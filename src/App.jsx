@@ -8,6 +8,7 @@ function App() {
   return (
     <>
      <h1> Unimate</h1>
+     <p>unimate is a platform for seamless collaboration and communication.</p>
     </>
   )
 }
