@@ -51,6 +51,7 @@ img{
   flex-wrap: wrap;
   justify-items: center;
   justify-content: space-evenly;
+ 
 }
 .card{
   display: flex;
@@ -59,9 +60,10 @@ img{
   align-items: center;
   width: 25vw;
   background-color: white;
-  border-radius: 3rem;
+  border-radius: 2rem;
   gap: 1rem;
   box-shadow: 0px 4px 10px rgba(24, 24, 24, 0.162);
+  padding: 1.5rem;
   p{
     font-size: 1rem;
     margin-top: -10px;

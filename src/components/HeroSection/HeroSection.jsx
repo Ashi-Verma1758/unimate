@@ -14,7 +14,7 @@ const HeroSection = () =>{
     <> 
     <div className="full">
       <div className="box1">
-        <h1>Connect. Collaborate. <span className = "create">Create.</span></h1>
+        <h1>Connect. <span className = "create">Collaborate.</span> Create.</h1>
         <p>The ultimate platform for university students to find teammates, discover events, and<br/>
        build amazing projects together. Join thousands of students already collaborating on <br/>Unimate.</p>
        <div className="button"> 
