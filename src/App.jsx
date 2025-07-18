@@ -1,12 +1,16 @@
 import { useState } from 'react'
-import './App.css'
-import HeroSection from './components/HeroSection/HeroSection.jsx'
-// import Navbar from './components/Navbar'
+
+import React from 'react'
+import './App.css';
+
+// import Navbar from './components/Navbar.jsx';
+import HeroSection from './components/HeroSection/HeroSection'
+
 function App() {
   return (
     <>
-    <HeroSection/>
     {/* <Navbar/> */}
+    <HeroSection/>
     </>
   )
 }
