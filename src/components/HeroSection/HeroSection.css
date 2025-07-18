@@ -1,0 +1,181 @@
+/* src/components/Hero.css */
+.full{
+  max-width: 98%;
+  height: auto;
+  margin: 0px;
+  background-color: rgb(221, 234, 247);
+  padding: 2rem;
+  
+  
+}
+.box1{
+  margin: 2rem;
+}
+.create{
+  color: rgb(37, 99, 235)
+;
+}
+.button{
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+
+}
+button{
+  color: black;
+  background-color: white;
+  border: 1px ;
+  border-radius: 10px;
+  /* width: 12vw; */
+  height: 5vh;
+  font-size: 1rem;
+  padding: 1rem 1rem 2rem 1rem;
+}
+button:hover{
+  background-color: rgb(37, 99, 235);
+  color: white;
+}
+img{
+  width: 50vw;
+  height: auto;
+  margin-top: 2rem;
+  border-radius: 20px;
+}
+.part2{
+  margin-top: 6rem;
+}
+.cards{
+  display: flex;
+  flex-direction: row;
+  gap:2rem;
+  flex-wrap: wrap;
+  justify-items: center;
+  justify-content: space-evenly;
+}
+.card{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 25vw;
+  background-color: white;
+  border-radius: 3rem;
+  gap: 1rem;
+  box-shadow: 0px 4px 10px rgba(24, 24, 24, 0.162);
+  p{
+    font-size: 1rem;
+    margin-top: -10px;
+  }
+
+
+}
+.icons{
+  height: auto;
+  width: 2.5rem;
+  color: rgba(37, 100, 235, 0.762);
+  background-color: rgb(221, 234, 247);
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.head{
+  font-size: 1.3rem;
+ 
+ 
+}
+.part3{
+  background-color: rgb(9, 113, 224);
+  color:white;
+  padding:3rem;
+}
+.heaidng{
+  font-size: 2rem;
+}
+.word{
+  margin-top: 3rem;
+  padding: 2rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* .hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap;
+  padding: 3rem 2rem;
+  gap: 2rem;
+}
+
+.hero-content {
+  flex: 1;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.btn-secondary:hover {
+  background-color: #ddd;
+}
+
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+} */
