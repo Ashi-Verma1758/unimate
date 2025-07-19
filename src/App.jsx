@@ -3,16 +3,22 @@ import { useState } from 'react'
 import React from 'react'
 import './App.css';
 
-// import Navbar from './components/Navbar.jsx';
-import HeroSection from './components/HeroSection/HeroSection'
+
+// import HeroSection from './components/HeroSection/HeroSection'
 // import TeamCard from './components/teamInvite/TeamCard';
+
+import HomePage from './components/HomePage/HomePage';
+
 
 function App() {
   return (
     <>
     {/* <Navbar/> */}
-    <HeroSection/>
+    {/* <HeroSection/> */}
     {/* <TeamCard/> */}
+    {/* <ProjectCard /> */}
+    {/* <StatsCard /> */}
+    <HomePage />
     </>
   )
 }
