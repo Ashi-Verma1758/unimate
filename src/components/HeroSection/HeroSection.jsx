@@ -64,7 +64,7 @@ const HeroSection = () =>{
       <div className="part3">
         <span className="heaidng">Ready to start collaborating?</span><br/><br/>
         <span className="word">Join thousands of students who are already building amazing things together.</span><br/><br/><br/>
-        <button>Sign Up Now- It's free</button>
+        <button className="btnsd">Sign Up Now- It's free</button>
 
 
       </div>
