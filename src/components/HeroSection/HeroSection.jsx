@@ -1,6 +1,8 @@
 import "./HeroSection.css";
 import { Link } from 'react-router-dom';
-import photo from '../../assets/photo.jpg'
+import photo from '../../assets/photo.jpg';
+import { useRef } from "react";
+import Navbar from "../Navbar.jsx"
 import {
   Users ,  
   CalendarCheck,   
@@ -10,17 +12,26 @@ import {
   Zap } from 'lucide-react';
 
 const HeroSection = () =>{
+  const cardsRef = useRef(null);
+  const scrollToCards = ()=>{
+    cardsRef.current.scrollIntoView({behavior: 'smooth'});
+  }
     return(
     <> 
+    <Navbar/>
     <div className="full">
       <div className="box1">
         <h1>Connect. <span className = "create">Collaborate.</span> Create.</h1>
         <p>The ultimate platform for university students to find teammates, discover events, and<br/>
        build amazing projects together. Join thousands of students already collaborating on <br/>Unimate.</p>
+       <br/>
+       <br/>
        <div className="button"> 
         
-        <button>Get Started</button>
-        <button>Explore Platform</button>
+       <Link to="/signup">
+         <button>Get Started</button>
+       </Link>
+        <button onClick={scrollToCards}>Explore Platform</button>
        </div>
        <img src={photo}/> 
       </div> 
@@ -28,7 +39,8 @@ const HeroSection = () =>{
     <div className="part2">
       <h2>Everything you need to succeed together</h2>
       <p>From finding the perfect teammate to managing your next big project, Unimate<br/> provides all the tools you need for successful collaboration.</p>
-      <div className="cards">
+      <br/><br/>
+      <div className="cards" ref={cardsRef}>
         <div className="card">
           <Users className="icons"/>
           <span className="head">Team Building</span>
@@ -64,7 +76,9 @@ const HeroSection = () =>{
       <div className="part3">
         <span className="heaidng">Ready to start collaborating?</span><br/><br/>
         <span className="word">Join thousands of students who are already building amazing things together.</span><br/><br/><br/>
-        <button className="btnsd">Sign Up Now- It's free</button>
+        <Link to="/signup">
+           <button className="btnsd">Sign Up Now- It's free</button>
+        </Link>
 
 
       </div>

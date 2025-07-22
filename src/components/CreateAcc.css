@@ -5,13 +5,13 @@
   padding: 0;
 }
 
-body {
+/* body {
   background-color: #e9f0ff;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
+} */
 
 .container {
   text-align: center;
@@ -68,7 +68,7 @@ form select {
   flex: 1;
 }
 
-button {
+/* button {
   width: 100%;
   padding: 12px;
   background-color: #5973bb;
@@ -84,7 +84,7 @@ button {
 
 button:hover {
   background-color: #1e4fd1;
-}
+} */
 
 .signin-text {
   margin-top: 15px;
