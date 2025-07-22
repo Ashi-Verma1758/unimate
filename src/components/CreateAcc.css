@@ -4,6 +4,10 @@
   margin: 0;
   padding: 0;
 }
+.logo-link {
+  text-decoration: none; /* Removes the underline */
+  color: inherit; 
+}
 
 /* body {
   background-color: #e9f0ff;

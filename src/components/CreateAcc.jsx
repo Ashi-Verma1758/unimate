@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import "./CreateAcc.css";
+import { Link } from "react-router-dom";
 
 function CreateAccount() {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ function CreateAccount() {
 
   return (
     <div className="container">
-      <h1 className="logo">Unimate</h1>
+     <Link to="/" className="logo-link"><h1 className="logo">Unimate</h1></Link>
       <p className="subtitle">Join the collaboration revolution</p>
 
       <div className="form-box">
