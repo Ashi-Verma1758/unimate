@@ -27,25 +27,24 @@ const Login = () => {
     setLoading(true); // Start loading
 
     try {
-      // Hardcoded localhost URL. Change for production!
-      const backendUrl = 'http://localhost:8000'; // Or import.meta.env.VITE_BACKEND_URL;
+     const backendUrl = 'http://localhost:8000';
+    const res = await axios.post(`${backendUrl}/api/auth/login`, {
+      email: formData.email,
+      password: formData.password,
+    });
 
-      const res = await axios.post(`${backendUrl}/api/auth/login`, { // Assuming your login endpoint is /api/login
-        email: formData.email,
-        password: formData.password,
-      });
+    const { accessToken, refreshToken, user, message: successMessage } = res.data;
 
-      // Assuming your backend sends a token and/or user data on successful login
-      const { token, user, message: successMessage } = res.data; // Adjust based on your actual backend response
-
-      localStorage.setItem('token', token); // Store the authentication token
-      localStorage.setItem('user', JSON.stringify(user)); // Store user data
+    // ✅ Change 'token' to 'accessToken' here
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken); // Ensure refreshToken is also stored
+    localStorage.setItem('user', JSON.stringify(user));
 
       setMessage({ type: 'success', text: successMessage || 'Login successful! Redirecting...' });
 
       // Redirect to the homepage or dashboard after a short delay
       setTimeout(() => {
-        navigate('/Homepage');
+        navigate('/Homepage'); // Redirect to your Homepage
       }, 1500);
 
     } catch (err) {

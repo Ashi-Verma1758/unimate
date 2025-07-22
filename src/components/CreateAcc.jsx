@@ -7,13 +7,13 @@ import { Link } from "react-router-dom";
 function CreateAccount() {
   const navigate = useNavigate();
 
-  // Corrected formData state to match input names and backend payload
+  // formData state matches input names
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    universityEmail: '', // Changed from 'email' to match input name and payload
+    universityEmail: '', // Input name is 'universityEmail'
     university: '',
-    year: '',            // Changed from 'academicYear' to match input name and payload
+    year: '',            // Input name is 'year'
     major: '',
     password: '',
     confirmPassword: '',
@@ -41,24 +41,28 @@ function CreateAccount() {
     }
 
     try {
-      // Hardcoded localhost URL as requested.
-      // IMPORTANT: Remember to change this to your deployed backend URL for production!
-      const backendUrl = 'http://localhost:8000';
+      const backendUrl = 'http://localhost:8000'; // Ensure this matches your backend port
 
       const res = await axios.post(`${backendUrl}/api/auth/register`, {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        email: formData.email, // This now correctly matches the state and input
+        email: formData.universityEmail, // Map frontend 'universityEmail' to backend 'email'
         university: formData.university,
-        academicYear: formData.academicYear,                       // This now correctly matches the state and input
+        academicYear: formData.year,     // Map frontend 'year' to backend 'academicYear'
         major: formData.major,
         password: formData.password,
       });
 
-      setMessage({ type: 'success', text: res.data.message || 'Account created successfully!' });
+      // ✅ Store the tokens and user info from the successful registration response
+      const { accessToken, refreshToken, user, message: successMessage } = res.data;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(user)); // Store user data
+
+      setMessage({ type: 'success', text: successMessage || 'Account created successfully!' });
 
       setTimeout(() => {
-        navigate('/Homepage'); // Redirect to your login page
+        navigate('/Homepage'); // Redirect to your Homepage after registration
       }, 2000);
 
     } catch (err) {
@@ -75,60 +79,62 @@ function CreateAccount() {
   return (
     <div className="maincont">
       <div className="container">
-     <Link to="/" className="logo-link"><h1 className="logo">Unimate</h1></Link>
-      <p className="subtitle">Join the collaboration revolution</p>
+        <Link to="/" className="logo-link"><h1 className="logo">Unimate</h1></Link>
+        <p className="subtitle">Join the collaboration revolution</p>
 
-      <div className="form-box">
-        <h2>Create account</h2>
-        <p>Enter your details</p>
+        <div className="form-box">
+          <h2>Create account</h2>
+          <p>Enter your details</p>
 
-        <form onSubmit={handleSubmit}>
-          {message.text && (
-            <p className={`form-message ${message.type}`}>
-              {message.text}
-            </p>
-          )}
+          <form onSubmit={handleSubmit}>
+            {message.text && (
+              <p className={`form-message ${message.type}`}>
+                {message.text}
+              </p>
+            )}
 
-          <div className="input-row">
-            <input type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
-            <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
-          </div>
+            <div className="input-row">
+              <input type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
+              <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
+            </div>
 
-          <input type="email" name="email" placeholder="University Email" value={formData.email} onChange={handleChange} required />
+            {/* Input name is 'universityEmail' */}
+            <input type="email" name="universityEmail" placeholder="University Email" value={formData.universityEmail} onChange={handleChange} required />
 
-          <select name="university" value={formData.university} onChange={handleChange} required>
-            <option value="">Select your university</option>
-            <option value="University A">University A</option>
-            <option value="University B">University B</option>
-            {/* Add more university options as needed */}
-          </select>
-
-          <div className="input-row">
-            <select name="academicYear" value={formData.academicYear} onChange={handleChange} required>
-              <option value="">Year</option>
-              <option value="1st">1st</option>
-              <option value="2nd">2nd</option>
-              <option value="3rd">3rd</option>
-              <option value="4th">4th</option>
-              <option value="5th">5th</option>
+            <select name="university" value={formData.university} onChange={handleChange} required>
+              <option value="">Select your university</option>
+              <option value="University A">University A</option>
+              <option value="University B">University B</option>
+              {/* Add more university options as needed */}
             </select>
-            <input type="text" name="major" placeholder="e.g., Computer Science" value={formData.major} onChange={handleChange} required />
-          </div>
 
-          <input type="password" name="password" placeholder="Create password" value={formData.password} onChange={handleChange} required />
-          <input type="password" name="confirmPassword" placeholder="Confirm password" value={formData.confirmPassword} onChange={handleChange} required />
+            <div className="input-row">
+              {/* Input name is 'year' */}
+              <select name="year" value={formData.year} onChange={handleChange} required>
+                <option value="">Year</option>
+                <option value="1st">1st</option>
+                <option value="2nd">2nd</option>
+                <option value="3rd">3rd</option>
+                <option value="4th">4th</option>
+                <option value="5th">5th</option>
+              </select>
+              <input type="text" name="major" placeholder="e.g., Computer Science" value={formData.major} onChange={handleChange} required />
+            </div>
 
-          <button type="submit" className="submit" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create account'}
-          </button>
-        </form>
+            <input type="password" name="password" placeholder="Create password" value={formData.password} onChange={handleChange} required />
+            <input type="password" name="confirmPassword" placeholder="Confirm password" value={formData.confirmPassword} onChange={handleChange} required />
 
-        <p className="signin-text">
-          Already have an account? <a href="/login">Sign In</a>
-          {/* Consider using <Link to="/login">Sign In</Link> if /login is a React Router route */}
-        </p>
+            <button type="submit" className="submit" disabled={loading}>
+              {loading ? 'Creating account...' : 'Create account'}
+            </button>
+          </form>
+
+          <p className="signin-text">
+            Already have an account? <a href="/login">Sign In</a>
+            {/* Consider using <Link to="/login">Sign In</Link> if /login is a React Router route */}
+          </p>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
