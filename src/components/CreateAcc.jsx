@@ -73,7 +73,8 @@ function CreateAccount() {
   };
 
   return (
-    <div className="container">
+    <div className="maincont">
+      <div className="container">
      <Link to="/" className="logo-link"><h1 className="logo">Unimate</h1></Link>
       <p className="subtitle">Join the collaboration revolution</p>
 
@@ -117,7 +118,7 @@ function CreateAccount() {
           <input type="password" name="password" placeholder="Create password" value={formData.password} onChange={handleChange} required />
           <input type="password" name="confirmPassword" placeholder="Confirm password" value={formData.confirmPassword} onChange={handleChange} required />
 
-          <button type="submit" disabled={loading}>
+          <button type="submit" className="submit" disabled={loading}>
             {loading ? 'Creating account...' : 'Create account'}
           </button>
         </form>
@@ -127,6 +128,7 @@ function CreateAccount() {
           {/* Consider using <Link to="/login">Sign In</Link> if /login is a React Router route */}
         </p>
       </div>
+    </div>
     </div>
   );
 }

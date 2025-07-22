@@ -11,6 +11,7 @@ import CreateAccount from './components/CreateAcc';
 
 
 import HomePage from './components/HomePage/HomePage';
+import Login from './Log-In';
 
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HeroSection/>} />
         <Route path="/signup" element={<CreateAccount />} />
+        <Route path="/login" element={<Login />} />
+
         <Route path="/Homepage" element={<HomePage />} />
 
       </Routes>
