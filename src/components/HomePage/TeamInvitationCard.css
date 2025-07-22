@@ -1,0 +1,82 @@
+/* TeamInvitationCard.css */
+.invitation-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.invitation-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.invitation-content {
+  margin-bottom: 0.75rem;
+}
+
+.invitation-title {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.invitation-details {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.invitation-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.accept-button, .decline-button {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.accept-button {
+  background-color: #2563eb;
+  color: white;
+}
+
+.accept-button:hover {
+  background-color: #1d4ed8;
+}
+
+.decline-button {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.decline-button:hover {
+  background-color: #e5e7eb;
+}
+
+/* Focus states for accessibility */
+.accept-button:focus, .decline-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Active states */
+.accept-button:active {
+  background-color: #1e40af;
+  transform: translateY(1px);
+}
+
+.decline-button:active {
+  background-color: #d1d5db;
+  transform: translateY(1px);
+}
