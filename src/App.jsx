@@ -19,6 +19,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HeroSection/>} />
         <Route path="/signup" element={<CreateAccount />} />
+        <Route path="/Homepage" element={<HomePage />} />
+
       </Routes>
     </Router>
  

@@ -2,7 +2,7 @@ import "./HeroSection.css";
 import { Link } from 'react-router-dom';
 import photo from '../../assets/photo.jpg';
 import { useRef } from "react";
-import Navbar from "../Navbar.jsx"
+import Navbar from "../HomePage/Navbar.jsx"
 import {
   Users ,  
   CalendarCheck,   
