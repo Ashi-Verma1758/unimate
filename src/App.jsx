@@ -1,32 +1,28 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import React from 'react'
 import './App.css';
 
-// import Login from './Log-In';
 // import Navbar from './components/Navbar.jsx';
 import HeroSection from './components/HeroSection/HeroSection'
-import CreateAccount from './components/CreateAcc';
-
-
-import HomePage from './components/HomePage/HomePage';
-import Login from './Log-In';
-
-
+// import { Sidebar } from 'lucide-react';
+// import TeamCard from './components/teamInvite/TeamCard';
+// import Sidebar from './components/ChatBox/Sidebar';
+import ChatWindow from './components/ChatBox/ChatWindow'
+import TeamMembers from './components/ChatBox/TeamMembers';
+import Sidebar from './components/ChatBox/SideBar';
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HeroSection/>} />
-        <Route path="/signup" element={<CreateAccount />} />
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/Homepage" element={<HomePage />} />
-
-      </Routes>
-    </Router>
- 
+    <>
+    {/* <Navbar/> */}
+    {/* <HeroSection/> */}
+    {/* <TeamCard/> */}
+    <div className="parent-container">
+     <Sidebar/>
+     <ChatWindow/>
+      <TeamMembers/>
+    </div>
+    </>
   )
 }
 
