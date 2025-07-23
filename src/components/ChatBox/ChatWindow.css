@@ -1,21 +1,18 @@
 
 .chat-window-container {
  width:50%;
- height: 500px;
-  display: flex;
+ height: 100%;
   flex-direction: column;
   background-color: #ffffff; 
-  margin-left: 20rem;
-  
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
   border-radius: 20px;
-   box-sizing: border-box;
+ 
 }
 
 .chat-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1rem;
   border-bottom: 1px solid #e5e7eb; 
 }
 
@@ -35,8 +32,8 @@
 }
 
 .chat-messages-area {
-  flex: 1; 
   padding: 1.5rem;
+  height: 60%;
 
 }
 
@@ -69,14 +66,16 @@
 
 .chat-bubble {
   background-color: #f3f4f6; 
-  padding: 0.75rem;
+  padding: 0.35rem;
   border-radius: 0.75rem; 
-  max-width: 28rem; 
+  max-width: 30rem; 
+ 
 }
 
 .chat-bubble p {
   color: #1f2937;
   text-align: left;
+  font-size: smaller;
 }
 
 .chat-input-area {
@@ -85,6 +84,8 @@
   display: flex;
   align-items: center;
   background-color: #ffffff; 
+  width: 90%;
+  
 }
 
 .chat-input-field {
@@ -102,11 +103,13 @@
 }
 
 .chat-input-send-button {
-  background-color: #2563eb; 
+  background-color: #1a60f8; 
   color: #ffffff; 
-  /* padding: 2rem;  */
-  border-radius: 30px; 
-  margin-left: 0.5rem; 
+  padding: 5px 2px; 
+  border-radius: 20px; 
+  margin-left: 0.5rem;
+ width: 50px;
+ height: 35px;
 }
 
 .chat-input-send-button:hover {

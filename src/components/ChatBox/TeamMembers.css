@@ -1,0 +1,37 @@
+.team-members-container {
+  width: 256px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  background-color: #ffffff; /* bg-white */
+  border: 1px solid #e5e7eb; /* border-l border-gray-200 */
+  padding: 15px; 
+  margin-left: 2rem;
+margin-right: 2rem;
+  flex-direction: column;
+   border-radius: 8px; 
+}
+
+.team-members-title {
+  font-size: 1.125rem;  /* text-xl */
+  font-weight: 600; /* font-semibold */
+  color: #1f2937; /* text-gray-800 */
+ 
+}
+
+.team-member-card {
+  display: flex;
+  text-align: left;
+  margin-left: 5rem;
+  
+}
+
+
+.team-member-name {
+  font-weight: 600; 
+  font-size: medium;
+  color: #1f2937; 
+}
+
+.team-member-status {
+  font-size: 0.875rem; 
+  color: #6b7280;
+}

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState,useRef,useEffect } from "react";
 import './chatwindow.css'; 
 
-// import Sidebar from './SideBar';
+
 const ChatWindow = () => {
+  
   return (
    
     <div className="chat-window-container">
