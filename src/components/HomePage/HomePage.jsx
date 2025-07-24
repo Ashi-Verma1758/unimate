@@ -146,8 +146,8 @@ const HomePage = ({ setSelectedConversationId }) => {
           id: project._id, // Use _id as 'id' for key and prop
           // ASSUMPTION: 'createdBy' is populated with 'name', 'email'.
           // 'university' and 'avatar' are NOT populated by your current backend 'getAllProjects'.
-          author: project.createdBy ? (project.createdBy.name || project.createdBy.email) : 'Unknown',
-          university: 'N/A', // Cannot get from current backend `getAllProjects` without change
+         author: project.createdBy ? `${project.createdBy.firstName || ''} ${project.createdBy.lastName || ''}`.trim() : 'Unknown',
+         university: project.createdBy ? project.createdBy.university : 'N/A',// Cannot get from current backend `getAllProjects` without change
           timeAgo: moment(project.createdAt).fromNow(), // Uses moment.js for formatting
           title: project.title,
           description: project.description,
@@ -190,8 +190,8 @@ const HomePage = ({ setSelectedConversationId }) => {
           projectName: item.project?.title,
           // ASSUMPTION: 'createdBy' in 'project' within 'item' is populated with 'name', 'email'.
           // 'university' and 'avatar' are NOT populated by your current backend 'getReceivedInvites'.
-          fromName: item.project?.createdBy?.name || 'Unknown',
-          fromUniversity: 'N/A', // Cannot get from current backend `getReceivedInvites` without change
+         fromName: item.project?.createdBy ? (item.project.createdBy.name || `${item.project.createdBy.firstName} ${item.project.createdBy.lastName}`).trim() : 'Unknown',
+        fromUniversity: item.project?.createdBy?.university || 'N/A',// Cannot get from current backend `getReceivedInvites` without change
           fromAvatar: null,      // Cannot get from current backend `getReceivedInvites` without change
           timeAgo: moment(item.invite?.sentAt).fromNow(), // Uses moment.js for formatting
         })).filter(invite => invite.projectId); // Filter out any incomplete entries

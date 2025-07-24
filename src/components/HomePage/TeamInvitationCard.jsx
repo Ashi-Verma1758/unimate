@@ -6,7 +6,7 @@ const TeamInvitationCard = ({
   projectName,
   fromName,
   fromUniversity, // New prop: University of the project creator
-  fromAvatar,     // New prop: Avatar URL of the project creator
+  // fromAvatar,     // New prop: Avatar URL of the project creator
   timeAgo,
   onAccept,
   onDecline
@@ -14,14 +14,14 @@ const TeamInvitationCard = ({
   return (
     <div className="invitation-card">
       <div className="invitation-header"> {/* Added a header div for better layout control */}
-        <div className="from-avatar">
-          {/* Display image if avatar URL exists, else fallback to first letter of name */}
+        {/* <div className="from-avatar">
+          
           {fromAvatar ? (
             <img src={fromAvatar} alt={`${fromName}'s avatar`} className="avatar-img" />
           ) : (
             fromName ? fromName.charAt(0).toUpperCase() : '?'
           )}
-        </div>
+        </div> */}
         <div className="from-details">
           <h4 className="invitation-title">
             {projectName}
