@@ -1,14 +1,10 @@
 import React from 'react';
 import './createpost.css';
-
+import Navbar from './HomePage/Navbar';
 const CreatePost = () => {
   return (
     <div className='body'>
-      <header>
-        <div className="nav-left">
-          <h1>Unimate</h1>
-        </div>
-      </header>
+      <Navbar/>
 
       <div className="container">
         <h2>Create New Project Post</h2>

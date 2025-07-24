@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'
 import { Plus, Users } from 'lucide-react';
 import moment from 'moment'; // Import moment.js for timeAgo calculations
 import './HomePage.css';
@@ -9,7 +10,7 @@ import Navbar from './Navbar.jsx';
 import StatsCard from './StatsCard.jsx';
 import ProjectCard from './ProjectCard.jsx';
 import TeamInvitationCard from './TeamInvitationCard.jsx';
-
+import CreatePost from '../createpost.jsx';
 const HomePage = ({ setSelectedConversationId }) => {
   // State for Dashboard Summary
    const navigate = useNavigate();
@@ -227,11 +228,12 @@ const HomePage = ({ setSelectedConversationId }) => {
               Ready to collaborate and build something amazing today?
             </p>
           </div>
-
+          <Link to ="/CreatePost">
           <button className="create-project-button">
             <Plus size={20} />
             <span>Create Project</span>
           </button>
+          </Link>
         </div>
 
         {/* Stats Cards Section - fetches from backend */}
