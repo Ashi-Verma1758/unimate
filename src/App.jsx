@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
@@ -28,18 +28,16 @@ function App() {
           <Route path="/login" element={<Login />} />
 
           {/* HomePage might need currentUserId if it fetches user-specific data */}
-          <Route path="/homepage" element={<HomePage />} />
+          <Route
+          path="/homepage"
+          element={<HomePage setSelectedConversationId={setSelectedConversationId} />}
+        />
 
           {/* Pass selectedConversationId and its setter to ChatWindow */}
-          <Route 
-            path="/chat" 
-            element={
-              <ChatWindow 
-                selectedConversationId={selectedConversationId} 
-                setSelectedConversationId={setSelectedConversationId}
-              />
-            } 
-          />
+          <Route
+          path="/chat"
+          element={<ChatWindow selectedConversationId={selectedConversationId} />} // Pass to ChatWindow
+        />
         </Routes>
       </Router>
     </AuthProvider>
