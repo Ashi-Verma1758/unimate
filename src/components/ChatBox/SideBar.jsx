@@ -1,70 +1,66 @@
-import React from 'react';
-import './Sidebar.css'; 
+import React, { useState, useEffect, useContext } from 'react';
+import api from '../../api'; // Import your configured Axios instance
+import { AuthContext } from '../../context/AuthContext'; // Import AuthContext
 
-const Sidebar = () => {
-  const teams = [
-    {
-      id: 1,
-      name: "AI Study Assistant",
-      message: "Great progress on the ML model!",
-      time: "2 min ago",
-      notifications: 3,
-      members: [
-        "https://placehold.co/32x32/FFD700/000000?text=S",
-        "https://placehold.co/32x32/4CAF50/FFFFFF?text=J",
-        "https://placehold.co/32x32/2196F3/FFFFFF?text=M",
-      ],
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: "Campus Food Delivery",
-      message: "When can we schedule the next meeting?",
-      time: "1 hour ago",
-      notifications: 0,
-      members: [
-        "https://placehold.co/32x32/FF5722/FFFFFF?text=A",
-        "https://placehold.co/32x32/9C27B0/FFFFFF?text=B",
-      ],
-      isActive: false,
-    },
-    {
-      id: 3,
-      name: "Mental Health Platform",
-      message: "The user interface looks amazing!",
-      time: "2 days ago",
-      notifications: 1,
-      members: [
-        "https://placehold.co/32x32/00BCD4/FFFFFF?text=A",
-      ],
-      isActive: false,
-    },
-  ];
+const Sidebar = ({ setSelectedConversationId }) => {
+  const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { currentUserId } = useContext(AuthContext); // Get current user ID from context
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      if (!currentUserId) {
+        setLoading(false);
+        // Optionally, handle case where user is not logged in/ID not available
+        return; 
+      }
+      try {
+        setLoading(true);
+        setError(null);
+        // Endpoint: GET /api/chats/conversations
+        const response = await api.get('/chats/conversations');
+        setConversations(response.data);
+      } catch (err) {
+        console.error('Error fetching conversations:', err.response?.data || err.message);
+        setError(err.response?.data?.message || 'Failed to load conversations.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchConversations();
+  }, [currentUserId]); // Re-fetch when currentUserId changes
+
+  if (loading) return <div className="sidebar-container">Loading conversations...</div>;
+  if (error) return <div className="sidebar-container text-red-500">{error}</div>;
 
   return (
     <div className="sidebar-container">
-      <h2 className="sidebar-title">Your Teams</h2>
-      <div className="sidebar-teams-list">
-        {teams.map((team) => (
-          <div
-            key={team.id}
-            className={`team-item ${team.isActive ? "team-item-active" : ""}`}
-          >
-            <div className="team-content">
-              <div className="team-header">
-                <h3 className="team-name">{team.name}</h3>
-                {team.notifications > 0 && (
-                  <span className="team-notification">
-                    {team.notifications}
-                  </span>
-                )}
+      <h2 className="sidebar-title">Conversations</h2>
+      <div className="conversation-list custom-scrollbar">
+        {conversations.length === 0 ? (
+          <p className="text-gray-500 text-sm p-4">No conversations found.</p>
+        ) : (
+          conversations.map((convo) => (
+            <div
+              key={convo._id}
+              className="conversation-item"
+              onClick={() => setSelectedConversationId(convo._id)}
+            >
+              <div className="conversation-info">
+                {/* Display members (excluding current user) */}
+                <h4 className="conversation-name">
+                  {convo.members
+                    .filter(member => member._id !== currentUserId)
+                    .map(member => `${member.firstName} ${member.lastName}`)
+                    .join(', ') || 'Unnamed Chat'}
+                </h4>
+                <p className="last-message">{convo.lastMessage || 'No messages yet.'}</p>
               </div>
-              <p className="team-message">{team.message}</p>
-              <p className="team-time">{team.time}</p>
-            
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
