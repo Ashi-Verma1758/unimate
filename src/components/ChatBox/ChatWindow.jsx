@@ -1,11 +1,16 @@
 import React, { useState,useRef,useEffect } from "react";
 import './chatwindow.css'; 
-
-
+// import { Sidebar } from "lucide-react";
+import Sidebar from "./SideBar.jsx";
+import TeamMembers from "./TeamMembers.jsx"
+import Navbar from "../HomePage/Navbar.jsx";
 const ChatWindow = () => {
   
   return (
-   
+   <>
+   <Navbar/>
+   <div className="noopt">
+   <Sidebar/>
     <div className="chat-window-container">
       {/* Chat Header */}
       <div className="chat-header">
@@ -48,7 +53,9 @@ const ChatWindow = () => {
         </button>
       </div>
     </div>
-  
+    <TeamMembers/>
+    </div>
+  </>
   );
 };
 

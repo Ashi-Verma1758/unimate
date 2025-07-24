@@ -1,4 +1,11 @@
-
+.noopt{
+  display: flex;
+  flex-direction: row;
+  height: 80vh;
+  width: auto;
+  margin-top: 2rem;
+  justify-content: center;
+}
 .chat-window-container {
  width:50%;
  height: 100%;
