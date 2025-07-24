@@ -160,26 +160,20 @@ const HomePage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Your `getReceivedInvites` controller returns data wrapped in `ApiResponse` { success, data, message }
-        // and the `data` field contains an array of { project: {...}, invite: {...} }
+       
         const rawInvites = res.data.data;
+console.log("Raw Invites from Backend (before mapping):", rawInvites); // <-- NEW CONSOLE.LOG
 
-        // Map the raw backend response to match TeamInvitationCard props
-        const formattedInvites = rawInvites.map(item => ({
-          // Use item.invite._id as key if available, else item.project._id
-          id: item.invite?._id || item.project?._id || Math.random().toString(36).substring(7),
-          projectId: item.project?._id, // Pass project ID for response actions
-          projectName: item.project?.title,
-          // ASSUMPTION: 'createdBy' in 'project' within 'item' is populated with 'name', 'email'.
-          // 'university' and 'avatar' are NOT populated by your current backend 'getReceivedInvites'.
-         fromName: item.project?.createdBy ? (item.project.createdBy.name || `${item.project.createdBy.firstName} ${item.project.createdBy.lastName}`).trim() : 'Unknown',
-        fromUniversity: item.project?.createdBy?.university || 'N/A',// Cannot get from current backend `getReceivedInvites` without change
-          fromAvatar: null,      // Cannot get from current backend `getReceivedInvites` without change
-          timeAgo: moment(item.invite?.sentAt).fromNow(), // Uses moment.js for formatting
-        })).filter(invite => invite.projectId); // Filter out any incomplete entries
-
-        setTeamInvitations(formattedInvites);
-      } catch (err) {
+     setTeamInvitations(rawInvites.map(item => ({
+          id: item.invitationId, // Use invitationId as the key
+          projectId: item.projectId,
+          projectName: item.projectName,
+          fromName: item.fromName,
+          fromUniversity: item.fromUniversity,
+          fromAvatar: item.fromAvatar,
+          timeAgo: item.timeAgo,
+      })));
+} catch (err) {
         console.error('Error fetching team invitations:', err);
         setInvitationsError(err.response?.data?.message || 'Failed to load invitations.');
       } finally {
