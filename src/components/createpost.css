@@ -50,16 +50,17 @@ header {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
   margin-bottom: 30px;
+  text-align: left;
 }
 
 .section h2 {
-  font-size: 20px;
+  font-size: 2rem;
   margin-bottom: 4px;
 }
 
 .section p {
   color: #666;
-  font-size: 14px;
+  font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
@@ -108,8 +109,8 @@ textarea {
   color: white;
   border: none;
   font-size: 18px;
-  width: 36px;
-  height: 36px;
+  width:auto;
+  height: 1rem;
   border-radius: 6px;
   cursor: pointer;
 }

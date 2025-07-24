@@ -25,7 +25,9 @@ function App() {
           <Route path="/create" element={<CreatePost />} />
           <Route path="/fullpost" element={<ProjectInfo/>}/>
           <Route path="/CreatePost" element={<CreatePost/>}/>
+          <Route path="/ProjectInfo" element={<ProjectInfo/>}/>
 
+          
           {/* HomePage might need currentUserId if it fetches user-specific data */}
           <Route
           path="/homepage"
