@@ -4,9 +4,7 @@ import React from 'react'
 import './App.css';
 
 
-// import HeroSection from './components/HeroSection/HeroSection'
-// import TeamCard from './components/teamInvite/TeamCard';
-
+import ProjectInfo from './components/ProjectInfo/ProjectInfo';
 import HomePage from './components/HomePage/HomePage';
 
 
@@ -18,7 +16,9 @@ function App() {
     {/* <TeamCard/> */}
     {/* <ProjectCard /> */}
     {/* <StatsCard /> */}
-    <HomePage />
+    {/* <HomePage /> */}
+    {/* <CreateAcc /> */}
+    <ProjectInfo />
     </>
   )
 }
