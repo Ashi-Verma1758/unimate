@@ -3,10 +3,11 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-body {
+.body {
   margin: 0;
   background-color: #f8f9fc;
   color: #222;
+  
 }
 
 header {
@@ -16,6 +17,7 @@ header {
   padding: 16px 40px;
   background-color: white;
   border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 1rem;
 }
 
 .nav-left,
@@ -35,6 +37,11 @@ header {
   max-width: 900px;
   margin: 40px auto;
   padding: 0 20px;
+  
+}
+.container p{
+  margin-bottom: 2rem;
+  font-size: 1rem;
 }
 
 .section {

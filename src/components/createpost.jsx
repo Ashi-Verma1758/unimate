@@ -3,7 +3,7 @@ import './createpost.css';
 
 const CreatePost = () => {
   return (
-    <div>
+    <div className='body'>
       <header>
         <div className="nav-left">
           <h1>Unimate</h1>
