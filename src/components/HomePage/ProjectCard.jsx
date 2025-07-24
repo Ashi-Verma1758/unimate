@@ -1,7 +1,9 @@
 import React from 'react';
 import { Users } from 'lucide-react';
-import './ProjectCard.css';
+import './ProjectCard.css'; // Assuming your CSS file is correctly linked
+
 const ProjectCard = ({
+  projectId, // New prop: The ID of the project
   author,
   university,
   timeAgo,
@@ -9,7 +11,8 @@ const ProjectCard = ({
   description,
   technologies = [],
   responseCount,
-  avatar
+  avatar,
+  onSendRequest // New prop: Function to call when "Send Request" is clicked
 }) => {
   return (
     <div className="project-card">
@@ -17,7 +20,13 @@ const ProjectCard = ({
       <div className="project-header">
         <div className="author-info">
           <div className="author-avatar">
-            {avatar || author.charAt(0)}
+            {/* Conditional rendering for avatar: display image if avatar URL exists, else fallback to first letter */}
+            {avatar ? (
+              <img src={avatar} alt={`${author}'s avatar`} className="avatar-img" />
+            ) : (
+              // Fallback to first letter of author's name if no avatar URL
+              author ? author.charAt(0).toUpperCase() : '?' // Ensure uppercase for better aesthetics
+            )}
           </div>
           <div className='author-details'>
             <div className="author-name">{author}</div>
@@ -46,7 +55,7 @@ const ProjectCard = ({
         <div className="technologies">
           {technologies.map((tech, index) => (
             <span
-              key={index}
+              key={tech} // Changed key to 'tech' assuming technologies are unique strings
               className="tech-tag"
             >
               {tech}
@@ -61,7 +70,10 @@ const ProjectCard = ({
           <Users size={16} />
           <span>{responseCount} responses</span>
         </div>
-        <button className="send-request-button">
+        <button
+          className="send-request-button"
+          onClick={() => onSendRequest(projectId)} // Call the handler with projectId
+        >
           Send Request
         </button>
       </div>

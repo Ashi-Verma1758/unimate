@@ -4,8 +4,8 @@
   margin: 0;
   padding: 0;
 }
-
-body {
+/* 
+.comt {
   background-color: #e9f0ff;
   display: flex;
   justify-content: center;
@@ -13,7 +13,7 @@ body {
   flex-direction: column;
   padding: 40px 20px;
   min-height: 100vh;
-}
+} */
 
 .logo {
   font-size: 2rem;
@@ -78,7 +78,7 @@ input {
   text-decoration: none;
 }
 
-button {
+/* button {
   width: 100%;
   padding: 12px;
   background-color: #2f64f9;
@@ -93,7 +93,7 @@ button {
 
 button:hover {
   background-color: #1e4fd1;
-}
+} */
 
 .switch {
   margin-top: 15px;

@@ -4,17 +4,23 @@
   margin: 0;
   padding: 0;
 }
+.logo-link {
+  text-decoration: none; /* Removes the underline */
+  color: inherit; 
+}
 
-body {
+.maincont {
   background-color: #e9f0ff;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  
 }
 
 .container {
   text-align: center;
+  /* margin-top: 5vh; */
 }
 
 .logo {
@@ -37,15 +43,22 @@ body {
   max-width: 400px;
   margin: 0 auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  justify-content: center;
 }
 
 .form-box h2 {
   margin-bottom: 10px;
+  display: flex;
+    justify-content: center;
+
 }
 
 .form-box p {
   margin-bottom: 20px;
   color: #666;
+  display: flex;
+    justify-content: center;
+
 }
 
 form input,
@@ -68,22 +81,22 @@ form select {
   flex: 1;
 }
 
-button {
+.submit {
   width: 100%;
-  padding: 12px;
-  background-color: #5973bb;
-  color: white;
+  /* padding: auto; */
+  /* background-color: #5973bb; */
+  /* color: white; */
   font-size: 1rem;
   font-weight: 600;
-  border: none;
-  border-radius: 8px;
+  /* border: 1px solid rgb(37, 99, 235); */
+  /* border-radius: 8px; */
   cursor: pointer;
   margin-top: 10px;
   transition: background 0.3s;
 }
 
-button:hover {
-  background-color: #1e4fd1;
+.submit:hover {
+  background-color: rgb(37, 99, 235);
 }
 
 .signin-text {

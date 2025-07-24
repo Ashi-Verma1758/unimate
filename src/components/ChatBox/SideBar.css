@@ -1,0 +1,85 @@
+
+.sidebar-container {
+  width: 256px;
+  height: 100%;
+  background-color: #ffffff; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  padding: 15px; 
+margin-left: 2rem;
+margin-right: 2rem;
+ 
+  flex-direction: column;
+  border-radius: 8px; 
+ 
+}
+
+.sidebar-title {
+  font-size: 1.125rem; 
+  font-weight: 600; 
+  color: #1f2937; 
+}
+
+.sidebar-teams-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px; /* Equivalent to space-y-4 */
+}
+
+.team-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 6px; 
+  border-radius: 8px; 
+  cursor: pointer;
+  transition: all 0.2s ease-in-out; 
+}
+
+.team-item:hover {
+  background-color: #f9fafb; /* Equivalent to hover:bg-gray-50 */
+}
+
+.team-item-active {
+  background-color: #eff6ff; /* Equivalent to bg-blue-50 */
+  box-shadow: inset 0 0 0 2px #bfdbfe; /* Equivalent to ring-2 ring-blue-200 */
+}
+
+.team-content {
+  flex-grow: 1;
+}
+
+.team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px; /* Equivalent to mb-1 */
+}
+
+.team-name {
+  font-weight: 100; /* Equivalent to font-medium */
+  color: #111827; /* Equivalent to text-gray-900 */
+}
+
+.team-notification {
+  background-color: #ef4444; /* Equivalent to bg-red-500 */
+  color: #ffffff;
+  font-size: 0.75rem; 
+  font-weight: 500; 
+  padding: 2px 8px; 
+  border-radius: 9999px;
+}
+
+.team-message {
+  font-size: 0.875rem; /* Equivalent to text-sm */
+  color: #4b5563; /* Equivalent to text-gray-600 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+ 
+}
+
+.team-time {
+  font-size: 0.75rem; /* Equivalent to text-xs */
+  color: #6b7280; /* Equivalent to text-gray-500 */
+  margin-top: 4px; /* Equivalent to mt-1 */
+text-align: left;
+}

@@ -12,8 +12,9 @@
   margin: 2rem;
 }
 .create{
-  color: rgb(37, 99, 235)
-;
+  color: rgb(37, 99, 235);
+  font-size: 3.5rem;
+
 }
 .button{
   display: flex;
@@ -26,7 +27,7 @@ button{
   background-color: white;
   border: 1px ;
   border-radius: 10px;
-  /* width: 12vw; */
+  width: 12vw;
   height: 5vh;
   font-size: 1rem;
   padding: 1rem 1rem 2rem 1rem;
@@ -73,7 +74,7 @@ img{
 }
 .icons{
   height: auto;
-  width: 2.5rem;
+  width: 4.5rem;
   color: rgba(37, 100, 235, 0.762);
   background-color: rgb(221, 234, 247);
   padding: 1rem;
@@ -98,7 +99,9 @@ img{
   margin-top: 3rem;
   padding: 2rem;
 }
-
+.btnsd{
+  width: 14vw;
+}
 
 
 
