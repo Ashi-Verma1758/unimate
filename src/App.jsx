@@ -2,14 +2,11 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
-<<<<<<< HEAD
 
-import ProjectInfo from './components/ProjectInfo/ProjectInfo';
-=======
 // Import components
 import HeroSection from './components/HeroSection/HeroSection';
 import CreateAccount from './components/CreateAcc';
->>>>>>> 2d1b32059067b62ab3596e0a0de3ad7479e8cffb
+
 import HomePage from './components/HomePage/HomePage';
 import Login from './Log-In';
 import ChatWindow from './components/ChatBox/ChatWindow.jsx';
@@ -25,7 +22,7 @@ function App() {
   // for clarity in props, though ChatWindow can also useContext(AuthContext) directly.
 
   return (
-<<<<<<< HEAD
+
     <>
     {/* <Navbar/> */}
     {/* <HeroSection/> */}
@@ -37,7 +34,7 @@ function App() {
     <ProjectInfo />
     </>
   )
-=======
+
     <AuthProvider> {/* Wrap your entire app with AuthProvider */}
       <Router>
         <Routes>
@@ -62,7 +59,7 @@ function App() {
       </Router>
     </AuthProvider>
   );
->>>>>>> 2d1b32059067b62ab3596e0a0de3ad7479e8cffb
+
 }
 
 export default App;
