@@ -16,6 +16,7 @@ import ProjectInfo from './components/ProjectInfo/ProjectInfo.jsx'; // Assuming 
 
 import AllProjectsPage from './components/HomePage/AllProjects.jsx'; // Assuming in src/components/HomePage/
 import TeamInvitations from './components/teamInvite/TeamInvite.jsx';
+import FindTeammates from './team.jsx';
 
 function App() {
 
@@ -135,6 +136,8 @@ function App() {
 
                     <Route path="/ProjectInfo" element={<ProjectInfo />} />
                     <Route path="/Team" element={<TeamInvitations />} />
+
+                    
 
 
                     <Route

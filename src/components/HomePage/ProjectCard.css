@@ -10,13 +10,15 @@
     border: 1px solid #d4dcec;
     padding: 1.5rem;
     transition: box-shadow 0.2s ease;
-    width: 60vw;
+    width: 50vw;
     /* margin-bottom : 2rem; */
     
 }
 
 .project-card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
+
 }
 
 .project-header {
