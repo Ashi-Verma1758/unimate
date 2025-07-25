@@ -56,7 +56,7 @@ const Navbar = () => {
                 <a href="/Find-Teammates"><UserSearch size={20} /> <span>Find Teammates</span></a>
                 <a href="#"><MessageCircle size={20} /> <span>Chat</span></a>
 
-                <a href="#"><Users size={20} /> <span>Teams</span></a>
+                <a href="/Team"><Users size={20} /> <span>Teams</span></a>
                 <a href="#"><Info size={20} /> <span>About Us</span></a>
                 <a href="#"><HelpCircle size={20} /> <span>Help</span></a>
               </div>

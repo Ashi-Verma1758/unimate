@@ -15,6 +15,7 @@ import CreateAccount from './components/CreateAcc.jsx'; // Assuming directly in 
 import ProjectInfo from './components/ProjectInfo/ProjectInfo.jsx'; // Assuming in src/components/HomePage/
 
 import AllProjectsPage from './components/HomePage/AllProjects.jsx'; // Assuming in src/components/HomePage/
+import TeamInvitations from './components/teamInvite/TeamInvite.jsx';
 
 function App() {
     const backendUrl = 'http://localhost:8000'; // IMPORTANT: Replace with your actual backend URL
@@ -132,6 +133,8 @@ function App() {
                     />
 
                     <Route path="/ProjectInfo" element={<ProjectInfo />} />
+                    <Route path="/Team" element={<TeamInvitations />} />
+
 
                     <Route
                         path="/chat"
