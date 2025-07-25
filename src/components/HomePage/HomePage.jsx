@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Users, Mail } from 'lucide-react';
+
+import { Plus, Users, Mail } from 'lucide-react
+import { Link } from 'react-router-dom'
+import { Plus, Users } from 'lucide-react';
 import moment from 'moment'; // Import moment.js for timeAgo calculations
 import './HomePage.css';
-
+import { useNavigate } from 'react-router-dom';
 // Import your components
 import Navbar from './Navbar.jsx';
 import StatsCard from './StatsCard.jsx';
 import ProjectCard from './ProjectCard.jsx';
 import TeamInvitationCard from './TeamInvitationCard.jsx';
+
 import JoinRequestCard from './JoinRequestCard.jsx';
 const HomePage = () => {
+
+import CreatePost from '../createpost.jsx';
+const HomePage = ({ setSelectedConversationId }) => {
+
   // State for Dashboard Summary
+   const navigate = useNavigate();
   const [dashboardSummary, setDashboardSummary] = useState({
     activeProjects: 0,
     completedProjects: 0,
@@ -67,7 +76,7 @@ const HomePage = () => {
   };
 
   // Handlers for accepting/declining team invitations
-  const handleRespondToInvitation = async (projectId, status) => {
+  const handleRespondToInvitation = async (projectId, fromUserId, status) => { // <--- Receive fromUserId
     const token = localStorage.getItem('accessToken');
     if (!token) {
       alert('Authentication required to respond to invitation.');
@@ -75,20 +84,37 @@ const HomePage = () => {
     }
 
     try {
-      // Assuming your backend route is PUT /api/invites/respond/:projectId
-      // If your backend still requires :userId in the URL, you'll need to adjust this.
+      // 1. Respond to the invitation (accept/reject)
       const res = await axios.put(`${backendUrl}/api/invites/respond/${projectId}`,
-        { status }, // Send 'accepted' or 'rejected' in the body
+        { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert(res.data.message || `Invitation ${status} successfully!`);
 
-      // Update UI: Remove the invitation from the list after successful response
+      // Update UI: Remove the invitation from the list
       setTeamInvitations(prevInvitations =>
         prevInvitations.filter(invite => invite.projectId !== projectId)
       );
-      // Optional: Refetch dashboard summary if accepting an invite adds to team members etc.
-      // fetchDashboardSummary();
+
+      // 2. If accepted, get or create the conversation and navigate
+      if (status === 'accepted') {
+        console.log("Attempting to get or create conversation...");
+        const conversationRes = await axios.get(
+          `${backendUrl}/api/chats/get-or-create-conversation?otherUserId=${fromUserId}&projectId=${projectId}`, // <--- Pass otherUserId and projectId
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const conversation = conversationRes.data; // Assuming your backend returns the conversation directly
+        console.log("Conversation obtained:", conversation);
+
+        if (conversation && conversation._id) {
+          setSelectedConversationId(conversation._id); // Update selected conversation ID in App.jsx
+          navigate('/chat'); // Navigate to the chat window
+        } else {
+          console.error("Failed to get or create conversation: No conversation ID returned.");
+          alert("Invitation accepted, but could not open chat. Please navigate to chat manually.");
+        }
+      }
 
     } catch (err) {
       console.error(`Error ${status} invitation:`, err);
@@ -312,11 +338,12 @@ useEffect(() => {
               Ready to collaborate and build something amazing today?
             </p>
           </div>
-
+          <Link to ="/CreatePost">
           <button className="create-project-button">
             <Plus size={20} />
             <span>Create Project</span>
           </button>
+          </Link>
         </div>
 
         {/* Stats Cards Section - fetches from backend */}
@@ -445,6 +472,7 @@ useEffect(() => {
                   <p>No new team invitations. All caught up! 🎉</p>
                 ) : (
                   teamInvitations.map((invitation) => (
+
                     <TeamInvitationCard
                       key={invitation.id}
                       projectId={invitation.projectId}
@@ -457,6 +485,8 @@ useEffect(() => {
                       onDecline={() => handleRespondToInvitation(invitation.projectId, 'rejected')}
                     />
                   ))
+
+
                 )}
               </div>
 
