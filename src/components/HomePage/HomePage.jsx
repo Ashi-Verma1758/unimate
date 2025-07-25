@@ -97,9 +97,10 @@ const handleViewAllProjects = () => {
         if (!token) { alert('Authentication required to respond.'); return; }
         try {
             const requestToRespond = joinRequests.find(req => req.requestId === requestId);
-            const userIdToRespond = requestToRespond?.requesterDetails?._id;
+           const userIdToRespond = requestToRespond?.requesterUserId;
+            // const userIdToRespond = requestToRespond?.requesterDetails?._id;
             if (!userIdToRespond) { alert('Could not find user associated with this request for backend processing.'); return; }
-            const res = await axios.patch(`${backendUrl}/api/projects/${projectId}/requests/${requestId}/respond`, { status }, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.patch(`${backendUrl}/api/projects/${projectId}/requests/${requestId}/respond/${userIdToRespond}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
             alert(res.data.message || `Request ${status} successfully!`);
             // Update join requests list on successful response
             setJoinRequests(prevRequests => prevRequests.filter(req => req.requestId !== requestId));
@@ -200,6 +201,7 @@ useEffect(() => {
                         projectTitle: item.project.title,
                         requestMessage: item.request.message || '',
                         skills: item.requesterDetails.skills || [],
+                        requesterUserId: item.requesterDetails._id,
                     });
                 }
             });
