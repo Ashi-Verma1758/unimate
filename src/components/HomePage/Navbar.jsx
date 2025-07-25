@@ -49,6 +49,7 @@ const Navbar = () => {
 
             {/* <div className="navbar-logo">Unimate</div> */}
 
+            {/* Links only if logged in */}
             {isLoggedIn && (
               <div className="navbar-links">
                 <a href="#"><Home size={20} /> <span>Home</span></a>
@@ -60,7 +61,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Desktop buttons (hidden on mobile) */}
           <div className="navbar-right">
             {isLoggedIn ? (
               <>
@@ -90,15 +90,20 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Hamburger menu (only visible on mobile) */}
+          {/* Hamburger menu always visible on mobile */}
           <button className="menu-button" onClick={() => setIsSidebarOpen(true)}>
             <Menu size={24} />
           </button>
         </div>
       </nav>
 
-      {/* Sidebar for small screens */}
-      <div className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      {/* Sidebar overlay */}
+      <div
+        className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`}
+        onClick={() => setIsSidebarOpen(false)}
+      ></div>
+
+      {/* Sidebar content */}
       <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-top">
           {isLoggedIn ? ( // Show these links if logged in
