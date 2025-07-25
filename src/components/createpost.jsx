@@ -96,32 +96,94 @@ function CreatePost() {
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
 
-        if (!userProfile) {
-            alert('User profile not loaded. Cannot create project. Please try again or log in.');
-            return;
-        }
+//         if (!userProfile) {
+//             alert('User profile not loaded. Cannot create project. Please try again or log in.');
+//             return;
+//         }
 
-        // Construct the project object to be passed, including authorDetails
-       // In CreatePost.jsx, inside handleSubmit:
-const projectToPass = {
-    ...projectData,
-    authorDetails: {
-        // Use userProfile.firstName and userProfile.lastName if you prefer concatenated name,
-        // or userProfile.name if your User model has a single 'name' field
-        name: userProfile.name || `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim(),
-        university: userProfile.university || 'N/A', // <-- This must match your DB field
-        year: userProfile.academicYear || 'N/A',     // <-- This must match your DB field
-        rating: userProfile.rating || 5.0,
-        projectsCompleted: userProfile.projectsCompleted || 1
+//         // Construct the project object to be passed, including authorDetails
+//        // In CreatePost.jsx, inside handleSubmit:
+// const projectToPass = {
+//     ...projectData,
+//     authorDetails: {
+//         // Use userProfile.firstName and userProfile.lastName if you prefer concatenated name,
+//         // or userProfile.name if your User model has a single 'name' field
+//         name: userProfile.name || `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim(),
+//         university: userProfile.university || 'N/A', // <-- This must match your DB field
+//         year: userProfile.academicYear || 'N/A',     // <-- This must match your DB field
+//         rating: userProfile.rating || 5.0,
+//         projectsCompleted: userProfile.projectsCompleted || 1
+//     }
+// };
+
+//         navigate('/ProjectInfo', { state: { project: projectToPass } });
+//     };
+
+const handleSubmit = async (e) => { // <--- ADD async HERE
+    e.preventDefault();
+
+    if (!userProfile) {
+        alert('User profile not loaded. Cannot create project. Please try again or log in.');
+        return;
     }
-};
 
-        navigate('/ProjectInfo', { state: { project: projectToPass } });
+    // --- PRE-SUBMISSION DATA TRANSFORMATION ---
+    // Ensure all data types match your backend Project schema (project.model.js)
+    const dataToSend = {
+        title: projectData.projectTitle,
+        description: projectData.projectDescription,
+        domain: projectData.domain,
+        projectType: projectData.projectType,
+        requiredSkills: projectData.requiredSkills, // Already array of strings
+        niceToHaveSkills: projectData.niceToHaveSkills, // Already array of strings
+        timeCommitment: projectData.timeCommitment,
+        projectDuration: projectData.projectDuration,
+        teamSize: parseInt(projectData.teamSize, 10), // Convert to Number
+        location: projectData.location,
+        startDate: projectData.startDate, // YYYY-MM-DD from date input, Mongoose parses fine
+        applicationDeadline: projectData.applicationDeadline, // YYYY-MM-DD from date input
+        remote: projectData.remoteWorkOkay, // Match 'remote' field in backend
+        githubRepo: projectData.githubRepo,
+        figmaLink: projectData.figmaLink,
+        demoLink: projectData.demoLink,
     };
 
+    // Basic client-side validation check for required fields
+    if (!dataToSend.title || !dataToSend.description || !dataToSend.domain ||
+        !dataToSend.timeCommitment || !dataToSend.projectDuration || isNaN(dataToSend.teamSize) ||
+        !dataToSend.startDate || !dataToSend.applicationDeadline) {
+        alert('Please fill out all required fields (marked with *) and ensure Team Size is a valid number.');
+        return;
+    }
+
+    // --- AXIOS POST CALL ---
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        alert('Authentication required to create project. Please log in.');
+        return;
+    }
+
+    try {
+        console.log("CreatePost: Attempting to send project data to backend:", dataToSend); // DEBUG LOG
+        const res = await axios.post(`${backendUrl}/api/projects`, dataToSend, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        alert(res.data.message || 'Project created successfully!');
+        console.log("CreatePost: Project created successfully. Response:", res.data); // DEBUG LOG
+
+        // --- Navigate to HomePage and trigger refresh ---
+        // This will now happen ONLY after successful database submission
+        navigate('/HomePage', { state: { refreshHomePage: true } });
+
+    } catch (err) {
+        console.error('CreatePost: Error creating project:', err.response?.data || err); // DEBUG LOG
+        alert(err.response?.data?.message || 'Failed to create project. Please check your inputs.');
+    }
+};
     const handleCancel = () => {
         setProjectData({
             projectTitle: '',

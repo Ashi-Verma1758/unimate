@@ -3,7 +3,11 @@ import axios from 'axios';
 import { Plus, Users, Mail } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import './HomePage.css'; // Your HomePage specific CSS
+
+import './HomePage.css';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
 
 // Import your components - adjust paths based on your actual structure
 import Navbar from './Navbar.jsx';
@@ -42,9 +46,9 @@ const HomePage = ({
 
     const [selectedMainTab, setSelectedMainTab] = useState('recentPosts');
 
-    const handleViewAllProjects = () => {
-        navigate('/all-projects');
-    };
+const location=useLocation();
+    const [refreshTrigger, setRefreshTrigger] = useState(0); 
+
 
     const handleSendJoinRequest = async (projectId) => {
         const token = localStorage.getItem('accessToken');
@@ -103,6 +107,7 @@ const HomePage = ({
         }
     };
 
+    
 
     // Data Fetching Logic for local states (summary, invites, requests)
     useEffect(() => {
@@ -163,12 +168,19 @@ const HomePage = ({
                 setJoinRequestsError(err.response?.data?.message || 'Failed to load join requests.');
             } finally { setJoinRequestsLoading(false); }
         };
+        if (location.state && location.state.refreshHomePage) {
+        setRefreshTrigger(prev => prev + 1); // Increment trigger to force re-fetch
+        // Clear the state from location so it doesn't re-trigger on subsequent visits or hard refreshes
+        // This is important to prevent an infinite loop if the user just refreshes the HomePage.
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
         fetchDashboardSummary();
         fetchTeamInvitations();
         fetchJoinRequests();
 
-    }, [backendUrl]);
+    },[refreshTrigger, location.state]);// Only runs these fetches when backendUrl changes (unlikely)
+
 
 
     useEffect(() => {
