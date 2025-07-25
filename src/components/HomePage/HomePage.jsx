@@ -230,7 +230,7 @@ const HomePage = ({
                         </div>
                         {selectedMainTab === 'recentPosts' && (
                             <div className="view-all-button-container">
-                                <button className="view-all-button" onClick={handleViewAllProjects}>View all</button>
+                                <button className="view-all-button" onClick={handleViewAllProjects}>View all Projects</button>
                             </div>
                         )}
 
