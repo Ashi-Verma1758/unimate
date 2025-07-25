@@ -334,7 +334,7 @@ const projectToPass = {
                             <div>
                                 <label htmlFor="teamSize">Team Size <span className="text-red-500">*</span></label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     id="teamSize"
                                     name="teamSize"
                                     placeholder="How many people do you need?"
