@@ -17,8 +17,6 @@ header {
   padding: 16px 40px;
   background-color: white;
   border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 1rem;
-}
 
 .nav-left,
 .nav-right {
@@ -37,11 +35,13 @@ header {
   max-width: 900px;
   margin: 40px auto;
   padding: 0 20px;
+
   
 }
 .container p{
   margin-bottom: 2rem;
   font-size: 1rem;
+
 }
 
 .section {
@@ -50,16 +50,17 @@ header {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
   margin-bottom: 30px;
-  text-align: left;
-}
+
 
 .section h2 {
   font-size: 2rem;
+
   margin-bottom: 4px;
 }
 
 .section p {
   color: #666;
+
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
@@ -109,6 +110,7 @@ textarea {
   color: white;
   border: none;
   font-size: 18px;
+
   width:auto;
   height: 1rem;
   border-radius: 6px;

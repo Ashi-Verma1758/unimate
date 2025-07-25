@@ -1,0 +1,110 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f5f6fa;
+  color: #333;
+}
+
+main {
+  display: flex;
+  padding: 2rem;
+}
+
+.checkbox-group {
+  width: 250px;
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  margin-right: 2rem;
+}
+
+.checkbox-group label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+}
+
+.teammates {
+  flex: 1;
+}
+
+.teammates h2 {
+  margin-bottom: 1rem;
+}
+
+.teammates input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-header img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.verified {
+  color: #0a84ff;
+}
+
+.tags {
+  margin-top: 0.5rem;
+}
+
+.tags span {
+  background: #eef2ff;
+  color: #0056ff;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #e0e0e0;
+}
+
+.footer button.primary {
+  background: #0056ff;
+  color: white;
+}
