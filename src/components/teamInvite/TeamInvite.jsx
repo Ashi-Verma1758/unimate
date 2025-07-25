@@ -41,14 +41,14 @@ export default function TeamInvitations() {
       <p>Manage your team invitations and collaboration requests</p>
 
       <div className="tabs">
-        <button className="tab active">👥 Received (2)</button>
-        <button className="tab">💬 Sent Requests</button>
+        <button className="tabu active">👥 Received </button>
+        <button className="tabu">💬 Sent Requests</button>
       </div>
 
       <h2>Pending Invitations</h2>
-
+<div className="carddd">
       {invitations.map((invite) => (
-        <div className="card" key={invite.id}>
+        <div className="cardss" key={invite.id}>
           <div className="card-header">
             <div className="user">
               <img src={invite.avatar} alt={invite.name} className="avatar" />
@@ -86,6 +86,7 @@ export default function TeamInvitations() {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

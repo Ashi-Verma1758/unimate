@@ -5,9 +5,9 @@
   color: #1c1e21;
 }
 
-h2 {
+.team-container h2 {
   font-size: 28px;
-  margin-bottom: 4px;
+  margin-bottom: 2rem;
 }
 
 p {
@@ -21,9 +21,10 @@ p {
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 30px;
+  /* width: 50 */
 }
 
-.tab {
+.tabu {
   flex: 1;
   padding: 10px 15px;
   border: none;
@@ -31,10 +32,11 @@ p {
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
+  width: 30vw;
 }
 
 .tab.active {
-  background-color: #fff;
+  /* background-color: #bla; */
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
@@ -50,6 +52,32 @@ h3 {
   padding: 20px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.1);
   margin-bottom: 20px;
+}
+
+/* ashi */
+.carddd{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.cardss{
+    width: 60vw;
+    margin-bottom: 2rem;
+    border: 2px solid rgb(245, 238, 238);
+    padding: 2rem;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
+
+}
+.cardss:hover{
+    box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
+
+}
+.actions{
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
 }
 
 .card-header {
