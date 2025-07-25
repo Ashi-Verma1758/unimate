@@ -15,96 +15,90 @@ import {
 } from 'lucide-react';
 import './ProjectInfo.css';
 import Navbar from '../HomePage/Navbar';
-// import HomePage from '../HomePage/HomePage'; // HomePage import might not be needed here directly unless you're navigating to it
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation and useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function ProjectInfo() {
-    const location = useLocation(); // Get the current location object
-    const navigate = useNavigate(); // Initialize useNavigate
+    const location = useLocation();
+    const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [joinMessage, setJoinMessage] = useState('');
 
-    // Access the passed project data from location.state
+    // This will contain the project data passed from CreatePost
     const passedProject = location.state?.project;
 
-    // Mock project data (fallback if no project is passed via navigation)
-    const mockProject = {
-        title: 'AI-Powered Study Assistant',
-        description: `We're building an innovative machine learning application designed to revolutionize how students organize their study materials and create personalized learning plans. The platform will use natural language processing to analyze study content, identify knowledge gaps, and recommend optimal learning paths.
-
-Our goal is to create a comprehensive solution that adapts to each student's learning style, tracks progress over time, and integrates with popular educational platforms. This project combines cutting-edge AI technology with practical educational applications.
-
-We're looking for passionate teammates who want to make a real impact on education technology. This is a great opportunity to work with modern ML frameworks, build scalable web applications, and potentially turn this into a startup after the initial development phase.`,
+    // Define a default project structure for when no data is passed (e.g., direct URL access)
+    // This provides a consistent shape even if the form hasn't been submitted.
+    const defaultProject = {
+        title: 'No Project Selected',
+        description: 'Please create a project using the "Create Post" form.',
         author: {
-            name: 'Sarah Chen',
-            university: 'Stanford University',
-            year: 'Junior',
-            rating: 4.8,
-            projectsCompleted: 12
+            name: 'N/A',
+            university: 'N/A',
+            year: 'N/A',
+            rating: 0,
+            projectsCompleted: 0
         },
-        domain: 'Artificial Intelligence',
-        status: 'Recruiting',
-        postedDate: '2 hours ago',
-        timeCommitment: '10-15 hours/week',
-        duration: '3 months',
-        teamSize: { current: 2, target: 5 },
-        location: 'Remote + Weekly Stanford meetups',
-        startDate: 'February 1, 2025',
-        deadline: 'January 25, 2025',
-        responses: 15,
-        views: 234,
-        skills: ['Python', 'TensorFlow', 'React', 'Node.js', 'PostgreSQL', 'Natural Language Processing'],
-        requiredSkills: [
-            { skill: 'Python', level: 'Intermediate', required: true },
-            { skill: 'Machine Learning', level: 'Beginner', required: true },
-            { skill: 'React', level: 'Intermediate', required: false },
-            { skill: 'UI/UX Design', level: 'Any', required: false }
-        ],
-        currentTeam: [
-            {
-                name: 'Sarah Chen',
-                role: 'Project Lead & ML Engineer',
-                skills: ['Python', 'TensorFlow', 'Leadership']
-            },
-            {
-                name: 'David Kim',
-                role: 'Backend Developer',
-                skills: ['Node.js', 'PostgreSQL', 'API Design']
-            }
-        ]
+        domain: 'General',
+        status: 'N/A',
+        postedDate: 'N/A',
+        timeCommitment: 'N/A',
+        duration: 'N/A',
+        teamSize: { current: 0, target: 0 },
+        location: 'N/A',
+        startDate: 'N/A',
+        deadline: 'N/A',
+        responses: 0,
+        views: 0,
+        skills: [],
+        requiredSkills: [],
+        currentTeam: [],
+        githubRepo: '',
+        figmaLink: '',
+        demoLink: ''
     };
 
-    // Use passed project data if available, otherwise use mock data
-    // You'll need to map the structure from CreatePost to ProjectInfo's expected structure
+    // Determine which project data to use: passed data or default
     const project = passedProject ? {
         title: passedProject.projectTitle,
         description: passedProject.projectDescription,
         domain: passedProject.domain,
-        status: 'Recruiting', // Assuming default status
-        postedDate: 'Just now', // Or calculate dynamically
+        status: 'Recruiting', // Assuming default status for new posts
+        postedDate: 'Just now', // Can be made dynamic if you add date logic in CreatePost
         timeCommitment: passedProject.timeCommitment,
         duration: passedProject.projectDuration,
         teamSize: {
-            current: 0, // No current members when newly created from form
-            target: parseInt(passedProject.teamSize) || 0 // Parse team size
+            current: 1, // Assume the creator is the first member
+            target: parseInt(passedProject.teamSize) || 1 // Parse to integer, default to 1
         },
         location: passedProject.remoteWorkOkay ? `${passedProject.location} (Remote Friendly)` : passedProject.location,
         startDate: passedProject.startDate,
         deadline: passedProject.applicationDeadline,
-        responses: 0, // No responses initially
-        views: 0, // No views initially
-        // Map required and nice-to-have skills to the format expected by ProjectInfo
+        responses: 0, // Freshly posted, no responses yet
+        views: 0, // Freshly posted, no views yet
+        // Combine and map skills from CreatePost into ProjectInfo's format
         requiredSkills: passedProject.requiredSkills.map(skill => ({ skill, level: 'Any', required: true }))
                       .concat(passedProject.niceToHaveSkills.map(skill => ({ skill, level: 'Any', required: false }))),
-        skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills], // For general skills display
-        currentTeam: [], // No team members initially
-        // Add author info if you want to connect it (would need to come from a user context/login)
-        author: mockProject.author, // Fallback to mock author for now
-        githubRepo: passedProject.githubRepo, // Pass links
+        skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills], // General skills list
+        currentTeam: [ // You might want to add the creator as the initial team member
+            {
+                name: 'You (Creator)', // Placeholder, ideally from user context
+                role: 'Project Lead',
+                skills: [...passedProject.requiredSkills] // Or specific to creator
+            }
+        ],
+        // You would typically get author info from a user context or login system
+        author: {
+            name: 'Project Creator', // Placeholder
+            university: 'Your University', // Placeholder
+            year: 'N/A',
+            rating: 5.0,
+            projectsCompleted: 1 // Assuming this is their first posted project through the app
+        },
+        githubRepo: passedProject.githubRepo,
         figmaLink: passedProject.figmaLink,
         demoLink: passedProject.demoLink
-    } : mockProject;
+    } : defaultProject; // Use the default project if no data is passed
 
 
     const handleJoinRequest = () => {
@@ -118,7 +112,7 @@ We're looking for passionate teammates who want to make a real impact on educati
     };
 
     const handleBack = () => {
-        navigate(-1); // Go back to the previous page in history
+        navigate('/HomePage'); // Navigate directly to the homepage route
     }
 
     return (
@@ -164,9 +158,9 @@ We're looking for passionate teammates who want to make a real impact on educati
                             <h1 className="project-title">{project.title}</h1>
 
                             <div className="badges">
-                                <span className="badge recruiting">{project.status}</span>
-                                <span className="badge domain">{project.domain}</span>
-                                <span className="badge posted">Posted {project.postedDate}</span>
+                                {project.status && <span className="badge recruiting">{project.status}</span>}
+                                {project.domain && <span className="badge domain">{project.domain}</span>}
+                                {project.postedDate && <span className="badge posted">Posted {project.postedDate}</span>}
                             </div>
 
                             <div className="project-description">
@@ -237,18 +231,21 @@ We're looking for passionate teammates who want to make a real impact on educati
                                         GitHub
                                     </a>
                                 )}
+                                {project.figmaLink && ( // Added Figma link display
+                                    <a href={project.figmaLink} target="_blank" rel="noopener noreferrer" className="link-btn">
+                                        <Globe size={20} /> {/* Using Globe for Figma as well */}
+                                        Figma
+                                    </a>
+                                )}
                                 {project.demoLink && (
                                     <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="link-btn">
                                         <Globe size={20} />
                                         Demo
                                     </a>
                                 )}
-                                {/* You can add Figma link here if it's consistently named */}
-                                {!project.githubRepo && !project.demoLink && <p>No project links provided.</p>}
+                                {!project.githubRepo && !project.figmaLink && !project.demoLink && <p>No project links provided.</p>}
                             </div>
                         </div>
-
-                        {/* Current Team */}
 
                     </div>
 
@@ -305,7 +302,6 @@ We're looking for passionate teammates who want to make a real impact on educati
                                         <div className="member-info">
                                             <h4>{member.name}</h4>
                                             <p>{member.role}</p>
-
                                         </div>
                                         <button className="message-btn">
                                             <MessageCircle size={20} />
@@ -321,7 +317,6 @@ We're looking for passionate teammates who want to make a real impact on educati
                     </div>
                 </div>
 
-                {/* Join Dialog */}
                 {showJoinDialog && (
                     <div className="dialog-overlay" onClick={() => setShowJoinDialog(false)}>
                         <div className="dialog" onClick={(e) => e.stopPropagation()}>
