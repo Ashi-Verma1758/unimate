@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 
 import './HomePage.css';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 
@@ -49,7 +49,9 @@ const HomePage = ({
 const location=useLocation();
     const [refreshTrigger, setRefreshTrigger] = useState(0); 
 
-
+const handleViewAllProjects = () => {
+        navigate('/all-projects');
+    };
     const handleSendJoinRequest = async (projectId) => {
         const token = localStorage.getItem('accessToken');
         if (!token) { alert('You must be logged in to send a join request.'); return; }
@@ -110,76 +112,111 @@ const location=useLocation();
     
 
     // Data Fetching Logic for local states (summary, invites, requests)
-    useEffect(() => {
-        const token = localStorage.getItem('accessToken');
+   // 2. Main fetching logic — runs only when refreshTrigger changes
+useEffect(() => {
+    const token = localStorage.getItem('accessToken');
 
-        const fetchDashboardSummary = async () => {
-            setSummaryLoading(true);
-            setSummaryError(null);
-            if (!token) { setSummaryError('Authentication required to view dashboard summary. Please log in.'); setSummaryLoading(false); return; }
-            try {
-                const res = await axios.get(`${backendUrl}/api/dashboard/summary`, { headers: { Authorization: `Bearer ${token}` } });
-                setDashboardSummary(res.data);
-            } catch (err) {
-                console.error('Error fetching dashboard summary:', err);
-                setSummaryError(err.response?.data?.message || 'Failed to load summary.');
-            } finally { setSummaryLoading(false); }
-        };
+    const fetchDashboardSummary = async () => {
+        setSummaryLoading(true);
+        setSummaryError(null);
+        if (!token) {
+            setSummaryError('Authentication required to view dashboard summary. Please log in.');
+            setSummaryLoading(false);
+            return;
+        }
+        try {
+            const res = await axios.get(`${backendUrl}/api/dashboard/summary`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setDashboardSummary(res.data);
+        } catch (err) {
+            console.error('Error fetching dashboard summary:', err);
+            setSummaryError(err.response?.data?.message || 'Failed to load summary.');
+        } finally {
+            setSummaryLoading(false);
+        }
+    };
 
-        const fetchTeamInvitations = async () => {
-            setInvitationsLoading(true);
-            setInvitationsError(null);
-            if (!token) { setInvitationsError('Authentication required to view team invitations. Please log in.'); setInvitationsLoading(false); return; }
-            try {
-                const res = await axios.get(`${backendUrl}/api/invites/received`, { headers: { Authorization: `Bearer ${token}` } });
-                const rawInvites = res.data.data;
-                setTeamInvitations(rawInvites.map(item => ({
-                    id: item.invitationId, projectId: item.projectId, projectName: item.projectName,
-                    fromName: item.fromName, fromUniversity: item.fromUniversity, fromAvatar: item.fromAvatar, timeAgo: item.timeAgo,
-                })));
-            } catch (err) {
-                console.error('Error fetching team invitations:', err);
-                setInvitationsError(err.response?.data?.message || 'Failed to load invitations.');
-            } finally { setInvitationsLoading(false); }
-        };
+    const fetchTeamInvitations = async () => {
+        setInvitationsLoading(true);
+        setInvitationsError(null);
+        if (!token) {
+            setInvitationsError('Authentication required to view team invitations. Please log in.');
+            setInvitationsLoading(false);
+            return;
+        }
+        try {
+            const res = await axios.get(`${backendUrl}/api/invites/received`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const rawInvites = res.data.data;
+            setTeamInvitations(rawInvites.map(item => ({
+                id: item.invitationId,
+                projectId: item.projectId,
+                projectName: item.projectName,
+                fromName: item.fromName,
+                fromUniversity: item.fromUniversity,
+                fromAvatar: item.fromAvatar,
+                timeAgo: item.timeAgo,
+            })));
+        } catch (err) {
+            console.error('Error fetching team invitations:', err);
+            setInvitationsError(err.response?.data?.message || 'Failed to load invitations.');
+        } finally {
+            setInvitationsLoading(false);
+        }
+    };
 
-        const fetchJoinRequests = async () => {
-            setJoinRequestsLoading(true);
-            setJoinRequestsError(null);
-            if (!token) { setJoinRequestsError('Authentication required. Please log in to view join requests.'); setJoinRequestsLoading(false); return; }
-            try {
-                const res = await axios.get(`${backendUrl}/api/projects/me/incoming-request`, { headers: { Authorization: `Bearer ${token}` } });
-                const allRequests = [];
-                res.data.data.forEach(item => {
-                    if (item.request.status === 'pending' && item.requesterDetails) {
-                        allRequests.push({
-                            requestId: item.request._id, projectId: item.project._id, requesterAvatar: item.requesterDetails.avatar || null,
-                            requesterName: item.requesterDetails.firstName && item.requesterDetails.lastName ? `${item.requesterDetails.firstName} ${item.requesterDetails.lastName}`.trim() : 'Unknown', // More robust name
-                            requesterMajor: item.requesterDetails.major || 'N/A', requesterAcademicYear: item.requesterDetails.academicYear || 'N/A',
-                            requesterUniversity: item.requesterDetails.university || 'N/A', requesterRating: item.requesterDetails.rating || 0,
-                            requesterProjectsCount: item.requesterDetails.projectsCount || 0, timeAgo: moment(item.request.sentAt).fromNow(),
-                            projectTitle: item.project.title, requestMessage: item.request.message || '', skills: item.requesterDetails.skills || [],
-                        });
-                    }
-                });
-                setJoinRequests(allRequests);
-            } catch (err) {
-                console.error('Error fetching join requests:', err);
-                setJoinRequestsError(err.response?.data?.message || 'Failed to load join requests.');
-            } finally { setJoinRequestsLoading(false); }
-        };
-        if (location.state && location.state.refreshHomePage) {
-        setRefreshTrigger(prev => prev + 1); // Increment trigger to force re-fetch
-        // Clear the state from location so it doesn't re-trigger on subsequent visits or hard refreshes
-        // This is important to prevent an infinite loop if the user just refreshes the HomePage.
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    const fetchJoinRequests = async () => {
+        setJoinRequestsLoading(true);
+        setJoinRequestsError(null);
+        if (!token) {
+            setJoinRequestsError('Authentication required. Please log in to view join requests.');
+            setJoinRequestsLoading(false);
+            return;
+        }
+        try {
+            const res = await axios.get(`${backendUrl}/api/projects/me/incoming-request`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-        fetchDashboardSummary();
-        fetchTeamInvitations();
-        fetchJoinRequests();
+            const allRequests = [];
+            res.data.data.forEach(item => {
+                if (item.request.status === 'pending' && item.requesterDetails) {
+                    allRequests.push({
+                        requestId: item.request._id,
+                        projectId: item.project._id,
+                        requesterAvatar: item.requesterDetails.avatar || null,
+                        requesterName:
+                            item.requesterDetails.firstName && item.requesterDetails.lastName
+                                ? `${item.requesterDetails.firstName} ${item.requesterDetails.lastName}`.trim()
+                                : 'Unknown',
+                        requesterMajor: item.requesterDetails.major || 'N/A',
+                        requesterAcademicYear: item.requesterDetails.academicYear || 'N/A',
+                        requesterUniversity: item.requesterDetails.university || 'N/A',
+                        requesterRating: item.requesterDetails.rating || 0,
+                        requesterProjectsCount: item.requesterDetails.projectsCount || 0,
+                        timeAgo: moment(item.request.sentAt).fromNow(),
+                        projectTitle: item.project.title,
+                        requestMessage: item.request.message || '',
+                        skills: item.requesterDetails.skills || [],
+                    });
+                }
+            });
+            setJoinRequests(allRequests);
+        } catch (err) {
+            console.error('Error fetching join requests:', err);
+            setJoinRequestsError(err.response?.data?.message || 'Failed to load join requests.');
+        } finally {
+            setJoinRequestsLoading(false);
+        }
+    };
 
-    },[refreshTrigger, location.state]);// Only runs these fetches when backendUrl changes (unlikely)
+    // Call all fetch functions
+    fetchDashboardSummary();
+    fetchTeamInvitations();
+    fetchJoinRequests();
+}, [refreshTrigger]); // Runs only when refresh is triggered
 
 
 
@@ -233,7 +270,7 @@ const location=useLocation();
 
                 {/* Homepage Grid */}
                 <div className="homepage-grid">
-                    <div className="main-content">
+                    <div className="mains-content">
                         <div className="section-header tabs-container">
                             <button className={`tab-button ${selectedMainTab === 'recentPosts' ? 'active' : ''}`} onClick={() => setSelectedMainTab('recentPosts')}>Recent Posts</button>
                             <button className={`tab-button ${selectedMainTab === 'joinRequests' ? 'active' : ''}`} onClick={() => setSelectedMainTab('joinRequests')}>

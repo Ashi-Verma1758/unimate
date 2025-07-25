@@ -83,7 +83,7 @@
 }
 
 /* Main Content */
-.main-content {
+.mains-content {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -293,13 +293,13 @@
 /* In src/HomePage.css, add these new styles */
 
 .view-all-button-container {
-  display: flex; /* Use flexbox to align children */
-  justify-content: flex-end; /* Push content (the button) to the far right */
- margin-top: -30px;
- margin-bottom: 20px;
- 
-  padding-right: 10px; /* Optional: Add some padding to prevent it from hugging the edge */
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -3rem;
+  margin-bottom: -4rem;
+  padding-right: 10px;
 }
+
 
 /* Ensure your .view-all-button styles are still present (they should be) */
 .view-all-button {
