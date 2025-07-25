@@ -4,7 +4,7 @@ import './App.css'; // Your global App CSS
 import axios from 'axios';
 import moment from 'moment';
 
-// Import your components - adjust paths based on your actual structure
+
 import HomePage from './components/HomePage/HomePage';
 import Login from './Log-In'; // Assuming directly in src/
 import ChatWindow from './components/ChatBox/ChatWindow.jsx'; // Assuming in src/components/ChatBox/
@@ -18,6 +18,7 @@ import AllProjectsPage from './components/HomePage/AllProjects.jsx'; // Assuming
 import TeamInvitations from './components/teamInvite/TeamInvite.jsx';
 
 function App() {
+
     const backendUrl = 'http://localhost:8000'; // IMPORTANT: Replace with your actual backend URL
 
     // CONSOLIDATED STATE FOR ALL PROJECT POSTS - SINGLE SOURCE OF TRUTH
@@ -144,6 +145,7 @@ function App() {
             </Router>
         </AuthProvider>
     );
+
 }
 
 export default App;

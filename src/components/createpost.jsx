@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'; // Import useEffect
 import './createpost.css';
 import Navbar from './HomePage/Navbar';
@@ -514,3 +515,4 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
 }
 
 export default CreatePost;
+
