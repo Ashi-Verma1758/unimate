@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import { Plus, Users, Mail } from 'lucide-react
+import { Plus, Users, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom'
-import { Plus, Users } from 'lucide-react';
+// import { Plus, Users } from 'lucide-react';
 import moment from 'moment'; // Import moment.js for timeAgo calculations
 import './HomePage.css';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +14,9 @@ import ProjectCard from './ProjectCard.jsx';
 import TeamInvitationCard from './TeamInvitationCard.jsx';
 
 import JoinRequestCard from './JoinRequestCard.jsx';
-const HomePage = () => {
 
-import CreatePost from '../createpost.jsx';
+
+// import CreatePost from '../createpost.jsx';
 const HomePage = ({ setSelectedConversationId }) => {
 
   // State for Dashboard Summary

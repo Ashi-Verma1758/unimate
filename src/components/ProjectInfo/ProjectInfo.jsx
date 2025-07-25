@@ -15,15 +15,21 @@ import {
 } from 'lucide-react';
 import './ProjectInfo.css';
 import Navbar from '../HomePage/Navbar';
-import HomePage from '../HomePage/HomePage';
+// import HomePage from '../HomePage/HomePage'; // HomePage import might not be needed here directly unless you're navigating to it
+import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation and useNavigate
 
 export default function ProjectInfo() {
+    const location = useLocation(); // Get the current location object
+    const navigate = useNavigate(); // Initialize useNavigate
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [joinMessage, setJoinMessage] = useState('');
 
-    // Mock project data
-    const project = {
+    // Access the passed project data from location.state
+    const passedProject = location.state?.project;
+
+    // Mock project data (fallback if no project is passed via navigation)
+    const mockProject = {
         title: 'AI-Powered Study Assistant',
         description: `We're building an innovative machine learning application designed to revolutionize how students organize their study materials and create personalized learning plans. The platform will use natural language processing to analyze study content, identify knowledge gaps, and recommend optimal learning paths.
 
@@ -69,6 +75,38 @@ We're looking for passionate teammates who want to make a real impact on educati
         ]
     };
 
+    // Use passed project data if available, otherwise use mock data
+    // You'll need to map the structure from CreatePost to ProjectInfo's expected structure
+    const project = passedProject ? {
+        title: passedProject.projectTitle,
+        description: passedProject.projectDescription,
+        domain: passedProject.domain,
+        status: 'Recruiting', // Assuming default status
+        postedDate: 'Just now', // Or calculate dynamically
+        timeCommitment: passedProject.timeCommitment,
+        duration: passedProject.projectDuration,
+        teamSize: {
+            current: 0, // No current members when newly created from form
+            target: parseInt(passedProject.teamSize) || 0 // Parse team size
+        },
+        location: passedProject.remoteWorkOkay ? `${passedProject.location} (Remote Friendly)` : passedProject.location,
+        startDate: passedProject.startDate,
+        deadline: passedProject.applicationDeadline,
+        responses: 0, // No responses initially
+        views: 0, // No views initially
+        // Map required and nice-to-have skills to the format expected by ProjectInfo
+        requiredSkills: passedProject.requiredSkills.map(skill => ({ skill, level: 'Any', required: true }))
+                      .concat(passedProject.niceToHaveSkills.map(skill => ({ skill, level: 'Any', required: false }))),
+        skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills], // For general skills display
+        currentTeam: [], // No team members initially
+        // Add author info if you want to connect it (would need to come from a user context/login)
+        author: mockProject.author, // Fallback to mock author for now
+        githubRepo: passedProject.githubRepo, // Pass links
+        figmaLink: passedProject.figmaLink,
+        demoLink: passedProject.demoLink
+    } : mockProject;
+
+
     const handleJoinRequest = () => {
         alert('Join request sent!');
         setShowJoinDialog(false);
@@ -78,8 +116,9 @@ We're looking for passionate teammates who want to make a real impact on educati
     const handleBookmark = () => {
         setIsBookmarked(!isBookmarked);
     };
-    const handleBack = () =>{
-        
+
+    const handleBack = () => {
+        navigate(-1); // Go back to the previous page in history
     }
 
     return (
@@ -173,29 +212,39 @@ We're looking for passionate teammates who want to make a real impact on educati
 
                             <div className="required-skills">
                                 <h4>Required Skills</h4>
-                                {project.requiredSkills.map((item, index) => (
-                                    <div key={index} className="skill-item">
-                                        <div className="skill-info">
-                                            <span className="skill-name">{item.skill}</span>
-                                            <span className={`skill-badge ${item.required ? 'required' : 'optional'}`}>
-                                                {item.required ? 'Required' : 'Nice to have'}
-                                            </span>
+                                {project.requiredSkills.length > 0 ? (
+                                    project.requiredSkills.map((item, index) => (
+                                        <div key={index} className="skill-item">
+                                            <div className="skill-info">
+                                                <span className="skill-name">{item.skill}</span>
+                                                <span className={`skill-badge ${item.required ? 'required' : 'optional'}`}>
+                                                    {item.required ? 'Required' : 'Nice to have'}
+                                                </span>
+                                            </div>
+                                            <span className="skill-level">{item.level}</span>
                                         </div>
-                                        <span className="skill-level">{item.level}</span>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <p>No specific skills listed.</p>
+                                )}
                             </div>
 
                             <div className="project-links">
                                 <h4>Project Links</h4>
-                                <button className="link-btn">
-                                    <Github size={20} />
-                                    GitHub
-                                </button>
-                                <button className="link-btn">
-                                    <Globe size={20} />
-                                    Demo
-                                </button>
+                                {project.githubRepo && (
+                                    <a href={project.githubRepo} target="_blank" rel="noopener noreferrer" className="link-btn">
+                                        <Github size={20} />
+                                        GitHub
+                                    </a>
+                                )}
+                                {project.demoLink && (
+                                    <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="link-btn">
+                                        <Globe size={20} />
+                                        Demo
+                                    </a>
+                                )}
+                                {/* You can add Figma link here if it's consistently named */}
+                                {!project.githubRepo && !project.demoLink && <p>No project links provided.</p>}
                             </div>
                         </div>
 
@@ -249,19 +298,24 @@ We're looking for passionate teammates who want to make a real impact on educati
                         <div className="current-team">
                             <h3>Current Team</h3>
                             <p className="team-subtitle">Meet the team members already working on this project</p>
-                            {project.currentTeam.map((member, index) => (
-                                <div key={index} className="team-member">
-                                    <div className="member-avatar">{member.name[0]}</div>
-                                    <div className="member-info">
-                                        <h4>{member.name}</h4>
-                                        <p>{member.role}</p>
+                            {project.currentTeam.length > 0 ? (
+                                project.currentTeam.map((member, index) => (
+                                    <div key={index} className="team-member">
+                                        <div className="member-avatar">{member.name[0]}</div>
+                                        <div className="member-info">
+                                            <h4>{member.name}</h4>
+                                            <p>{member.role}</p>
 
+                                        </div>
+                                        <button className="message-btn">
+                                            <MessageCircle size={20} />
+                                            Message
+                                        </button>
                                     </div>
-                                    <button className="message-btn">
-                                        <MessageCircle size={20} />
-                                    </button>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p>No team members listed yet.</p>
+                            )}
                         </div>
 
                     </div>
@@ -286,8 +340,7 @@ We're looking for passionate teammates who want to make a real impact on educati
                         </div>
                     </div>
                 )}
-        </div>
             </div>
-
-            );
+        </div>
+    );
 }
