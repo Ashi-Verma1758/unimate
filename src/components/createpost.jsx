@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import './createpost.css';
-import { useState } from 'react';
-import Navbar from './HomePage/Navbar'; // Assuming Navbar is correctly imported
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Navbar from './HomePage/Navbar';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios for API calls
 
 function CreatePost() {
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
+    const backendUrl = 'http://localhost:8000'; // Make sure this matches your backend
 
     const [projectData, setProjectData] = useState({
         projectTitle: '',
@@ -28,6 +29,37 @@ function CreatePost() {
 
     const [currentRequiredSkill, setCurrentRequiredSkill] = useState('');
     const [currentNiceToHaveSkill, setCurrentNiceToHaveSkill] = useState('');
+    const [userProfile, setUserProfile] = useState(null); // State to store the logged-in user's profile
+    const [loadingProfile, setLoadingProfile] = useState(true);
+    const [profileError, setProfileError] = useState(null);
+
+    // --- Fetch Logged-in User Profile on Component Mount ---
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            setLoadingProfile(true);
+            setProfileError(null);
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                setProfileError('Authentication required. Please log in.');
+                setLoadingProfile(false);
+                return;
+            }
+
+            try {
+                const res = await axios.get(`${backendUrl}/api/user/me`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setUserProfile(res.data); // Store the fetched user profile
+            } catch (err) {
+                console.error('Error fetching user profile in CreatePost:', err);
+                setProfileError(err.response?.data?.message || 'Failed to load user profile.');
+            } finally {
+                setLoadingProfile(false);
+            }
+        };
+
+        fetchUserProfile();
+    }, []); // Empty dependency array means this runs once on mount
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -66,13 +98,31 @@ function CreatePost() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Here, you'd typically send projectData to your backend.
-        // For now, we'll navigate and pass the data directly.
-        navigate('/ProjectInfo', { state: { project: projectData } });
+
+        if (!userProfile) {
+            alert('User profile not loaded. Cannot create project. Please try again or log in.');
+            return;
+        }
+
+        // Construct the project object to be passed, including authorDetails
+       // In CreatePost.jsx, inside handleSubmit:
+const projectToPass = {
+    ...projectData,
+    authorDetails: {
+        // Use userProfile.firstName and userProfile.lastName if you prefer concatenated name,
+        // or userProfile.name if your User model has a single 'name' field
+        name: userProfile.name || `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim(),
+        university: userProfile.university || 'N/A', // <-- This must match your DB field
+        year: userProfile.academicYear || 'N/A',     // <-- This must match your DB field
+        rating: userProfile.rating || 5.0,
+        projectsCompleted: userProfile.projectsCompleted || 1
+    }
+};
+
+        navigate('/project-info', { state: { project: projectToPass } });
     };
 
     const handleCancel = () => {
-        // Reset form data and potentially navigate back to a home page
         setProjectData({
             projectTitle: '',
             projectDescription: '',
@@ -93,12 +143,40 @@ function CreatePost() {
         });
         setCurrentRequiredSkill('');
         setCurrentNiceToHaveSkill('');
-        navigate('/'); // Navigate to home page or another appropriate route
+        navigate('/HomePage'); // Navigate to home page
     };
 
-    // Your form rendering remains the same
+    // You might want to show a loading state for the form itself
+    if (loadingProfile) {
+        return (
+            <div className="body">
+                <Navbar />
+                <div className="container">
+                    <h2>Loading User Profile...</h2>
+                    <p>Please wait while we fetch your details to create the post.</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (profileError) {
+        return (
+            <div className="body">
+                <Navbar />
+                <div className="container">
+                    <h2>Error Loading Profile</h2>
+                    <p className="error-message">{profileError}</p>
+                    <p>Please ensure you are logged in and your backend is running correctly.</p>
+                    <button onClick={() => navigate('/login')} className="send-btn">Go to Login</button>
+                </div>
+            </div>
+        );
+    }
+
+    // Otherwise, display the form
     return (
         <div className="body">
+            <Navbar /> {/* Ensure Navbar is displayed even when creating a post */}
             <div className="container">
                 <h2>Create New Project Post</h2>
                 <p>Find the perfect teammates for your next project</p>

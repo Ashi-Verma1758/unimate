@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {
+import React, { useState } from 'react'; // Removed useEffect for fetching authorProfile as it's now passed
+import { // Removed useEffect for fetching authorProfile as it's now passed
     ArrowLeft,
     Bookmark,
     Share2,
@@ -24,11 +24,9 @@ export default function ProjectInfo() {
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [joinMessage, setJoinMessage] = useState('');
 
-    // This will contain the project data passed from CreatePost
     const passedProject = location.state?.project;
 
-    // Define a default project structure for when no data is passed (e.g., direct URL access)
-    // This provides a consistent shape even if the form hasn't been submitted.
+    // Define a default project structure for when no data is passed
     const defaultProject = {
         title: 'No Project Selected',
         description: 'Please create a project using the "Create Post" form.',
@@ -63,42 +61,37 @@ export default function ProjectInfo() {
         title: passedProject.projectTitle,
         description: passedProject.projectDescription,
         domain: passedProject.domain,
-        status: 'Recruiting', // Assuming default status for new posts
+        status: 'Recruiting',
         postedDate: 'Just now', // Can be made dynamic if you add date logic in CreatePost
         timeCommitment: passedProject.timeCommitment,
         duration: passedProject.projectDuration,
         teamSize: {
             current: 1, // Assume the creator is the first member
-            target: parseInt(passedProject.teamSize) || 1 // Parse to integer, default to 1
+            target: parseInt(passedProject.teamSize) || 1
         },
         location: passedProject.remoteWorkOkay ? `${passedProject.location} (Remote Friendly)` : passedProject.location,
         startDate: passedProject.startDate,
         deadline: passedProject.applicationDeadline,
-        responses: 0, // Freshly posted, no responses yet
-        views: 0, // Freshly posted, no views yet
-        // Combine and map skills from CreatePost into ProjectInfo's format
+        responses: 0,
+        views: 0,
         requiredSkills: passedProject.requiredSkills.map(skill => ({ skill, level: 'Any', required: true }))
                       .concat(passedProject.niceToHaveSkills.map(skill => ({ skill, level: 'Any', required: false }))),
-        skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills], // General skills list
-        currentTeam: [ // You might want to add the creator as the initial team member
+        skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills],
+        currentTeam: passedProject.authorDetails ? [ // Use authorDetails if available
             {
-                name: 'You (Creator)', // Placeholder, ideally from user context
+                name: passedProject.authorDetails.name || 'Project Lead',
                 role: 'Project Lead',
-                skills: [...passedProject.requiredSkills] // Or specific to creator
+                skills: passedProject.authorDetails.skills || [] // Assuming skills might be on authorDetails
             }
-        ],
-        // You would typically get author info from a user context or login system
-        author: {
-            name: 'Project Creator', // Placeholder
-            university: 'Your University', // Placeholder
-            year: 'N/A',
-            rating: 5.0,
-            projectsCompleted: 1 // Assuming this is their first posted project through the app
-        },
+        ] : [],
+        // --- THIS IS THE MAIN CHANGE ---
+        // Use the authorDetails passed from HomePage directly
+        author: passedProject.authorDetails || defaultProject.author,
+        // --- END MAIN CHANGE ---
         githubRepo: passedProject.githubRepo,
         figmaLink: passedProject.figmaLink,
         demoLink: passedProject.demoLink
-    } : defaultProject; // Use the default project if no data is passed
+    } : defaultProject;
 
 
     const handleJoinRequest = () => {
@@ -112,7 +105,7 @@ export default function ProjectInfo() {
     };
 
     const handleBack = () => {
-        navigate('/HomePage'); // Navigate directly to the homepage route
+        navigate('/HomePage');
     }
 
     return (
@@ -132,7 +125,8 @@ export default function ProjectInfo() {
                         <div className="project-header-card">
                             <div className="project-header">
                                 <div className="author-info">
-                                    <div className="avatar">{project.author.name.charAt(0)}</div>
+                                    {/* Use optional chaining for charAt to handle potential null/undefined names */}
+                                    <div className="avatar">{project.author.name?.charAt(0) || '?'}</div>
                                     <div className="author-details">
                                         <h3>{project.author.name}</h3>
                                         <p>{project.author.university} • {project.author.year}</p>
@@ -231,9 +225,9 @@ export default function ProjectInfo() {
                                         GitHub
                                     </a>
                                 )}
-                                {project.figmaLink && ( // Added Figma link display
+                                {project.figmaLink && (
                                     <a href={project.figmaLink} target="_blank" rel="noopener noreferrer" className="link-btn">
-                                        <Globe size={20} /> {/* Using Globe for Figma as well */}
+                                        <Globe size={20} />
                                         Figma
                                     </a>
                                 )}
@@ -298,7 +292,7 @@ export default function ProjectInfo() {
                             {project.currentTeam.length > 0 ? (
                                 project.currentTeam.map((member, index) => (
                                     <div key={index} className="team-member">
-                                        <div className="member-avatar">{member.name[0]}</div>
+                                        <div className="member-avatar">{member.name?.charAt(0) || '?'}</div>
                                         <div className="member-info">
                                             <h4>{member.name}</h4>
                                             <p>{member.role}</p>
