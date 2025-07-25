@@ -46,7 +46,7 @@ function CreatePost() {
             }
 
             try {
-                const res = await axios.get(`${backendUrl}/api/user/me`, {
+                const res = await axios.get(`${backendUrl}/api/users/me`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUserProfile(res.data); // Store the fetched user profile
@@ -119,7 +119,7 @@ const projectToPass = {
     }
 };
 
-        navigate('/project-info', { state: { project: projectToPass } });
+        navigate('/ProjectInfo', { state: { project: projectToPass } });
     };
 
     const handleCancel = () => {

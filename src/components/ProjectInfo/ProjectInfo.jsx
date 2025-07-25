@@ -1,5 +1,5 @@
-import React, { useState } from 'react'; // Removed useEffect for fetching authorProfile as it's now passed
-import { // Removed useEffect for fetching authorProfile as it's now passed
+import React, { useState } from 'react';
+import {
     ArrowLeft,
     Bookmark,
     Share2,
@@ -16,6 +16,7 @@ import { // Removed useEffect for fetching authorProfile as it's now passed
 import './ProjectInfo.css';
 import Navbar from '../HomePage/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
+import moment from 'moment'; // <--- ADD THIS IMPORT for date formatting
 
 export default function ProjectInfo() {
     const location = useLocation();
@@ -62,18 +63,20 @@ export default function ProjectInfo() {
         description: passedProject.projectDescription,
         domain: passedProject.domain,
         status: 'Recruiting',
-        postedDate: 'Just now', // Can be made dynamic if you add date logic in CreatePost
+        // --- START CHANGES FOR STATS CARD DATA ---
+        postedDate: passedProject.createdAt ? moment(passedProject.createdAt).fromNow() : 'Just now', // Use createdAt from backend
         timeCommitment: passedProject.timeCommitment,
         duration: passedProject.projectDuration,
         teamSize: {
-            current: 1, // Assume the creator is the first member
+            current: passedProject.currentTeamCount || 1, // Use actual count passed from HomePage
             target: parseInt(passedProject.teamSize) || 1
         },
         location: passedProject.remoteWorkOkay ? `${passedProject.location} (Remote Friendly)` : passedProject.location,
         startDate: passedProject.startDate,
         deadline: passedProject.applicationDeadline,
-        responses: 0,
-        views: 0,
+        responses: passedProject.responseCount || 0, // Use actual response count passed from HomePage
+        views: passedProject.viewsCount || 0, // Use actual views count passed from HomePage
+        // --- END CHANGES FOR STATS CARD DATA ---
         requiredSkills: passedProject.requiredSkills.map(skill => ({ skill, level: 'Any', required: true }))
                       .concat(passedProject.niceToHaveSkills.map(skill => ({ skill, level: 'Any', required: false }))),
         skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills],
@@ -84,10 +87,7 @@ export default function ProjectInfo() {
                 skills: passedProject.authorDetails.skills || [] // Assuming skills might be on authorDetails
             }
         ] : [],
-        // --- THIS IS THE MAIN CHANGE ---
-        // Use the authorDetails passed from HomePage directly
         author: passedProject.authorDetails || defaultProject.author,
-        // --- END MAIN CHANGE ---
         githubRepo: passedProject.githubRepo,
         figmaLink: passedProject.figmaLink,
         demoLink: passedProject.demoLink
@@ -125,7 +125,6 @@ export default function ProjectInfo() {
                         <div className="project-header-card">
                             <div className="project-header">
                                 <div className="author-info">
-                                    {/* Use optional chaining for charAt to handle potential null/undefined names */}
                                     <div className="avatar">{project.author.name?.charAt(0) || '?'}</div>
                                     <div className="author-details">
                                         <h3>{project.author.name}</h3>
@@ -247,7 +246,7 @@ export default function ProjectInfo() {
                     <div className="right-sidebar">
                         <div className="action-card">
                             <div className="interest-count">
-                                <div className="count">{project.responses}</div>
+                                <div className="count">{project.responses}</div> {/* Dynamic responses */}
                                 <div className="count-label">people interested</div>
                             </div>
                             <div className="deadline-info">
@@ -271,19 +270,19 @@ export default function ProjectInfo() {
                             <h3>Project Stats</h3>
                             <div className="stat-row">
                                 <span>Views</span>
-                                <span>{project.views}</span>
+                                <span>{project.views}</span> {/* Dynamic views */}
                             </div>
                             <div className="stat-row">
                                 <span>Applications</span>
-                                <span>{project.responses}</span>
+                                <span>{project.responses}</span> {/* Dynamic applications (same as interested) */}
                             </div>
                             <div className="stat-row">
                                 <span>Team Members</span>
-                                <span>{project.teamSize.current}/{project.teamSize.target}</span>
+                                <span>{project.teamSize.current}/{project.teamSize.target}</span> {/* Dynamic current team members */}
                             </div>
                             <div className="stat-row">
                                 <span>Posted</span>
-                                <span>{project.postedDate}</span>
+                                <span>{project.postedDate}</span> {/* Dynamic posted date */}
                             </div>
                         </div>
                         <div className="current-team">
