@@ -3,12 +3,15 @@
     font-size: 1rem;
 }
 .project-card {
+    margin-top: 2rem;
     background-color: white;
     border-radius: 1rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     border: 1px solid #d4dcec;
     padding: 1.5rem;
     transition: box-shadow 0.2s ease;
+    width: 60vw;
+    /* margin-bottom : 2rem; */
     
 }
 
@@ -65,12 +68,13 @@
     font-weight: 500;
     font-size: 0.875rem;
     cursor: pointer;
+    border-radius: 30px;
     transition: color 0.2s ease;
 }
 
 .view-button:hover {
     
-    color:#062d99;
+    color:#ffffff;
 }
 
 .project-title {

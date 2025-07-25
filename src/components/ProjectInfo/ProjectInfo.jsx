@@ -15,62 +15,107 @@ import {
 } from 'lucide-react';
 import './ProjectInfo.css';
 import Navbar from '../HomePage/Navbar';
-import HomePage from '../HomePage/HomePage';
+import { useLocation, useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 export default function ProjectInfo() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [joinMessage, setJoinMessage] = useState('');
 
-    // Mock project data
-    const project = {
-        title: 'AI-Powered Study Assistant',
-        description: `We're building an innovative machine learning application designed to revolutionize how students organize their study materials and create personalized learning plans. The platform will use natural language processing to analyze study content, identify knowledge gaps, and recommend optimal learning paths.
+    // FIX: Correctly retrieve the passed data using the 'project' key
+    const passedProjectData = location.state?.project; // Changed from 'fullProjectData' to 'project'
 
-Our goal is to create a comprehensive solution that adapts to each student's learning style, tracks progress over time, and integrates with popular educational platforms. This project combines cutting-edge AI technology with practical educational applications.
-
-We're looking for passionate teammates who want to make a real impact on education technology. This is a great opportunity to work with modern ML frameworks, build scalable web applications, and potentially turn this into a startup after the initial development phase.`,
+    // Define a default project structure for when no data is passed
+    const defaultProject = {
+        title: 'No Project Selected',
+        description: 'No description available. Please navigate from a project card or create a new project.',
         author: {
-            name: 'Sarah Chen',
-            university: 'Stanford University',
-            year: 'Junior',
-            rating: 4.8,
-            projectsCompleted: 12
+            name: 'N/A',
+            university: 'N/A',
+            year: 'N/A',
+            rating: 0,
+            projectsCompleted: 0,
+            avatar: null
         },
-        domain: 'Artificial Intelligence',
-        status: 'Recruiting',
-        postedDate: '2 hours ago',
-        timeCommitment: '10-15 hours/week',
-        duration: '3 months',
-        teamSize: { current: 2, target: 5 },
-        location: 'Remote + Weekly Stanford meetups',
-        startDate: 'February 1, 2025',
-        deadline: 'January 25, 2025',
-        responses: 15,
-        views: 234,
-        skills: ['Python', 'TensorFlow', 'React', 'Node.js', 'PostgreSQL', 'Natural Language Processing'],
-        requiredSkills: [
-            { skill: 'Python', level: 'Intermediate', required: true },
-            { skill: 'Machine Learning', level: 'Beginner', required: true },
-            { skill: 'React', level: 'Intermediate', required: false },
-            { skill: 'UI/UX Design', level: 'Any', required: false }
-        ],
-        currentTeam: [
-            {
-                name: 'Sarah Chen',
-                role: 'Project Lead & ML Engineer',
-                skills: ['Python', 'TensorFlow', 'Leadership']
-            },
-            {
-                name: 'David Kim',
-                role: 'Backend Developer',
-                skills: ['Node.js', 'PostgreSQL', 'API Design']
-            }
-        ]
+        domain: 'General',
+        status: 'N/A',
+        postedDate: 'N/A',
+        timeCommitment: 'N/A',
+        duration: 'N/A',
+        teamSize: { current: 0, target: 0 },
+        location: 'N/A',
+        startDate: 'N/A',
+        deadline: 'N/A',
+        responses: 0,
+        views: 0,
+        requiredSkills: [],
+        niceToHaveSkills: [],
+        currentTeam: [],
+        githubRepo: '',
+        figmaLink: '',
+        demoLink: ''
     };
 
+    // Determine which project data to use: passed data or default
+    const project = passedProjectData ? {
+        title: passedProjectData.title,
+        description: passedProjectData.description,
+        domain: passedProjectData.domain,
+        projectType: passedProjectData.projectType,
+        status: 'Recruiting',
+        postedDate: passedProjectData.createdAt ? moment(passedProjectData.createdAt).fromNow() : 'Just now',
+        timeCommitment: passedProjectData.timeCommitment,
+        duration: passedProjectData.projectDuration,
+        teamSize: {
+            current: passedProjectData.currentTeamCount || (passedProjectData.createdBy ? 1 : 0),
+            target: parseInt(passedProjectData.teamSize) || 1
+        },
+        location: passedProjectData.remote ? `${passedProjectData.location} (Remote Friendly)` : passedProjectData.location,
+        startDate: passedProjectData.startDate ? moment(passedProjectData.startDate).format('YYYY-MM-DD') : 'N/A',
+        deadline: passedProjectData.applicationDeadline ? moment(passedProjectData.applicationDeadline).format('YYYY-MM-DD') : 'N/A',
+        responses: passedProjectData.joinRequests?.length || 0,
+        views: passedProjectData.views || 0,
+
+        // FIX FOR AUTHOR DETAILS: Reconstruct from 'createdBy' (populated user object)
+        author: {
+            name: passedProjectData.createdBy ? `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim() : 'Unknown',
+            university: passedProjectData.createdBy?.university || 'N/A',
+            year: passedProjectData.createdBy?.academicYear || 'N/A',
+            rating: passedProjectData.createdBy?.rating || 0,
+            projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
+            avatar: passedProjectData.createdBy?.avatar || null
+        },
+
+        // Correctly map skills. Backend sends string arrays
+        requiredSkills: (passedProjectData.requiredSkills || []).map(skill => ({ skill, level: 'Any', required: true }))
+            .concat((passedProjectData.niceToHaveSkills || []).map(skill => ({ skill, level: 'Any', required: false }))),
+
+        // FIX FOR CURRENT TEAM: Ensure creator is listed and other accepted members if populated
+        currentTeam: passedProjectData.currentTeam ? passedProjectData.currentTeam.map(member => ({
+            name: member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim(),
+            role: 'Member', // Or actual role if available
+            skills: member.skills || [],
+            avatar: member.avatar || null
+        })) : (passedProjectData.createdBy ? [{ // Add project creator as first member if no specific team array
+            name: `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim(),
+            role: 'Project Lead',
+            skills: passedProjectData.createdBy.skills || [],
+            avatar: passedProjectData.createdBy.avatar || null
+        }] : []),
+
+        githubRepo: passedProjectData.githubRepo,
+        figmaLink: passedProjectData.figmaLink,
+        demoLink: passedProjectData.demoLink
+    } : defaultProject;
+
+    // DEBUGGING: Log the final 'project' object used for rendering
+    console.log('ProjectInfo: Final project object used for rendering:', project);
+
     const handleJoinRequest = () => {
-        alert('Join request sent!');
+        alert('Join request sent!'); // This needs actual API call logic
         setShowJoinDialog(false);
         setJoinMessage('');
     };
@@ -78,8 +123,9 @@ We're looking for passionate teammates who want to make a real impact on educati
     const handleBookmark = () => {
         setIsBookmarked(!isBookmarked);
     };
-    const handleBack = () =>{
-        
+
+    const handleBack = () => {
+        navigate('/homepage');
     }
 
     return (
@@ -87,7 +133,6 @@ We're looking for passionate teammates who want to make a real impact on educati
             <Navbar />
             <div className="project-details">
 
-                {/* Back button */}
                 <div className="back-button" onClick={handleBack}>
                     <ArrowLeft size={20} />
                     <span>Back to search</span>
@@ -99,13 +144,13 @@ We're looking for passionate teammates who want to make a real impact on educati
                         <div className="project-header-card">
                             <div className="project-header">
                                 <div className="author-info">
-                                    <div className="avatar">{project.author.name.charAt(0)}</div>
+                                    <div className="avatar">{project.author?.name?.charAt(0) || '?'}</div>
                                     <div className="author-details">
-                                        <h3>{project.author.name}</h3>
-                                        <p>{project.author.university} • {project.author.year}</p>
+                                        <h3>{project.author?.name}</h3>
+                                        <p>{project.author?.university} • {project.author?.year}</p>
                                         <div className="rating">
                                             <Star size={20} className="star-icon" />
-                                            {project.author.rating} ({project.author.projectsCompleted} projects)
+                                            {project.author?.rating} ({project.author?.projectsCompleted} projects)
                                         </div>
                                     </div>
                                 </div>
@@ -125,13 +170,13 @@ We're looking for passionate teammates who want to make a real impact on educati
                             <h1 className="project-title">{project.title}</h1>
 
                             <div className="badges">
-                                <span className="badge recruiting">{project.status}</span>
-                                <span className="badge domain">{project.domain}</span>
-                                <span className="badge posted">Posted {project.postedDate}</span>
+                                {project.status && <span className="badge recruiting">{project.status}</span>}
+                                {project.domain && <span className="badge domain">{project.domain}</span>}
+                                {project.postedDate && <span className="badge posted">Posted {project.postedDate}</span>}
                             </div>
 
                             <div className="project-description">
-                                {project.description.split('\n\n').map((paragraph, index) => (
+                                {(project.description || '').split('\n\n').map((paragraph, index) => (
                                     <p key={index}>{paragraph}</p>
                                 ))}
                             </div>
@@ -166,40 +211,53 @@ We're looking for passionate teammates who want to make a real impact on educati
                                     <MapPin size={20} className="detail-icon" />
                                     <div>
                                         <strong>Location</strong>
-                                        <p>{project.location || ''}</p>
+                                        <p>{project.location || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="required-skills">
                                 <h4>Required Skills</h4>
-                                {project.requiredSkills.map((item, index) => (
-                                    <div key={index} className="skill-item">
-                                        <div className="skill-info">
-                                            <span className="skill-name">{item.skill}</span>
-                                            <span className={`skill-badge ${item.required ? 'required' : 'optional'}`}>
-                                                {item.required ? 'Required' : 'Nice to have'}
-                                            </span>
+                                {(project.requiredSkills && project.requiredSkills.length > 0) ? (
+                                    project.requiredSkills.map((item, index) => (
+                                        <div key={index} className="skill-item">
+                                            <div className="skill-info">
+                                                <span className="skill-name">{item.skill}</span>
+                                                <span className={`skill-badge ${item.required ? 'required' : 'optional'}`}>
+                                                    {item.required ? 'Required' : 'Nice to have'}
+                                                </span>
+                                            </div>
+                                            <span className="skill-level">{item.level}</span>
                                         </div>
-                                        <span className="skill-level">{item.level}</span>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <p>No specific skills listed.</p>
+                                )}
                             </div>
 
                             <div className="project-links">
                                 <h4>Project Links</h4>
-                                <button className="link-btn">
-                                    <Github size={20} />
-                                    GitHub
-                                </button>
-                                <button className="link-btn">
-                                    <Globe size={20} />
-                                    Demo
-                                </button>
+                                {project.githubRepo && (
+                                    <a href={project.githubRepo} target="_blank" rel="noopener noreferrer" className="link-btn">
+                                        <Github size={20} />
+                                        GitHub
+                                    </a>
+                                )}
+                                {project.figmaLink && (
+                                    <a href={project.figmaLink} target="_blank" rel="noopener noreferrer" className="link-btn">
+                                        <Globe size={20} />
+                                        Figma
+                                    </a>
+                                )}
+                                {project.demoLink && (
+                                    <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="link-btn">
+                                        <Globe size={20} />
+                                        Demo
+                                    </a>
+                                )}
+                                {!project.githubRepo && !project.figmaLink && !project.demoLink && <p>No project links provided.</p>}
                             </div>
                         </div>
-
-                        {/* Current Team */}
 
                     </div>
 
@@ -249,25 +307,28 @@ We're looking for passionate teammates who want to make a real impact on educati
                         <div className="current-team">
                             <h3>Current Team</h3>
                             <p className="team-subtitle">Meet the team members already working on this project</p>
-                            {project.currentTeam.map((member, index) => (
-                                <div key={index} className="team-member">
-                                    <div className="member-avatar">{member.name[0]}</div>
-                                    <div className="member-info">
-                                        <h4>{member.name}</h4>
-                                        <p>{member.role}</p>
-
+                            {(project.currentTeam && project.currentTeam.length > 0) ? (
+                                project.currentTeam.map((member, index) => (
+                                    <div key={index} className="team-member">
+                                        <div className="member-avatar">{member.name?.charAt(0) || '?'}</div>
+                                        <div className="member-info">
+                                            <h4>{member.name}</h4>
+                                            <p>{member.role}</p>
+                                        </div>
+                                        <button className="message-btn">
+                                            <MessageCircle size={20} />
+                                            Message
+                                        </button>
                                     </div>
-                                    <button className="message-btn">
-                                        <MessageCircle size={20} />
-                                    </button>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p>No team members listed yet.</p>
+                            )}
                         </div>
 
                     </div>
                 </div>
 
-                {/* Join Dialog */}
                 {showJoinDialog && (
                     <div className="dialog-overlay" onClick={() => setShowJoinDialog(false)}>
                         <div className="dialog" onClick={(e) => e.stopPropagation()}>
@@ -286,8 +347,7 @@ We're looking for passionate teammates who want to make a real impact on educati
                         </div>
                     </div>
                 )}
-        </div>
             </div>
-
-            );
+        </div>
+    );
 }

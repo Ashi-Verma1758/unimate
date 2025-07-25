@@ -39,8 +39,10 @@
 
 .create-project-button {
   background-color: #2563eb;
+  /* width:150px; */
   color: white;
   padding: 0.75rem 1.5rem;
+  /* padding: 2rem; */
   border-radius: 0.5rem;
   font-weight: 500;
   border: none;
@@ -61,6 +63,18 @@
   grid-template-columns: 1fr;
   gap: 2rem;
 }
+.view-all-button {
+  color: #2563eb;
+  background: none;
+  border: none;
+  font-weight: 800;
+  /* font-size: 1.5rem; */
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+}
+
 
 @media (min-width: 1024px) {
   .homepage-grid {
@@ -69,7 +83,7 @@
 }
 
 /* Main Content */
-.main-content {
+.mains-content {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -116,18 +130,9 @@
   margin: 0;
 }
 
-.view-all-button {
-  color: #2563eb;
-  background: none;
-  border: none;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
 
 .view-all-button:hover {
-  color: #1d4ed8;
+  color: #ffffff;
 }
 
 .projects-list {
@@ -139,7 +144,10 @@
 /* Sidebar */
 .sidebar {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; 
+   /* flex: 1; /* For flex-based layouts */
+  /* min-width: 300px;
+  max-width: 400px;  */
 }
 
 .sidebar-card {
@@ -189,7 +197,7 @@
 }
 
 .view-all-invitations:hover {
-  color: #1d4ed8;
+  color: #ffffff;
 }
 
 /* Responsive adjustments */
@@ -211,4 +219,116 @@
   .welcome-title {
     font-size: 1.5rem;
   }
+}
+/* src/HomePage.css (add these styles) */
+.tabs-container {
+  display: flex; /* Makes the buttons sit side-by-side */
+  background-color: #e0e0e0; /* Light grey background for the entire segmented control */
+  border-radius: 9999px; /* Pill-shaped container */
+  padding: 4px; /* Small padding inside the container */
+  margin-bottom: 5px; /* Space below the tabs */
+  /* Remove border-bottom and padding-bottom from here that were for the old underline style */
+  border-bottom: none; /* Ensure no residual border */
+  padding-bottom: unset; /* Remove previous padding for border-bottom */
+}
+
+/* Revised Tab Button Styles */
+.tab-button {
+  flex: 1; /* Makes each button take equal available width */
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: none; /* Remove any default button borders */
+  outline:none;
+  background-color: transparent; /* Default transparent background */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666; /* Default text color for inactive tab */
+  border-radius: 9999px; /* Make individual buttons pill-shaped inside container */
+  transition: background-color 0.3s ease, color 0.3s ease, font-weight 0.3s ease;
+  display: flex; /* For badge alignment */
+  align-items: center;
+  justify-content: center; /* Center content horizontally */
+  gap: 8px; /* Space between text and badge */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.tab-button:hover:not(.active) { /* Hover effect for inactive tabs */
+  background-color: #d0d0d0; /* Slightly darker grey on hover */
+  color: #444; /* Darker text on hover */
+}
+
+.tab-button.active {
+  background-color: #ffffff; /* Solid white background for active tab */
+  color: #000000; /* Black text color for active tab (adjust if your design is different) */
+  font-weight: 600; /* Bolder text for active tab */
+  border:none;
+  outline:none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* Subtle shadow for active tab */
+  /* Remove ::after pseudo-element styling here */
+}
+
+/* Tab Badge Styles (already good, just ensure they are here) */
+.tab-badge {
+  background-color: #2563eb; /* Blue for the badge */
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+  min-width: 24px;
+  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  /* Add margin to space it from the text if needed */
+  margin-left: 4px; /* Adjust spacing between text and badge */
+}
+
+/* Ensure the .ml-auto for View All button still works if desired */
+.ml-auto {
+  margin-left: auto;
+ 
+}
+
+/* In src/HomePage.css, add these new styles */
+
+.view-all-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -3rem;
+  margin-bottom: -4rem;
+  padding-right: 10px;
+}
+
+
+/* Ensure your .view-all-button styles are still present (they should be) */
+.view-all-button {
+  color: #2563eb;
+  background: none;
+  border: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+border-radius: 30px;
+}
+
+.view-all-button:hover {
+  color: #ffffff;
+  
+}
+.join-requests-list {
+  /* Inherits styling similar to projects-list from HomePage.css, or add specific styles if needed */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between request cards */
+}
+
+.no-requests-message {
+    text-align: center;
+    color: #777;
+    padding: 30px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    margin-top: 20px;
 }

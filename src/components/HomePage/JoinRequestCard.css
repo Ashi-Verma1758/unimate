@@ -1,0 +1,242 @@
+/* src/components/JoinRequestCard.css */
+
+.join-request-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-family: Arial, sans-serif; /* Adjust to your project's font */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Align top if details are multi-line */
+  gap: 15px;
+}
+
+.requester-info {
+  display: flex;
+  align-items: flex-start; /* Align avatar with the start of name/major */
+  gap: 12px;
+}
+
+.requester-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+  overflow: hidden; /* Ensure image fits */
+  flex-shrink: 0; /* Prevent avatar from shrinking */
+}
+
+.requester-avatar .avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.requester-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.requester-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.requester-major,
+.requester-academic-year,
+.requester-university {
+  font-size: 14px;
+  color: #666;
+  margin-right: 8px; /* Space out the inline details */
+  display: inline-block;
+}
+
+.requester-academic-year::before,
+.requester-university::before {
+  content: " • ";
+  margin-right: 8px;
+  color: #ccc; /* Subtle separator */
+}
+
+.requester-major::after {
+  content: ""; /* No separator after major unless it's the last inline element */
+}
+
+.requester-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+  font-size: 13px;
+  color: #777;
+}
+
+.requester-rating,
+.requester-projects-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.requester-rating svg {
+  color: #ffc107; /* Star color */
+}
+
+/* Action Buttons */
+.request-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.accept-button,
+.decline-button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.accept-button {
+  background-color: #007bff; /* Primary blue */
+  color: #ffffff;
+  border: 1px solid #007bff;
+}
+
+.accept-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.decline-button {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.decline-button:hover {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+
+
+/* Project Details */
+.project-details {
+  margin-top: 5px;
+}
+
+.project-title-request {
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Request Message */
+.request-message-section {
+  display: flex;
+  align-items: flex-start; /* Align icon with the start of the message */
+  gap: 8px;
+  padding: 10px 15px;
+  background-color: #f8f8f8;
+  border-left: 3px solid #007bff; /* Blue accent bar */
+  border-radius: 4px;
+}
+
+.request-message-section svg {
+  color: #007bff;
+  margin-top: 2px; /* Adjust icon vertical alignment */
+}
+
+.request-message {
+  font-size: 15px;
+  color: #444;
+  margin: 0;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+/* Skills Section */
+.skills-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap; /* Allow tags to wrap */
+}
+
+.skills-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-tag {
+  background-color: #e6f0ff; /* Light blue background */
+  color: #007bff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Time Ago */
+.request-time {
+  text-align: right;
+  font-size: 13px;
+  color: #888;
+  margin-top: -10px; /* Pull it up a bit */
+}
+
+/* Responsive adjustments (optional, but good practice) */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .request-actions {
+    justify-content: flex-end; /* Align buttons to the right on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .join-request-card {
+    padding: 15px;
+  }
+  .requester-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  .accept-button,
+  .decline-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,14 @@
+.page-title{
+    margin-bottom: 4rem;
+}
+.all-projects-container{
+    gap: 2rem;
+
+}
+.project-list{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: center;
+    
+}
