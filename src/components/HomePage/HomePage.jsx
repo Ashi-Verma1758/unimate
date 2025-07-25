@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Users, Mail } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import './HomePage.css';
-import { useNavigate } from 'react-router-dom';
+import './HomePage.css'; // Your HomePage specific CSS
 
-// Import your components
+// Import your components - adjust paths based on your actual structure
 import Navbar from './Navbar.jsx';
 import StatsCard from './StatsCard.jsx';
 import ProjectCard from './ProjectCard.jsx';
@@ -14,13 +13,12 @@ import TeamInvitationCard from './TeamInvitationCard.jsx';
 import JoinRequestCard from './JoinRequestCard.jsx';
 
 
-// HomePage now receives projectPosts, loadingProjects, and projectsError as props from App.js
 const HomePage = ({
     setSelectedConversationId,
-    projectPosts,      // Received as a prop from App.js
-    loadingProjects,   // Received as a prop from App.js
-    projectsError,     // Received as a prop from App.js
-    backendUrl         // Received from App.js
+    projectPosts,      // Received from App.js's consolidated state
+    loadingProjects,   // Received from App.js's consolidated state
+    projectsError,     // Received from App.js's consolidated state
+    backendUrl
 }) => {
 
     const navigate = useNavigate();
@@ -34,9 +32,6 @@ const HomePage = ({
     const [summaryLoading, setSummaryLoading] = useState(true);
     const [summaryError, setSummaryError] = useState(null);
 
-    // No local projectPosts state needed, as it comes from props.
-    // The loading/error states for projects also come from props.
-
     const [teamInvitations, setTeamInvitations] = useState([]);
     const [invitationsLoading, setInvitationsLoading] = useState(true);
     const [invitationsError, setInvitationsError] = useState(null);
@@ -47,8 +42,10 @@ const HomePage = ({
 
     const [selectedMainTab, setSelectedMainTab] = useState('recentPosts');
 
+    const handleViewAllProjects = () => {
+        navigate('/all-projects');
+    };
 
-    // Handlers (mostly unchanged, ensuring they use backendUrl prop)
     const handleSendJoinRequest = async (projectId) => {
         const token = localStorage.getItem('accessToken');
         if (!token) { alert('You must be logged in to send a join request.'); return; }
@@ -57,6 +54,7 @@ const HomePage = ({
         try {
             const res = await axios.post(`${backendUrl}/api/projects/${projectId}/join`, { message }, { headers: { Authorization: `Bearer ${token}` } });
             alert(res.data.message || 'Join request sent successfully!');
+            // You might want to refresh joinRequests or project info here if the status changes immediately
         } catch (err) {
             console.error('Error sending join request:', err);
             alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
@@ -69,6 +67,7 @@ const HomePage = ({
         try {
             const res = await axios.put(`${backendUrl}/api/invites/respond/${projectId}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
             alert(res.data.message || `Invitation ${status} successfully!`);
+            // Update invitations list on successful response
             setTeamInvitations(prevInvitations => prevInvitations.filter(invite => invite.projectId !== projectId));
             if (status === 'accepted') {
                 const conversationRes = await axios.get(`${backendUrl}/api/chats/get-or-create-conversation?otherUserId=${fromUserId}&projectId=${projectId}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -96,6 +95,7 @@ const HomePage = ({
             if (!userIdToRespond) { alert('Could not find user associated with this request for backend processing.'); return; }
             const res = await axios.patch(`${backendUrl}/api/projects/${projectId}/requests/${requestId}/respond`, { status }, { headers: { Authorization: `Bearer ${token}` } });
             alert(res.data.message || `Request ${status} successfully!`);
+            // Update join requests list on successful response
             setJoinRequests(prevRequests => prevRequests.filter(req => req.requestId !== requestId));
         } catch (err) {
             console.error(`Error ${status} request:`, err);
@@ -104,8 +104,7 @@ const HomePage = ({
     };
 
 
-    // --- Data Fetching Logic for local states (summary, invites, requests) ---
-    // HomePage no longer fetches projectPosts independently.
+    // Data Fetching Logic for local states (summary, invites, requests)
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
 
@@ -150,7 +149,7 @@ const HomePage = ({
                     if (item.request.status === 'pending' && item.requesterDetails) {
                         allRequests.push({
                             requestId: item.request._id, projectId: item.project._id, requesterAvatar: item.requesterDetails.avatar || null,
-                            requesterName: item.requesterDetails.name || `${item.requesterDetails.firstName || ''} ${item.requesterDetails.lastName || ''}`.trim(),
+                            requesterName: item.requesterDetails.firstName && item.requesterDetails.lastName ? `${item.requesterDetails.firstName} ${item.requesterDetails.lastName}`.trim() : 'Unknown', // More robust name
                             requesterMajor: item.requesterDetails.major || 'N/A', requesterAcademicYear: item.requesterDetails.academicYear || 'N/A',
                             requesterUniversity: item.requesterDetails.university || 'N/A', requesterRating: item.requesterDetails.rating || 0,
                             requesterProjectsCount: item.requesterDetails.projectsCount || 0, timeAgo: moment(item.request.sentAt).fromNow(),
@@ -169,13 +168,26 @@ const HomePage = ({
         fetchTeamInvitations();
         fetchJoinRequests();
 
-    }, [backendUrl]); // Only runs these fetches when backendUrl changes (unlikely)
+    }, [backendUrl]);
 
 
     useEffect(() => {
         console.log("DEBUG: Current teamInvitations state:", teamInvitations);
         console.log("DEBUG: Current teamInvitations length:", teamInvitations.length);
     }, [teamInvitations]);
+
+    // Debugging logs for props received from App.js
+    useEffect(() => {
+        console.log('HomePage.jsx: Rerendering/Props Update.');
+        console.log('  Received projectPosts count:', projectPosts.length);
+        console.log('  Received loadingProjects:', loadingProjects);
+        console.log('  Received projectsError:', projectsError);
+        console.log('  Sliced projectPosts count for display:', projectPosts.slice(0, 3).length);
+        if (projectPosts.length > 0 && !loadingProjects && !projectsError) {
+            console.log('  HomePage should now display posts!');
+        }
+    }, [projectPosts, loadingProjects, projectsError]);
+
 
     return (
         <div className="homepage">
@@ -188,7 +200,6 @@ const HomePage = ({
                         <h1 className="welcome-title">Welcome back!! 👋</h1>
                         <p className="welcome-subtitle">Ready to collaborate and build something amazing today?</p>
                     </div>
-                    {/* Link to CreatePost remains the same */}
                     <Link to="/CreatePost">
                         <button className="create-project-button">
                             <Plus size={20} />
@@ -219,21 +230,20 @@ const HomePage = ({
                         </div>
                         {selectedMainTab === 'recentPosts' && (
                             <div className="view-all-button-container">
-                                <button className="view-all-button">View all</button>
+                                <button className="view-all-button" onClick={handleViewAllProjects}>View all</button>
                             </div>
                         )}
 
                         {selectedMainTab === 'recentPosts' && (
                             <div className="projects-list">
-                                {/* Now using props from App.js for projectPosts and their loading/error states */}
-                                {loadingProjects ? ( // Using loadingProjects prop
+                                {loadingProjects ? (
                                     <p>Loading project posts...</p>
-                                ) : projectsError ? ( // Using projectsError prop
+                                ) : projectsError ? (
                                     <p className="error-message">{projectsError}</p>
-                                ) : projectPosts.length === 0 ? ( // Using projectPosts prop
+                                ) : projectPosts.length === 0 ? (
                                     <p>No project posts found. Time to create one! 🌟</p>
                                 ) : (
-                                    projectPosts.map((project) => (
+                                    projectPosts.slice(0, 3).map((project) => (
                                         <ProjectCard
                                             key={project.id}
                                             projectId={project.id}
@@ -246,7 +256,7 @@ const HomePage = ({
                                             responseCount={project.responseCount}
                                             avatar={project.avatar}
                                             onSendRequest={handleSendJoinRequest}
-                                            projectData={project.fullProjectData}
+                                            projectData={project.fullProjectData} // Passing full data for ProjectInfo
                                         />
                                     ))
                                 )}

@@ -1,5 +1,16 @@
 
-
+:root {
+    --primary-color: #007bff; /* Example blue */
+    --secondary-color: #6c757d; /* Example gray */
+    --background-light: #f8f9fa; /* Light background */
+    --background-dark: #e9ecef; /* Slightly darker background for cards, etc. */
+    --text-color-primary: #343a40; /* Dark text */
+    --text-color-secondary: #6c757d; /* Muted text */
+    --border-color: #dee2e6; /* Light border */
+    --white: #ffffff;
+    --red: #dc3545; /* For error messages */
+    --green: #28a745; /* For success messages */
+}
 
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
