@@ -16,7 +16,7 @@ import {
 import './ProjectInfo.css';
 import Navbar from '../HomePage/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import moment from 'moment'; // <--- ADD THIS IMPORT for date formatting
+import moment from 'moment';
 
 export default function ProjectInfo() {
     const location = useLocation();
@@ -25,18 +25,20 @@ export default function ProjectInfo() {
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [joinMessage, setJoinMessage] = useState('');
 
-    const passedProject = location.state?.project;
+    // FIX: Correctly retrieve the passed data using the 'project' key
+    const passedProjectData = location.state?.project; // Changed from 'fullProjectData' to 'project'
 
     // Define a default project structure for when no data is passed
     const defaultProject = {
         title: 'No Project Selected',
-        description: 'Please create a project using the "Create Post" form.',
+        description: 'No description available. Please navigate from a project card or create a new project.',
         author: {
             name: 'N/A',
             university: 'N/A',
             year: 'N/A',
             rating: 0,
-            projectsCompleted: 0
+            projectsCompleted: 0,
+            avatar: null
         },
         domain: 'General',
         status: 'N/A',
@@ -49,8 +51,8 @@ export default function ProjectInfo() {
         deadline: 'N/A',
         responses: 0,
         views: 0,
-        skills: [],
         requiredSkills: [],
+        niceToHaveSkills: [],
         currentTeam: [],
         githubRepo: '',
         figmaLink: '',
@@ -58,44 +60,62 @@ export default function ProjectInfo() {
     };
 
     // Determine which project data to use: passed data or default
-    const project = passedProject ? {
-        title: passedProject.projectTitle,
-        description: passedProject.projectDescription,
-        domain: passedProject.domain,
+    const project = passedProjectData ? {
+        title: passedProjectData.title,
+        description: passedProjectData.description,
+        domain: passedProjectData.domain,
+        projectType: passedProjectData.projectType,
         status: 'Recruiting',
-        // --- START CHANGES FOR STATS CARD DATA ---
-        postedDate: passedProject.createdAt ? moment(passedProject.createdAt).fromNow() : 'Just now', // Use createdAt from backend
-        timeCommitment: passedProject.timeCommitment,
-        duration: passedProject.projectDuration,
+        postedDate: passedProjectData.createdAt ? moment(passedProjectData.createdAt).fromNow() : 'Just now',
+        timeCommitment: passedProjectData.timeCommitment,
+        duration: passedProjectData.projectDuration,
         teamSize: {
-            current: passedProject.currentTeamCount || 1, // Use actual count passed from HomePage
-            target: parseInt(passedProject.teamSize) || 1
+            current: passedProjectData.currentTeamCount || (passedProjectData.createdBy ? 1 : 0),
+            target: parseInt(passedProjectData.teamSize) || 1
         },
-        location: passedProject.remoteWorkOkay ? `${passedProject.location} (Remote Friendly)` : passedProject.location,
-        startDate: passedProject.startDate,
-        deadline: passedProject.applicationDeadline,
-        responses: passedProject.responseCount || 0, // Use actual response count passed from HomePage
-        views: passedProject.viewsCount || 0, // Use actual views count passed from HomePage
-        // --- END CHANGES FOR STATS CARD DATA ---
-        requiredSkills: passedProject.requiredSkills.map(skill => ({ skill, level: 'Any', required: true }))
-                      .concat(passedProject.niceToHaveSkills.map(skill => ({ skill, level: 'Any', required: false }))),
-        skills: [...passedProject.requiredSkills, ...passedProject.niceToHaveSkills],
-        currentTeam: passedProject.authorDetails ? [ // Use authorDetails if available
-            {
-                name: passedProject.authorDetails.name || 'Project Lead',
-                role: 'Project Lead',
-                skills: passedProject.authorDetails.skills || [] // Assuming skills might be on authorDetails
-            }
-        ] : [],
-        author: passedProject.authorDetails || defaultProject.author,
-        githubRepo: passedProject.githubRepo,
-        figmaLink: passedProject.figmaLink,
-        demoLink: passedProject.demoLink
+        location: passedProjectData.remote ? `${passedProjectData.location} (Remote Friendly)` : passedProjectData.location,
+        startDate: passedProjectData.startDate ? moment(passedProjectData.startDate).format('YYYY-MM-DD') : 'N/A',
+        deadline: passedProjectData.applicationDeadline ? moment(passedProjectData.applicationDeadline).format('YYYY-MM-DD') : 'N/A',
+        responses: passedProjectData.joinRequests?.length || 0,
+        views: passedProjectData.views || 0,
+
+        // FIX FOR AUTHOR DETAILS: Reconstruct from 'createdBy' (populated user object)
+        author: {
+            name: passedProjectData.createdBy ? `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim() : 'Unknown',
+            university: passedProjectData.createdBy?.university || 'N/A',
+            year: passedProjectData.createdBy?.academicYear || 'N/A',
+            rating: passedProjectData.createdBy?.rating || 0,
+            projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
+            avatar: passedProjectData.createdBy?.avatar || null
+        },
+
+        // Correctly map skills. Backend sends string arrays
+        requiredSkills: (passedProjectData.requiredSkills || []).map(skill => ({ skill, level: 'Any', required: true }))
+            .concat((passedProjectData.niceToHaveSkills || []).map(skill => ({ skill, level: 'Any', required: false }))),
+
+        // FIX FOR CURRENT TEAM: Ensure creator is listed and other accepted members if populated
+        currentTeam: passedProjectData.currentTeam ? passedProjectData.currentTeam.map(member => ({
+            name: member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim(),
+            role: 'Member', // Or actual role if available
+            skills: member.skills || [],
+            avatar: member.avatar || null
+        })) : (passedProjectData.createdBy ? [{ // Add project creator as first member if no specific team array
+            name: `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim(),
+            role: 'Project Lead',
+            skills: passedProjectData.createdBy.skills || [],
+            avatar: passedProjectData.createdBy.avatar || null
+        }] : []),
+
+        githubRepo: passedProjectData.githubRepo,
+        figmaLink: passedProjectData.figmaLink,
+        demoLink: passedProjectData.demoLink
     } : defaultProject;
 
+    // DEBUGGING: Log the final 'project' object used for rendering
+    console.log('ProjectInfo: Final project object used for rendering:', project);
 
     const handleJoinRequest = () => {
-        alert('Join request sent!');
+        alert('Join request sent!'); // This needs actual API call logic
         setShowJoinDialog(false);
         setJoinMessage('');
     };
@@ -105,7 +125,7 @@ export default function ProjectInfo() {
     };
 
     const handleBack = () => {
-        navigate('/HomePage');
+        navigate('/homepage');
     }
 
     return (
@@ -113,7 +133,6 @@ export default function ProjectInfo() {
             <Navbar />
             <div className="project-details">
 
-                {/* Back button */}
                 <div className="back-button" onClick={handleBack}>
                     <ArrowLeft size={20} />
                     <span>Back to search</span>
@@ -125,13 +144,13 @@ export default function ProjectInfo() {
                         <div className="project-header-card">
                             <div className="project-header">
                                 <div className="author-info">
-                                    <div className="avatar">{project.author.name?.charAt(0) || '?'}</div>
+                                    <div className="avatar">{project.author?.name?.charAt(0) || '?'}</div>
                                     <div className="author-details">
-                                        <h3>{project.author.name}</h3>
-                                        <p>{project.author.university} • {project.author.year}</p>
+                                        <h3>{project.author?.name}</h3>
+                                        <p>{project.author?.university} • {project.author?.year}</p>
                                         <div className="rating">
                                             <Star size={20} className="star-icon" />
-                                            {project.author.rating} ({project.author.projectsCompleted} projects)
+                                            {project.author?.rating} ({project.author?.projectsCompleted} projects)
                                         </div>
                                     </div>
                                 </div>
@@ -157,7 +176,7 @@ export default function ProjectInfo() {
                             </div>
 
                             <div className="project-description">
-                                {project.description.split('\n\n').map((paragraph, index) => (
+                                {(project.description || '').split('\n\n').map((paragraph, index) => (
                                     <p key={index}>{paragraph}</p>
                                 ))}
                             </div>
@@ -192,14 +211,14 @@ export default function ProjectInfo() {
                                     <MapPin size={20} className="detail-icon" />
                                     <div>
                                         <strong>Location</strong>
-                                        <p>{project.location || ''}</p>
+                                        <p>{project.location || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="required-skills">
                                 <h4>Required Skills</h4>
-                                {project.requiredSkills.length > 0 ? (
+                                {(project.requiredSkills && project.requiredSkills.length > 0) ? (
                                     project.requiredSkills.map((item, index) => (
                                         <div key={index} className="skill-item">
                                             <div className="skill-info">
@@ -246,7 +265,7 @@ export default function ProjectInfo() {
                     <div className="right-sidebar">
                         <div className="action-card">
                             <div className="interest-count">
-                                <div className="count">{project.responses}</div> {/* Dynamic responses */}
+                                <div className="count">{project.responses}</div>
                                 <div className="count-label">people interested</div>
                             </div>
                             <div className="deadline-info">
@@ -270,25 +289,25 @@ export default function ProjectInfo() {
                             <h3>Project Stats</h3>
                             <div className="stat-row">
                                 <span>Views</span>
-                                <span>{project.views}</span> {/* Dynamic views */}
+                                <span>{project.views}</span>
                             </div>
                             <div className="stat-row">
                                 <span>Applications</span>
-                                <span>{project.responses}</span> {/* Dynamic applications (same as interested) */}
+                                <span>{project.responses}</span>
                             </div>
                             <div className="stat-row">
                                 <span>Team Members</span>
-                                <span>{project.teamSize.current}/{project.teamSize.target}</span> {/* Dynamic current team members */}
+                                <span>{project.teamSize.current}/{project.teamSize.target}</span>
                             </div>
                             <div className="stat-row">
                                 <span>Posted</span>
-                                <span>{project.postedDate}</span> {/* Dynamic posted date */}
+                                <span>{project.postedDate}</span>
                             </div>
                         </div>
                         <div className="current-team">
                             <h3>Current Team</h3>
                             <p className="team-subtitle">Meet the team members already working on this project</p>
-                            {project.currentTeam.length > 0 ? (
+                            {(project.currentTeam && project.currentTeam.length > 0) ? (
                                 project.currentTeam.map((member, index) => (
                                     <div key={index} className="team-member">
                                         <div className="member-avatar">{member.name?.charAt(0) || '?'}</div>
