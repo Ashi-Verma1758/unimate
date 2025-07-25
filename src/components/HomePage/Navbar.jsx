@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Users, Info, HelpCircle, User, LogOut, Menu, MessageCircle } from 'lucide-react';
+import { Home, UserSearch, Users, Info, HelpCircle, User, LogOut, Menu, MessageCircle } from 'lucide-react';
 import {Link, useNavigate} from 'react-router-dom';
 import './Navbar.css';
 
@@ -52,9 +52,11 @@ const Navbar = () => {
             {/* Links only if logged in */}
             {isLoggedIn && (
               <div className="navbar-links">
-                <a href="#"><Home size={20} /> <span>Home</span></a>
-                <a href="#"><Users size={20} /> <span>Teams</span></a>
+                {/* <a href="/HomePage"><Home size={20} /> <span>Home</span></a> */}
+                <a href="/Find-Teammates"><UserSearch size={20} /> <span>Find Teammates</span></a>
                 <a href="#"><MessageCircle size={20} /> <span>Chat</span></a>
+
+                <a href="#"><Users size={20} /> <span>Teams</span></a>
                 <a href="#"><Info size={20} /> <span>About Us</span></a>
                 <a href="#"><HelpCircle size={20} /> <span>Help</span></a>
               </div>
