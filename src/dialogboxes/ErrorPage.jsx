@@ -13,8 +13,7 @@ const ErrorPage = () => {
             <Navbar />
             <div className="contair">
                 <h2>❌<br/> Error</h2>
-                <p>{error}
-                <br/>You're not logged In</p>
+                <p>{error}</p>
                 <div className='divgap'>
                 <button onClick={() => navigate(-1)} className="sendi-btn">
                     Go Back

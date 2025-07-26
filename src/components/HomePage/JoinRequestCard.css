@@ -68,7 +68,10 @@
   margin-right: 8px; /* Space out the inline details */
   display: inline-block;
 }
-
+.requester-academic-year,
+.requester-university{
+  margin-left: -2rem;
+}
 .requester-academic-year::before,
 .requester-university::before {
   content: " • ";
@@ -174,6 +177,7 @@
   margin: 0;
   line-height: 1.5;
   flex-grow: 1;
+  display: flex;
 }
 
 /* Skills Section */
