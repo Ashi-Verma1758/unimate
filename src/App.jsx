@@ -117,6 +117,7 @@ let currentUserId = null;
 
     return (
         <AuthProvider>
+            
             <Router>
                 <Routes>
                     <Route path="/" element={<HeroSection />} />

@@ -18,7 +18,7 @@ const ProjectCard = ({
     projectData // <-- This prop is crucial and must contain the full project object
 }) => {
     const navigate = useNavigate(); // Initialize useNavigate
- const buttonText = hasUserSentRequest ? 'Request Sent' : 'Send Request';
+//  const buttonText = hasUserSentRequest ? 'Request Sent' : 'Send Request';
   const isButtonDisabled = hasUserSentRequest; 
     const handleViewClick = () => {
         // Navigate to the ProjectInfo page, passing the entire projectData object
@@ -96,6 +96,19 @@ const ProjectCard = ({
    
       
                 </button>
+                {/* <button
+    className="send-request-button"
+    onClick={() => 
+        onSendRequest(projectId)
+    }
+    disabled={isButtonDisabled} 
+    style={{ 
+        backgroundColor: isButtonDisabled ? '#ccc' : '#2563eb',
+        cursor: isButtonDisabled ? 'not-allowed' : 'pointer' 
+    }}
+>
+    {buttonText} 
+</button> */}
             </div>
         </div>
     );

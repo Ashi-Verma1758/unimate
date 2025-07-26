@@ -117,6 +117,9 @@ body {
 }
 .badge.green { background: green; }
 .badge.blue { background: #2563eb; }
+.badge.yellow {
+  background: #ffc107;}
+
 
 .skills-interests {
   display: flex;
@@ -207,4 +210,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.ptitle{
+  margin-top: 2rem;
+}
+.view-btn{
+ color: #2563eb;
+
+ padding:4px 8px;
+}
+
+.view-btn:hover{
+  background-color: #1559ea;
+  color:white;
+  border-radius: 10px;
 }
