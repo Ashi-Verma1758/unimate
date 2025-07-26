@@ -29,7 +29,7 @@ function App() {
     const [loadingProjects, setLoadingProjects] = useState(true);
     const [projectsError, setProjectsError] = useState(null);
 
-    const [selectedConversationId, setSelectedConversationId] = useState(null);
+    // const [selectedConversationId, setSelectedConversationId] = useState(null);
 
     // Function to fetch all projects (can be called to refresh data)
     const fetchAllProjectsData = async () => {
@@ -108,7 +108,7 @@ function App() {
                                 projectPosts={projectPosts} // Pass the consolidated state
                                 loadingProjects={loadingProjects} // Pass the consolidated state
                                 projectsError={projectsError} // Pass the consolidated state
-                                setSelectedConversationId={setSelectedConversationId}
+                                // setSelectedConversationId={setSelectedConversationId}
                                 backendUrl={backendUrl}
                             />
                         }
@@ -121,7 +121,7 @@ function App() {
                                 loadingProjects={loadingProjects}
                                 projectsError={projectsError}
                                 backendUrl={backendUrl}
-                                setSelectedConversationId={setSelectedConversationId}
+                                // setSelectedConversationId={setSelectedConversationId}
                             />
                         }
                     />
@@ -149,7 +149,9 @@ function App() {
 
                     <Route
                         path="/chat"
-                        element={<ChatWindow selectedConversationId={selectedConversationId} />}
+                        element={<ChatWindow 
+                            // selectedConversationId={selectedConversationId}
+                             />}
                     />
                 </Routes>
             </Router>

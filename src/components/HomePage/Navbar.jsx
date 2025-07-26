@@ -54,7 +54,7 @@ const Navbar = () => {
               <div className="navbar-links">
                 {/* <a href="/HomePage"><Home size={20} /> <span>Home</span></a> */}
                 <a href="/Find-Teammates"><UserSearch size={20} /> <span>Find Teammates</span></a>
-                <a href="#"><MessageCircle size={20} /> <span>Chat</span></a>
+                <a href="/chat"><MessageCircle size={20} /> <span>Chat</span></a>
 
                 <a href="/Team"><Users size={20} /> <span>Teams</span></a>
                 <a href="#"><Info size={20} /> <span>About Us</span></a>
