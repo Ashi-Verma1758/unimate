@@ -1,0 +1,27 @@
+.contair{
+    width: 40vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 2px solid rgb(246, 239, 239);
+    margin: 30vw;
+    margin-top: 5vw;
+    padding: 4rem;
+    box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+    transform: translateY(-2px);
+
+}
+.contair h2 {
+    margin-bottom: 2rem;
+}
+.contair p {
+    margin-bottom: 2rem;
+}
+.divgap{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+.sendi-btn{
+    width: 10vw;
+}

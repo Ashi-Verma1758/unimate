@@ -168,22 +168,20 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
     }
 
     try {
-        console.log("CreatePost: Attempting to send project data to backend:", dataToSend); // DEBUG LOG
-        const res = await axios.post(`${backendUrl}/api/projects`, dataToSend, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+    const res = await axios.post(`${backendUrl}/api/projects`, dataToSend, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
 
-        alert(res.data.message || 'Project created successfully!');
-        console.log("CreatePost: Project created successfully. Response:", res.data); // DEBUG LOG
+    // Instead of alert()
+    navigate('/success', { state: { message: res.data.message || 'Project created successfully!' } });
 
-        // --- Navigate to HomePage and trigger refresh ---
-        // This will now happen ONLY after successful database submission
-        navigate('/HomePage', { state: { refreshHomePage: true } });
+} catch (err) {
+    console.error('CreatePost: Error creating project:', err.response?.data || err);
 
-    } catch (err) {
-        console.error('CreatePost: Error creating project:', err.response?.data || err); // DEBUG LOG
-        alert(err.response?.data?.message || 'Failed to create project. Please check your inputs.');
-    }
+    // Instead of alert()
+    navigate('/error', { state: { error: err.response?.data?.message || 'Failed to create project.' } });
+}
+
 };
     const handleCancel = () => {
         setProjectData({

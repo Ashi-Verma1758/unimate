@@ -17,6 +17,8 @@ import ProjectInfo from './components/ProjectInfo/ProjectInfo.jsx'; // Assuming 
 import AllProjectsPage from './components/HomePage/AllProjects.jsx'; // Assuming in src/components/HomePage/
 import TeamInvitations from './components/teamInvite/TeamInvite.jsx';
 import FindTeammates from './team.jsx';
+import SuccessPage from './dialogboxes/SuccessPage.jsx';
+import ErrorPage from './dialogboxes/ErrorPage.jsx';
 
 function App() {
 
@@ -133,6 +135,8 @@ function App() {
                             />
                         }
                     />
+                    <Route path="/success" element={<SuccessPage />} />
+                    <Route path="/error" element={<ErrorPage />} />
 
                     <Route path="/ProjectInfo" element={<ProjectInfo />} />
                     <Route path="/Team" element={<TeamInvitations />} />
