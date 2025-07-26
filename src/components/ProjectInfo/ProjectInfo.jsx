@@ -246,7 +246,7 @@ const project = currentProject; // Use currentProject for rendering
                         <div className="project-header-card">
                             <div className="project-header">
                                 <div className="author-info">
-                                    <div className="avatar">{project.author?.name?.charAt(0) || '?'}</div>
+                                    <div className="avatar">{project.author?.name?.charAt(0).toUpperCase || '?'}</div>
                                     <div className="author-details">
                                         <h3>{project.author?.name}</h3>
                                         <p>{project.author?.university} • {project.author?.year}</p>

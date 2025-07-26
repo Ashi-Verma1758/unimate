@@ -19,6 +19,7 @@ import TeamInvitations from './components/teamInvite/TeamInvite.jsx';
 import FindTeammates from './team.jsx';
 import SuccessPage from './dialogboxes/SuccessPage.jsx';
 import ErrorPage from './dialogboxes/ErrorPage.jsx';
+import StudentProfile from './Profile/profile.jsx';
 
 function App() {
 
@@ -120,6 +121,8 @@ let currentUserId = null;
                     <Route path="/" element={<HeroSection />} />
                     <Route path="/signup" element={<CreateAccount />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/profile" element={<StudentProfile />} />
+
 
                     <Route
                         path="/homepage"
