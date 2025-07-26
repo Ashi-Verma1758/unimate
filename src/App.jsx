@@ -142,6 +142,8 @@ function App() {
                     <Route path="/Team" element={<TeamInvitations />} />
 
                     <Route path="/all-invitations" element={<TeamInvitations />} />
+                    <Route path="/Find-Teammates" element={<FindTeammates />} />
+
 
 
 
