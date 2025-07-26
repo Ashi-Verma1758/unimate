@@ -323,9 +323,9 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
                             {projectData.requiredSkills.map((skill, index) => (
                                 <span key={index} className="skill-tag">
                                     {skill}
-                                    <button type="button" onClick={() => handleRemoveSkill('requiredSkills', skill)} className="remove-skill-btn">
+                                    <span  onClick={() => handleRemoveSkill('requiredSkills', skill)} className="remove-skill-btn">
                                         &times;
-                                    </button>
+                                    </span>
                                 </span>
                             ))}
                         </div>
@@ -351,9 +351,9 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
                             {projectData.niceToHaveSkills.map((skill, index) => (
                                 <span key={index} className="skill-tag">
                                     {skill}
-                                    <button type="button" onClick={() => handleRemoveSkill('niceToHaveSkills', skill)} className="remove-skill-btn">
+                                    <span type="button" onClick={() => handleRemoveSkill('niceToHaveSkills', skill)} className="remove-skill-btn">
                                         &times;
-                                    </button>
+                                    </span>
                                 </span>
                             ))}
                         </div>

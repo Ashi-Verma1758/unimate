@@ -56,7 +56,7 @@ const JoinRequestCard = ({
         </div>
       </div>
 
-      <div className="project-details">
+      <div className="project-detailsss">
         <h4 className="project-title-request">Requesting to join: {projectTitle}</h4>
       </div>
 

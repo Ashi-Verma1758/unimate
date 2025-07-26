@@ -64,7 +64,10 @@ const handleViewAllProjects = () => {
         if (message === null) { return; }
         try {
             const res = await axios.post(`${backendUrl}/api/projects/${projectId}/join`, { message }, { headers: { Authorization: `Bearer ${token}` } });
-            alert(res.data.message || 'Join request sent successfully!');
+            navigate('/success', {
+  state: { message: res.data.message || 'Join request sent successfully!' }
+});
+
             // You might want to refresh joinRequests or project info here if the status changes immediately
          setProjectPosts(prevPosts =>
         prevPosts.map(post =>
@@ -74,10 +77,13 @@ const handleViewAllProjects = () => {
         )
       );
         } catch (err) {
+
       console.error('Error sending join request:', err);
       // If the error is 'You have already requested to join this project', update UI too
       if (err.response?.status === 400 && err.response?.data?.message === 'You have already requested to join this project') {
-        alert(err.response.data.message);
+
+
+        
         // Even if backend caught it, update frontend flag to disable button
         setProjectPosts(prevPosts =>
           prevPosts.map(post =>
@@ -87,7 +93,9 @@ const handleViewAllProjects = () => {
           )
         );
       } else {
-        alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
+navigate('/error', {
+  state: { message: err.response?.data?.message || `Failed to ${status} invitation.` }
+});
       }
     }
   };
@@ -98,7 +106,10 @@ const handleViewAllProjects = () => {
         if (!token) { alert('Authentication required to respond to invitation.'); return; }
         try {
             const res = await axios.put(`${backendUrl}/api/invites/respond/${projectId}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
-            alert(res.data.message || `Invitation ${status} successfully!`);
+           navigate('/success', {
+  state: { message: res.data.message || 'Join request sent successfully!' }
+});
+;
             // Update invitations list on successful response
             setTeamInvitations(prevInvitations => prevInvitations.filter(invite => invite.projectId !== projectId));
             if (status === 'accepted') {
@@ -114,7 +125,10 @@ const handleViewAllProjects = () => {
             }
         } catch (err) {
             console.error(`Error ${status} invitation:`, err);
-            alert(err.response?.data?.message || `Failed to ${status} invitation. Please try again.`);
+            navigate('/error', {
+  state: { message: err.response?.data?.message || `Failed to ${status} invitation.` }
+});
+
         }
     };
 
@@ -127,12 +141,18 @@ const handleViewAllProjects = () => {
             // const userIdToRespond = requestToRespond?.requesterDetails?._id;
             if (!userIdToRespond) { alert('Could not find user associated with this request for backend processing.'); return; }
             const res = await axios.patch(`${backendUrl}/api/projects/${projectId}/requests/${requestId}/respond/${userIdToRespond}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
-            alert(res.data.message || `Request ${status} successfully!`);
+            navigate('/success', {
+  state: { message: res.data.message || 'Join request sent successfully!' }
+});
+
             // Update join requests list on successful response
             setJoinRequests(prevRequests => prevRequests.filter(req => req.requestId !== requestId));
         } catch (err) {
             console.error(`Error ${status} request:`, err);
-            alert(err.response?.data?.message || `Failed to ${status} request. Please try again.`);
+            navigate('/error', {
+  state: { message: err.response?.data?.message || `Failed to ${status} invitation.` }
+});
+
         }
     };
 
