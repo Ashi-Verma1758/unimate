@@ -41,11 +41,30 @@ function App() {
             const token = localStorage.getItem('accessToken');
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             const res = await axios.get(`${backendUrl}/api/projects`, config);
+let currentUserId = null;
+    if(token) {
+        try {
+            // Decode JWT payload for UI check (NOT for security)
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            currentUserId = decodedToken.id;
+        } catch (e) {
+            console.error("App.js: Failed to decode token for UI check:", e);
+            // Handle token decode error, maybe log out or clear token if invalid
+        }
+    }
 
             // Ensure createdBy is populated in your backend's getAllProjects controller
             // for author details on frontend.
-            const formattedProjects = res.data.map(project => ({
-                id: project._id,
+            // const formattedProjects = res.data.map(project => ({
+            //     id: project._id,
+             const formattedProjects = res.data.map(project => {
+        // Determine if the current user has already sent a request to this project
+        const hasUserSentRequest = currentUserId
+            ? project.joinRequests.some(req => req.user && req.user.toString() === currentUserId)
+            : false; // False if not logged in or no matching request found
+
+        return {
+           id:project._id,
                 // These details come from the populated 'createdBy' field
                 author: project.createdBy ? `${project.createdBy.firstName || ''} ${project.createdBy.lastName || ''}`.trim() : 'Unknown User',
                 university: project.createdBy?.university || 'N/A',
@@ -55,8 +74,9 @@ function App() {
                 technologies: project.requiredSkills, // Using requiredSkills for display
                 responseCount: project.joinRequests?.length || 0, // Use safe access
                 avatar: project.createdBy?.avatar || null,
+               hasUserSentRequest:hasUserSentRequest,
                 fullProjectData: project, // Pass the raw backend object for ProjectInfo
-            }));
+            }});
             setProjectPosts(formattedProjects);
             console.log('App.js: Projects fetched successfully. Count:', formattedProjects.length);
         } catch (err) {
@@ -105,6 +125,7 @@ function App() {
                         path="/homepage"
                         element={
                             <HomePage
+                                setProjectPosts={setProjectPosts}
                                 projectPosts={projectPosts} // Pass the consolidated state
                                 loadingProjects={loadingProjects} // Pass the consolidated state
                                 projectsError={projectsError} // Pass the consolidated state
@@ -120,6 +141,7 @@ function App() {
                                 projectPosts={projectPosts} // Pass the consolidated state
                                 loadingProjects={loadingProjects}
                                 projectsError={projectsError}
+                                setProjectPosts={setProjectPosts}
                                 backendUrl={backendUrl}
                                 // setSelectedConversationId={setSelectedConversationId}
                             />
@@ -138,7 +160,9 @@ function App() {
                     <Route path="/success" element={<SuccessPage />} />
                     <Route path="/error" element={<ErrorPage />} />
 
-                    <Route path="/ProjectInfo" element={<ProjectInfo />} />
+                    <Route path="/ProjectInfo"
+                   element={<ProjectInfo backendUrl={backendUrl} />}
+                   />
                     <Route path="/Team" element={<TeamInvitations />} />
 
                     <Route path="/all-invitations" element={<TeamInvitations />} />
