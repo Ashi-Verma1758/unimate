@@ -1,6 +1,6 @@
 import React from "react";
 import "./TeamInvite.css";
-
+import Navbar from "../HomePage/Navbar";
 const invitations = [
   {
     id: 1,
@@ -36,7 +36,9 @@ const invitations = [
 
 export default function TeamInvitations() {
   return (
-    <div className="team-container">
+    <>
+    <Navbar/>
+    <div className="team-containesr">
       <h1>Team Invitations</h1>
       <p>Manage your team invitations and collaboration requests</p>
 
@@ -88,5 +90,7 @@ export default function TeamInvitations() {
       ))}
       </div>
     </div>
+    </>
   );
+  
 }

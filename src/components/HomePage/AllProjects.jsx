@@ -41,9 +41,9 @@ const AllProjectsPage = ({
 
             <div className="all-projects-container">
                 <div className="all-projects-header">
-                    <button onClick={() => navigate(-1)} className="back-button">
-                        &larr; Back to Home
-                    </button>
+                    <div onClick={() => navigate(-1)} className="back-button ppp">
+                      <span> &larr; Back to Home</span> 
+                    </div>
                     <h1 className="page-title">All Project Posts</h1>
                 </div>
 

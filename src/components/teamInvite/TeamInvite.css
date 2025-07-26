@@ -1,3 +1,13 @@
+.team-containesr{
+  width: 80vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin:10vw;
+  margin-top: 5vw;
+
+}
 .team-invitations {
   max-width: 800px;
   margin: 40px auto;
@@ -179,4 +189,29 @@ h3 {
   padding: 8px 18px;
   border-radius: 6px;
   cursor: pointer;
+}
+@media (max-width:450px) {
+  .cardss{
+    width: 90vw;
+  }
+  .actions{
+    font-size: 12px;
+    /* width: 100vw; */
+  }
+  .accept{
+    width: 30vw;
+    height: auto;
+  }
+   .view{
+    width: 30vw;
+    height: auto;
+
+  }
+   .decline{
+    width: 30vw;
+    height: auto;
+
+  }
+  
+  
 }

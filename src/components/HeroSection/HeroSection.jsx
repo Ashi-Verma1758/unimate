@@ -40,7 +40,7 @@ const HeroSection = () =>{
       <h2>Everything you need to succeed together</h2>
       <p>From finding the perfect teammate to managing your next big project, Unimate<br/> provides all the tools you need for successful collaboration.</p>
       <br/><br/>
-      <div className="cards" ref={cardsRef}>
+      <div className="cardu" ref={cardsRef}>
         <div className="card">
           <Users className="icons"/>
           <span className="head">Team Building</span>

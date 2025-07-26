@@ -137,7 +137,8 @@ function App() {
                     <Route path="/ProjectInfo" element={<ProjectInfo />} />
                     <Route path="/Team" element={<TeamInvitations />} />
 
-                    
+                    <Route path="/all-invitations" element={<TeamInvitations />} />
+
 
 
                     <Route

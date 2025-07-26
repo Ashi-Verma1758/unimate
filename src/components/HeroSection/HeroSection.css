@@ -45,7 +45,7 @@ img{
 .part2{
   margin-top: 6rem;
 }
-.cards{
+.cardu{
   display: flex;
   flex-direction: row;
   gap:2rem;

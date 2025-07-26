@@ -52,6 +52,10 @@ const location=useLocation();
 const handleViewAllProjects = () => {
         navigate('/all-projects');
     };
+    const handleViewAllInvitations = () => {
+    navigate('/all-invitations');
+};
+
     const handleSendJoinRequest = async (projectId) => {
         const token = localStorage.getItem('accessToken');
         if (!token) { alert('You must be logged in to send a join request.'); return; }
@@ -353,7 +357,7 @@ useEffect(() => {
                                     ))
                                 )}
                             </div>
-                            <button className="view-all-invitations">View All Invitations</button>
+                            <button className="view-all-invitations" onClick={handleViewAllInvitations}>View All Invitations</button>
                         </div>
                     </div>
                 </div>
