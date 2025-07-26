@@ -63,18 +63,22 @@
   grid-template-columns: 1fr;
   gap: 2rem;
 }
-.view-all-button {
+.view-all-buttonlala {
   color: #2563eb;
   background: none;
   border: none;
-  font-weight: 800;
+  font-weight: 500;
   /* font-size: 1.5rem; */
   cursor: pointer;
   transition: color 0.2s ease;
-  font-size: 1.5rem;
-  margin-top: 2.5rem;
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-right: 2.5rem;
 }
-
+.view-all-buttonlala:hover{
+  color: blue;
+}
 
 @media (min-width: 1024px) {
   .homepage-grid {

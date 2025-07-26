@@ -285,7 +285,7 @@ useEffect(() => {
                         </div>
                         {selectedMainTab === 'recentPosts' && (
                             <div className="view-all-button-container">
-                                <button className="view-all-button" onClick={handleViewAllProjects}>View all Projects</button>
+                                <span className="view-all-buttonlala" onClick={handleViewAllProjects}>View all Projects</span>
                             </div>
                         )}
 
