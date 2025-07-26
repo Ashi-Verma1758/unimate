@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axios from 'axios';
 import {
     ArrowLeft,
     Bookmark,
@@ -19,11 +20,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 
 export default function ProjectInfo() {
+     const backendUrl = 'http://localhost:8000'; // Make sure this matches your backend
     const location = useLocation();
     const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
-    const [showJoinDialog, setShowJoinDialog] = useState(false);
-    const [joinMessage, setJoinMessage] = useState('');
+    // const [showJoinDialog, setShowJoinDialog] = useState(false);
+    // const [joinMessage, setJoinMessage] = useState('');
+     const [joinRequests, setJoinRequests] = useState([]);
+        const [joinRequestsLoading, setJoinRequestsLoading] = useState(true);
+        const [joinRequestsError, setJoinRequestsError] = useState(null);
 
     // FIX: Correctly retrieve the passed data using the 'project' key
     const passedProjectData = location.state?.project; // Changed from 'fullProjectData' to 'project'
@@ -56,11 +61,15 @@ export default function ProjectInfo() {
         currentTeam: [],
         githubRepo: '',
         figmaLink: '',
-        demoLink: ''
+        demoLink: '',
+        hasUserSentRequest:false
     };
 
     // Determine which project data to use: passed data or default
-    const project = passedProjectData ? {
+    // const project = passedProjectData ? {
+    const [currentProject, setCurrentProject] = useState(() => {
+        if (passedProjectData) {
+            return {
         title: passedProjectData.title,
         description: passedProjectData.description,
         domain: passedProjectData.domain,
@@ -108,17 +117,103 @@ export default function ProjectInfo() {
 
         githubRepo: passedProjectData.githubRepo,
         figmaLink: passedProjectData.figmaLink,
-        demoLink: passedProjectData.demoLink
-    } : defaultProject;
+        demoLink: passedProjectData.demoLink,
+          hasUserSentRequest: passedProjectData.hasUserSentRequest
+    } ;
+ }
+ return defaultProject;
+});
+ useEffect(() => {
+        if (passedProjectData) {
+            setCurrentProject({
+                id: passedProjectData.id,
+                title: passedProjectData.title,
+                description: passedProjectData.description,
+                domain: passedProjectData.domain,
+                projectType: passedProjectData.projectType,
+                status: 'Recruiting',
+                postedDate: passedProjectData.createdAt ? moment(passedProjectData.createdAt).fromNow() : 'Just now',
+                timeCommitment: passedProjectData.timeCommitment,
+                duration: passedProjectData.projectDuration,
+                teamSize: {
+                    current: passedProjectData.currentTeamCount || (passedProjectData.createdBy ? 1 : 0),
+                    target: parseInt(passedProjectData.teamSize) || 1
+                },
+                location: passedProjectData.remote ? `${passedProjectData.location} (Remote Friendly)` : passedProjectData.location,
+                startDate: passedProjectData.startDate ? moment(passedProjectData.startDate).format('YYYY-MM-DD') : 'N/A',
+                deadline: passedProjectData.applicationDeadline ? moment(passedProjectData.applicationDeadline).format('YYYY-MM-DD') : 'N/A',
+                responses: passedProjectData.responseCount || 0,
+                views: passedProjectData.views || 0,
+                author: {
+                    name: passedProjectData.author,
+                    university: passedProjectData.university,
+                    year: passedProjectData.createdBy?.academicYear || 'N/A',
+                    rating: passedProjectData.createdBy?.rating || 0,
+                    projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
+                    avatar: passedProjectData.avatar
+                },
+                requiredSkills: (passedProjectData.requiredSkills || []).map(skill => ({ skill, level: 'Any', required: true }))
+                    .concat((passedProjectData.niceToHaveSkills || []).map(skill => ({ skill, level: 'Any', required: false }))),
+                currentTeam: passedProjectData.currentTeam ? passedProjectData.currentTeam.map(member => ({
+                    name: member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim(),
+                    role: 'Member',
+                    skills: member.skills || [],
+                    avatar: member.avatar || null
+                })) : (passedProjectData.createdBy ? [{
+                    name: `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim(),
+                    role: 'Project Lead',
+                    skills: passedProjectData.createdBy.skills || [],
+                    avatar: passedProjectData.createdBy.avatar || null
+                }] : []),
+                githubRepo: passedProjectData.githubRepo,
+                figmaLink: passedProjectData.figmaLink,
+                demoLink: passedProjectData.demoLink,
+                hasUserSentRequest: passedProjectData.hasUserSentRequest
+            });
+        }
+    }, [passedProjectData]);
 
-    // DEBUGGING: Log the final 'project' object used for rendering
-    console.log('ProjectInfo: Final project object used for rendering:', project);
+const project = currentProject; // Use currentProject for rendering
 
-    const handleJoinRequest = () => {
-        alert('Join request sent!'); // This needs actual API call logic
-        setShowJoinDialog(false);
-        setJoinMessage('');
-    };
+    useEffect(() => {
+        console.log('ProjectInfo: Final project object used for rendering:', project);
+    }, [project]);
+
+
+    const handleJoinRequest =async () => {
+        // alert('Join request sent!'); // This needs actual API call logic
+        // setShowJoinDialog(false);
+        // setJoinMessage('');
+    // };
+    const token = localStorage.getItem('accessToken');
+        if (!token) { alert('You must be logged in to send a join request.'); return; }
+        const message = prompt('Optional: Add a message with your join request:');
+        if (message === null) { return; }
+        try {
+           const res = await axios.post(`${backendUrl}/api/projects/${project.id}/join`, { message }, { headers: { Authorization: `Bearer ${token}` } });
+            alert(res.data.message || 'Join request sent successfully!');
+
+            // Update the local `currentProject` state to reflect the sent request
+            setCurrentProject(prevProject => ({
+                ...prevProject,
+                hasUserSentRequest: true,
+                responses: prevProject.responses + 1 // Increment response count locally
+            }));
+
+        }catch (err) {
+            console.error('Error sending join request:', err);
+            if (err.response?.status === 400 && err.response?.data?.message === 'You have already requested to join this project') {
+                alert(err.response.data.message);
+                // Even if backend caught it, update frontend flag to disable button
+                setCurrentProject(prevProject => ({
+                    ...prevProject,
+                    hasUserSentRequest: true // Set flag to disable the button
+                }));
+            } else {
+                alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
+      }
+    }
+  };
 
     const handleBookmark = () => {
         setIsBookmarked(!isBookmarked);
@@ -274,10 +369,12 @@ export default function ProjectInfo() {
                             </div>
                             <button
                                 className="join-btn"
-                                onClick={() => setShowJoinDialog(true)}
+                                // onClick={() => setShowJoinDialog(true)}
+                                onClick={handleJoinRequest} // Directly call the handler now
+                                disabled={project.hasUserSentRequest}
                             >
                                 <Send size={20} />
-                                Send Join Request
+                                {project.hasUserSentRequest ? 'Request Sent' : 'Send Join Request'}
                             </button>
                             <button className="chat-btn">
                                 <MessageCircle size={20} />
@@ -329,25 +426,10 @@ export default function ProjectInfo() {
                     </div>
                 </div>
 
-                {showJoinDialog && (
-                    <div className="dialog-overlay" onClick={() => setShowJoinDialog(false)}>
-                        <div className="dialog" onClick={(e) => e.stopPropagation()}>
-                            <h3>Join Request</h3>
-                            <p>Tell the team why you'd be a great fit for this project.</p>
-                            <textarea
-                                placeholder="Hi! I'm interested in joining your project because..."
-                                value={joinMessage}
-                                onChange={(e) => setJoinMessage(e.target.value)}
-                                rows={4}
-                            />
-                            <div className="dialog-actions">
-                                <button onClick={handleJoinRequest} className="send-btn">Send Request</button>
-                                <button onClick={() => setShowJoinDialog(false)} className="cancel-btn">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+               
+               
             </div>
         </div>
     );
+
 }

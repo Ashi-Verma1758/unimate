@@ -19,6 +19,7 @@ import JoinRequestCard from './JoinRequestCard.jsx';
 
 const HomePage = ({
     setSelectedConversationId,
+    setProjectPosts,
     projectPosts,      // Received from App.js's consolidated state
     loadingProjects,   // Received from App.js's consolidated state
     projectsError,     // Received from App.js's consolidated state
@@ -65,11 +66,32 @@ const handleViewAllProjects = () => {
             const res = await axios.post(`${backendUrl}/api/projects/${projectId}/join`, { message }, { headers: { Authorization: `Bearer ${token}` } });
             alert(res.data.message || 'Join request sent successfully!');
             // You might want to refresh joinRequests or project info here if the status changes immediately
+         setProjectPosts(prevPosts =>
+        prevPosts.map(post =>
+          post.id === projectId
+            ? { ...post, hasUserSentRequest: true, responseCount: post.responseCount + 1 } // Add flag, increment count
+            : post
+        )
+      );
         } catch (err) {
-            console.error('Error sending join request:', err);
-            alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
-        }
-    };
+      console.error('Error sending join request:', err);
+      // If the error is 'You have already requested to join this project', update UI too
+      if (err.response?.status === 400 && err.response?.data?.message === 'You have already requested to join this project') {
+        alert(err.response.data.message);
+        // Even if backend caught it, update frontend flag to disable button
+        setProjectPosts(prevPosts =>
+          prevPosts.map(post =>
+            post.id === projectId
+              ? { ...post, hasUserSentRequest: true } // Set flag to disable the button
+              : post
+          )
+        );
+      } else {
+        alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
+      }
+    }
+  };
+
 
     const handleRespondToInvitation = async (projectId, fromUserId, status) => {
         const token = localStorage.getItem('accessToken');
@@ -120,6 +142,53 @@ const handleViewAllProjects = () => {
    // 2. Main fetching logic — runs only when refreshTrigger changes
 useEffect(() => {
     const token = localStorage.getItem('accessToken');
+
+    // const fetchProjectPosts = async () => {
+    //   setProjectsLoading(true);
+    //   ProjectsError(null);
+    //   try {
+    //     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    //     const res = await axios.get(`${backendUrl}/api/projects`, { headers }); // Calls getAllProjects
+
+    //     // To determine hasUserSentRequest, we need the current user's ID.
+    //     // Decode JWT client-side for UI check (not for security).
+    //     let currentUserId = null;
+    //     if(token) {
+    //         try {
+    //             const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload (base64 decode)
+    //             currentUserId = decodedToken.id;
+    //         } catch (e) {
+    //             console.error("Failed to decode token for UI check (HomePage):", e);
+    //         }
+    //     }
+
+    //     const formattedProjects = res.data.map(project => {
+    //       // Determine if the current user has already sent a request to this project
+    //       const hasUserSentRequest = currentUserId
+    //         ? project.joinRequests.some(req => req.user && req.user.toString() === currentUserId)
+    //         : false; // False if not logged in or no matching request found
+
+    //       return {
+    //         id: project._id,
+    //         author: project.createdBy ? (project.createdBy.name || `${project.createdBy.firstName || ''} ${project.createdBy.lastName || ''}`).trim() : 'Unknown',
+    //         university: project.createdBy ? project.createdBy.university : 'N/A',
+    //         timeAgo: moment(project.createdAt).fromNow(),
+    //         title: project.title,
+    //         description: project.description,
+    //         technologies: project.requiredSkills || [],
+    //         responseCount: project.joinRequests ? project.joinRequests.length : 0,
+    //         avatar: project.createdBy ? project.createdBy.avatar : null, // If you decide to include avatar
+    //         hasUserSentRequest: hasUserSentRequest, // <--- ADD THIS FLAG TO EACH PROJECT OBJECT
+    //       };
+    //     });
+    //     setProjectPosts(formattedProjects);
+    //   } catch (err) {
+    //     console.error('Error fetching project posts:', err);
+    //     setProjectsError(err.response?.data?.message || 'Failed to load projects.');
+    //   } finally {
+    //     setProjectsLoading(false);
+    //   }
+    // };
 
     const fetchDashboardSummary = async () => {
         setSummaryLoading(true);
@@ -219,6 +288,7 @@ useEffect(() => {
     };
 
     // Call all fetch functions
+    // fetchProjectPosts();
     fetchDashboardSummary();
     fetchTeamInvitations();
     fetchJoinRequests();
