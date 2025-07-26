@@ -20,6 +20,7 @@ import FindTeammates from './team.jsx';
 import SuccessPage from './dialogboxes/SuccessPage.jsx';
 import ErrorPage from './dialogboxes/ErrorPage.jsx';
 import StudentProfile from './Profile/profile.jsx';
+import EditProfile from './Profile/editProfile.jsx';
 
 function App() {
 
@@ -122,7 +123,7 @@ let currentUserId = null;
                     <Route path="/signup" element={<CreateAccount />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<StudentProfile />} />
-
+                    <Route path="/edit-profile" element={<EditProfile />} />
 
                     <Route
                         path="/homepage"

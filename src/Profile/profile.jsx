@@ -1,43 +1,81 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import './profile.css';
 
 const StudentProfile = () => {
+  const [profile, setProfile] = useState({
+    name: '',
+    major: '',
+    year: '',
+    university: '',
+    joinedDate: '',
+    totalProjects: 0,
+    completedProjects: 0,
+    inProgressProjects: 0,
+    connections: 0,
+    avatarUrl: '',
+    skills: [],
+    interests: [],
+    projects: [],
+    achievements: [],
+    reviews: []
+  });
+
+  const [loading, setLoading] = useState(true);
+  const backendUrl = "http://localhost:8000"; // Change this if needed
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const res = await axios.get(`${backendUrl}/api/users/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProfile(res.data ?? {});
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <div className="container">
 
       {/* Profile Header */}
       <div className="profile-header">
-        <img src="https://via.placeholder.com/80" className="avatar" alt="avatar" />
+        {profile.avatarUrl ? (
+          <img src={profile.avatarUrl} className="avatar" alt="avatar" />
+        ) : (
+          <div className="avatar-placeholder">
+            {profile.name?.charAt(0).toUpperCase()}
+          </div>
+        )}
         <div className="info">
-          <h2>John Doe</h2>
-          <p>Computer Science • Junior</p>
-          <p>🎓 MIT • 📍 Joined</p>
+          <h2>{profile.name}</h2>
+          <p>{profile.major} • {profile.year}</p>
+          <p>🎓 {profile.university} • 📍 {profile.joinedDate}</p>
           <div className="meta">
-            <span>⭐ 0 (0 projects)</span> • 
-            <span>👥 0 connections</span>
+            <span>({profile.totalProjects} projects)</span> •
+            <span>👥 {profile.connections} connections</span>
           </div>
         </div>
-        <button className="edit-btn">✏ Edit Profile</button>
+        <Link to="/edit-profile" className="edit-btn">✏ Edit Profile</Link>
       </div>
 
       {/* Stats */}
       <div className="stats">
-        <div className="stat">
-          <strong>0</strong>
-          <p>Total Projects</p>
-        </div>
-        <div className="stat">
-          <strong className="green">0</strong>
-          <p>Completed</p>
-        </div>
-        <div className="stat">
-          <strong className="orange">0</strong>
-          <p>In Progress</p>
-        </div>
-        <div className="stat">
-          <strong className="blue">0</strong>
-          <p>Avg Rating</p>
-        </div>
+        <div className="stat"><strong>{profile.totalProjects}</strong><p>Total Projects</p></div>
+        <div className="stat"><strong className="green">{profile.completedProjects}</strong><p>Completed</p></div>
+        <div className="stat"><strong className="orange">{profile.inProgressProjects}</strong><p>In Progress</p></div>
       </div>
 
       {/* Content */}
@@ -45,18 +83,14 @@ const StudentProfile = () => {
 
         {/* Projects */}
         <div className="projects">
-          <div className="project-card">
-            <img src="https://via.placeholder.com/300x150" alt="project" />
-            <div className="badge blue">In Progress</div>
-            <p><strong>AI Study Assistant</strong></p>
-            <p>Project Lead</p>
-          </div>
-          <div className="project-card">
-            <img src="https://via.placeholder.com/300x150" alt="project" />
-            <div className="badge green">Completed</div>
-            <p><strong>Mental Health Platform</strong></p>
-            <p>Full-Stack Developer</p>
-          </div>
+          {Array.isArray(profile.projects) && profile.projects.map((project, idx) => (
+            <div className="project-card" key={idx}>
+              <img src={project.image || "https://via.placeholder.com/300x150"} alt="project" />
+              <div className={`badge ${project.status === "Completed" ? "green" : "blue"}`}>{project.status}</div>
+              <p><strong>{project.name}</strong></p>
+              <p>{project.role}</p>
+            </div>
+          ))}
         </div>
 
         {/* Skills & Interests */}
@@ -64,71 +98,56 @@ const StudentProfile = () => {
           <div className="skills-card">
             <h3>Technical Skills</h3>
             <p>Programming languages and technologies</p>
-            <span className="tag">React</span>
-            <span className="tag">Python</span>
-            <span className="tag">Machine Learning</span>
+            {Array.isArray(profile.skills) && profile.skills.length > 0 ? profile.skills.map((skill, i) => (
+              <span className="tag" key={i}>{skill}</span>
+            )) : <p className="no-data">No skills listed.</p>}
           </div>
+
           <div className="skills-card">
             <h3>Interests</h3>
             <p>Areas of focus and passion</p>
-            <p className="no-data">No interests listed yet.</p>
+            {Array.isArray(profile.interests) && profile.interests.length > 0 ? profile.interests.map((interest, i) => (
+              <span className="tag" key={i}>{interest}</span>
+            )) : <p className="no-data">No interests listed yet.</p>}
           </div>
         </div>
 
         {/* Achievements */}
         <div className="achievements">
-          <div className="achievement">
-            <div className="icon">🏆</div>
-            <div>
-              <strong>HackMIT 2024 Winner</strong>
-              <p>First place in the AI/ML track</p>
+          {Array.isArray(profile.achievements) && profile.achievements.map((achieve, i) => (
+            <div className="achievement" key={i}>
+              <div className="icon">{achieve.icon}</div>
+              <div>
+                <strong>{achieve.title}</strong>
+                <p>{achieve.description}</p>
+              </div>
+              <span>{achieve.date}</span>
             </div>
-            <span>October 2024</span>
-          </div>
-          <div className="achievement">
-            <div className="icon">💻</div>
-            <div>
-              <strong>Google Summer of Code</strong>
-              <p>Contributed to TensorFlow project</p>
-            </div>
-            <span>Summer 2024</span>
-          </div>
-          <div className="achievement">
-            <div className="icon">🎓</div>
-            <div>
-              <strong>Stanford CS Scholarship</strong>
-              <p>Merit-based scholarship recipient</p>
-            </div>
-            <span>September 2023</span>
-          </div>
+          ))}
         </div>
 
         {/* Reviews */}
         <div className="reviews">
-          <div className="review">
-            <img src="https://via.placeholder.com/40" alt="reviewer" />
-            <div>
-              <strong>Michael Johnson</strong>
-              <p>Mental Health Platform</p>
-              <p>Sarah was an incredible team lead. Her technical skills and leadership made our project a huge success.</p>
+          {Array.isArray(profile.reviews) && profile.reviews.map((review, i) => (
+            <div className="review" key={i}>
+              {review.reviewerAvatar ? (
+                <img src={review.reviewerAvatar} alt="reviewer" />
+              ) : (
+                <div className="reviewer-placeholder">
+                  {review.reviewerName?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <strong>{review.reviewerName}</strong>
+                <p>{review.project}</p>
+                <p>{review.comment}</p>
+              </div>
+              <span>
+                {'⭐'.repeat(review.rating)}<br />
+                <small>{review.date}</small>
+              </span>
             </div>
-            <span>
-              ⭐⭐⭐⭐⭐<br />
-              <small>December 2024</small>
-            </span>
-          </div>
-          <div className="review">
-            <img src="https://via.placeholder.com/40" alt="reviewer" />
-            <div>
-              <strong>Emma Wilson</strong>
-              <p>Campus Sustainability Tracker</p>
-              <p>Sarah's UI/UX work was outstanding and really elevated our app.</p>
-            </div>
-            <span>
-              ⭐⭐⭐⭐⭐<br />
-              <small>June 2024</small>
-            </span>
-          </div>
+          ))}
         </div>
       </div>
     </div>
