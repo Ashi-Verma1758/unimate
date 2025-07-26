@@ -72,6 +72,10 @@ img{
 
 
 }
+.card:hover{
+   box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
+}
 .icons{
   height: auto;
   width: 4.5rem;
