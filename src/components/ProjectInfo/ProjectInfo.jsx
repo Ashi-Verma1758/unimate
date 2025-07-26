@@ -18,17 +18,17 @@ import './ProjectInfo.css';
 import Navbar from '../HomePage/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
+const backendUrl = 'http://localhost:8000';
 
 export default function ProjectInfo() {
-     const backendUrl = 'http://localhost:8000'; // Make sure this matches your backend
     const location = useLocation();
     const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
     // const [showJoinDialog, setShowJoinDialog] = useState(false);
     // const [joinMessage, setJoinMessage] = useState('');
-     const [joinRequests, setJoinRequests] = useState([]);
-        const [joinRequestsLoading, setJoinRequestsLoading] = useState(true);
-        const [joinRequestsError, setJoinRequestsError] = useState(null);
+        // const [joinRequests, setJoinRequests] = useState([]);
+        // const [joinRequestsLoading, setJoinRequestsLoading] = useState(true);
+        // const [joinRequestsError, setJoinRequestsError] = useState(null);
 
     // FIX: Correctly retrieve the passed data using the 'project' key
     const passedProjectData = location.state?.project; // Changed from 'fullProjectData' to 'project'
@@ -70,7 +70,8 @@ export default function ProjectInfo() {
     const [currentProject, setCurrentProject] = useState(() => {
         if (passedProjectData) {
             return {
-        title: passedProjectData.title,
+         id: passedProjectData._id || passedProjectData.id, 
+                title: passedProjectData.title,
         description: passedProjectData.description,
         domain: passedProjectData.domain,
         projectType: passedProjectData.projectType,
@@ -126,7 +127,7 @@ export default function ProjectInfo() {
  useEffect(() => {
         if (passedProjectData) {
             setCurrentProject({
-                id: passedProjectData.id,
+               id: passedProjectData._id || passedProjectData.id,
                 title: passedProjectData.title,
                 description: passedProjectData.description,
                 domain: passedProjectData.domain,
@@ -145,12 +146,18 @@ export default function ProjectInfo() {
                 responses: passedProjectData.responseCount || 0,
                 views: passedProjectData.views || 0,
                 author: {
-                    name: passedProjectData.author,
-                    university: passedProjectData.university,
-                    year: passedProjectData.createdBy?.academicYear || 'N/A',
-                    rating: passedProjectData.createdBy?.rating || 0,
-                    projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
-                    avatar: passedProjectData.avatar
+                    // name: passedProjectData.author,
+                    // university: passedProjectData.university,
+                    // year: passedProjectData.createdBy?.academicYear || 'N/A',
+                    // rating: passedProjectData.createdBy?.rating || 0,
+                    // projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
+                    // avatar: passedProjectData.avatar
+                    name: passedProjectData.createdBy ? `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim() : 'Unknown',
+    university: passedProjectData.createdBy?.university || 'N/A',
+    year: passedProjectData.createdBy?.academicYear || 'N/A',
+    rating: passedProjectData.createdBy?.rating || 0,
+    projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
+    avatar: passedProjectData.createdBy?.avatar || null
                 },
                 requiredSkills: (passedProjectData.requiredSkills || []).map(skill => ({ skill, level: 'Any', required: true }))
                     .concat((passedProjectData.niceToHaveSkills || []).map(skill => ({ skill, level: 'Any', required: false }))),
