@@ -96,6 +96,10 @@ textarea {
   flex: 1;
 }
 
+.remove-skill-btn{
+      width: 2rem;
+    margin-top: -0.3rem;
+}
 .input-with-button {
   display: flex;
   align-items: center;
@@ -117,7 +121,22 @@ textarea {
   border-radius: 6px;
   cursor: pointer;
 }
+.skill-tag{
+  padding: 2px 8px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #374151;
+    /* height: 2vh; */
+    width: 6rem;
+    display: flex
+;
+    gap: 0.5rem;
+    justify-content: space-around;
+    padding-top: 0.6rem;
 
+}
 .checkbox-row {
   margin-top: -10px;
   margin-bottom: 16px;
@@ -152,4 +171,7 @@ textarea {
 .footer-buttons .publish {
   background-color: #2563eb;
   color: white;
+}
+.skills-list{
+  gap:1rem;
 }
