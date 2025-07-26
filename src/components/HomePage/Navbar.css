@@ -114,18 +114,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #c91919;
   color: white;
   border: none;
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 1rem;
   cursor: pointer;
   transition: background 0.3s;
   width: 7vw;
+  color:#374151;
 }
 
 .logout-button:hover {
-  background-color: #7a1515;
+    background-color: #c91919;
+
 }
 
 .menu-button {

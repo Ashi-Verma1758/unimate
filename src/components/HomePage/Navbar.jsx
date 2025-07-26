@@ -57,8 +57,8 @@ const Navbar = () => {
                 <a href="/chat"><MessageCircle size={20} /> <span>Chat</span></a>
 
                 <a href="/Team"><Users size={20} /> <span>Teams</span></a>
-                <a href="#"><Info size={20} /> <span>About Us</span></a>
-                <a href="#"><HelpCircle size={20} /> <span>Help</span></a>
+                <a href="#"><Info size={20} /> <span> Walkthrough</span></a>
+                {/* <a href="#"><HelpCircle size={20} /> <span>Help</span></a> */}
               </div>
             )}
           </div>
