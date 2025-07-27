@@ -1,9 +1,17 @@
 
 
-.container {
+.containier {
   max-width: 1000px;
   margin: auto;
   padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.707);
+
+}
+.heauud{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  align-self: left;
 }
 
 .profile-header {
@@ -14,6 +22,7 @@
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  /* gap:2rem; */
 }
 
 .avatar {
@@ -48,12 +57,17 @@
   text-align: center;
 }
 
-.stat {
+.staut {
   background: white;
   padding: 1rem;
   flex: 1;
   border-radius: 10px;
   box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+.staut:hover{
+  
+    box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
 }
 
 .green { color: green; }
@@ -93,7 +107,7 @@
 
 
 
-.project-card {
+.project-carrrd {
   background: white;
   padding: 0.5rem;
   border-radius: 12px;
@@ -101,11 +115,12 @@
   width: 100%;
   position: relative;
 }
-
-.project-card img {
-  width: 100%;
-  border-radius: 8px;
+.project-carrrd:hover{
+  
+    box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
 }
+
 
 .badge {
   position: absolute;

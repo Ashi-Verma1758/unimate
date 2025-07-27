@@ -59,7 +59,7 @@ const totalProjects = profile.projects?.length || 0;
   const inProgressProjects = totalProjects - completedProjects;
   return (<>
   <Navbar/>
-    <div className="container">
+    <div className="containier">
 
       {/* Profile Header */}
       <div className="profile-header">
@@ -85,14 +85,14 @@ const totalProjects = profile.projects?.length || 0;
 
       {/* Stats */}
       <div className="stats">
-        <div className="stat"><strong>{totalProjects}</strong><p>Total Projects</p></div>
-        <div className="stat"><strong className="green">{completedProjects}</strong><p>Completed</p></div>
-        <div className="stat"><strong className="orange">{inProgressProjects}</strong><p>In Progress</p></div>
+        <div className="staut"><strong>{totalProjects}</strong><p>Total Projects</p></div>
+        <div className="staut"><strong className="green">{completedProjects}</strong><p>Completed</p></div>
+        <div className="staut"><strong className="orange">{inProgressProjects}</strong><p>In Progress</p></div>
       </div>
 
       {/* Content */}
       <div className="content">
-
+<p className="heauud">PROJECTS</p>
         {/* Projects */}
         {/* <div className="projects">
           {Array.isArray(profile.projects) && profile.projects.map((project, idx) => (
@@ -106,7 +106,7 @@ const totalProjects = profile.projects?.length || 0;
         </div> */}
         <div className="projectsssss">
   {Array.isArray(profile.projects) && profile.projects.map((project) => (
-    <div className="project-card" key={project._id}>
+    <div className="project-carrrd" key={project._id}>
    
       <div className="card-content">
         <div className={`badge ${project.status === "Completed" ? 'green' : project.status === 'In Progress' 
