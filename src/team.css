@@ -31,9 +31,12 @@
   border-radius: 12px;
   box-shadow: 0 0 8px rgba(0,0,0,0.05);
   width: 60vw;
-  box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
-  transform: translateY(-2px);
+  margin-bottom: 2rem;
   padding: 2rem;
+}
+.carduu:hover{
+box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
 }
 
 .card-headerrr {

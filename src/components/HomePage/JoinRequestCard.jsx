@@ -47,10 +47,10 @@ const JoinRequestCard = ({
           </div>
         </div>
         <div className="request-actions">
-          <button className="accept-button" onClick={() => onAccept(projectId, requestId)}>
+          <button className="acceppt-button" onClick={() => onAccept(projectId, requestId)}>
             Accept
           </button>
-          <button className="decline-button" onClick={() => onDecline(projectId, requestId)}>
+          <button className="decliine-button" onClick={() => onDecline(projectId, requestId)}>
             Decline
           </button>
         </div>

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './profile.css';
-
+import Navbar from "../components/HomePage/Navbar";
 const StudentProfile = () => {
   const [profile, setProfile] = useState({
   
@@ -57,7 +57,8 @@ const StudentProfile = () => {
 const totalProjects = profile.projects?.length || 0;
   const completedProjects = profile.projects?.filter(p => p.status === 'Completed').length || 0;
   const inProgressProjects = totalProjects - completedProjects;
-  return (
+  return (<>
+  <Navbar/>
     <div className="container">
 
       {/* Profile Header */}
@@ -103,7 +104,7 @@ const totalProjects = profile.projects?.length || 0;
             </div>
           ))}
         </div> */}
-        <div className="projects">
+        <div className="projectsssss">
   {Array.isArray(profile.projects) && profile.projects.map((project) => (
     <div className="project-card" key={project._id}>
    
@@ -187,7 +188,9 @@ const totalProjects = profile.projects?.length || 0;
         </div>
       </div>
     </div>
+    </>
   );
+
 };
 
 export default StudentProfile;

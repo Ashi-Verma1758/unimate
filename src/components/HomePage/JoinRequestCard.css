@@ -11,6 +11,11 @@
   flex-direction: column;
   gap: 15px;
   font-family: Arial, sans-serif; /* Adjust to your project's font */
+  width:55vw;
+}
+.join-request-card:hover{
+   box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
+  transform: translateY(-2px);
 }
 
 .card-header {
@@ -110,8 +115,8 @@
   flex-shrink: 0; /* Prevent buttons from shrinking */
 }
 
-.accept-button,
-.decline-button {
+.acceppt-button,
+.decliine-button {
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 15px;
@@ -120,7 +125,7 @@
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
-.accept-button {
+.acceppt-button {
   background-color: #007bff; /* Primary blue */
   color: #ffffff;
   border: 1px solid #007bff;
@@ -131,14 +136,14 @@
   border-color: #0056b3;
 }
 
-.decline-button {
+.decliine-button {
   background-color: #f0f0f0;
   color: #666;
   border: 1px solid #ccc;
 }
 
-.decline-button:hover {
-  background-color: #e0e0e0;
+.decliine-button:hover {
+  background-color: rgba(239, 74, 74, 0.597);
   border-color: #bbb;
 }
 

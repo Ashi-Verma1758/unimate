@@ -109,7 +109,16 @@ textarea {
 .input-with-button input {
   flex: 1;
 }
+.joinnn-btn{
+  width: 90%;
+  margin-left: -20px;
+}
+.chattt-btn{
+  width: 90%;
+  margin-left: -20px;
 
+
+}
 .plus-btn {
   background-color: #2563eb;
   color: white;

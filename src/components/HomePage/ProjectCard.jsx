@@ -27,7 +27,7 @@ const ProjectCard = ({
     };
 
     return (
-        <div className="project-card">
+        <div className="projecct-card">
 
             <div className="project-header">
                 <div className="author-info">

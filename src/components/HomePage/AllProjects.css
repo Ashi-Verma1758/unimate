@@ -1,3 +1,4 @@
+
 .ppp{
     margin-left: 10vw;
     margin-top: 3vh;
@@ -5,11 +6,15 @@
 .page-title{
     margin-bottom: 4rem;
 }
-.all-projects-container{
+.all-projectsss-container{
     gap: 2rem;
+    width: 90vw;
+    margin: 10vw;
+    margin-top: 4vh;
+
 
 }
-.project-list{
+.projectss-list{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;

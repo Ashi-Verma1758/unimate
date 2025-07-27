@@ -443,7 +443,7 @@ useEffect(() => {
                                     ))
                                 )}
                             </div>
-                            <button className="view-all-invitations" onClick={handleViewAllInvitations}>View All Invitations</button>
+                            <span className="view-all-invitati" onClick={handleViewAllInvitations}>View All Invitations</span>
                         </div>
                     </div>
                 </div>

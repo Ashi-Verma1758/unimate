@@ -1,9 +1,4 @@
-body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #f8f9fb;
-  color: #333;
-}
+
 
 .container {
   max-width: 1000px;
@@ -86,11 +81,17 @@ body {
   background: white;
 }
 
-.projects {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+.projectsssss {
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 30px auto;
 }
+
+
+
+
 
 .project-card {
   background: white;

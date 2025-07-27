@@ -12,7 +12,7 @@ const TeamInvitationCard = ({
   onDecline
 }) => {
   return (
-    <div className="invitation-card">
+    <div className="inviuutation-card">
       <div className="invitation-header"> {/* Added a header div for better layout control */}
         {/* <div className="from-avatar">
           
@@ -23,7 +23,7 @@ const TeamInvitationCard = ({
           )}
         </div> */}
         <div className="from-details">
-          <h4 className="invitation-title">
+          <h4 className="invitation-titleee">
             {projectName}
           </h4>
           <p className="invitation-details">

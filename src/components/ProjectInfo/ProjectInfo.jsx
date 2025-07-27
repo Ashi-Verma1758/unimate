@@ -375,7 +375,7 @@ const project = currentProject; // Use currentProject for rendering
                                 <div className="start-date">Starting {project.startDate}</div>
                             </div>
                             <button
-                                className="join-btn"
+                                className="joinnn-btn"
                                 // onClick={() => setShowJoinDialog(true)}
                                 onClick={handleJoinRequest} // Directly call the handler now
                                 disabled={project.hasUserSentRequest}
@@ -383,7 +383,7 @@ const project = currentProject; // Use currentProject for rendering
                                 <Send size={20} />
                                 {project.hasUserSentRequest ? 'Request Sent' : 'Send Join Request'}
                             </button>
-                            <button className="chat-btn">
+                            <button className="chattt-btn">
                                 <MessageCircle size={20} />
                                 Chat with Team
                             </button>

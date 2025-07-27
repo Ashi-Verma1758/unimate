@@ -124,7 +124,7 @@ function CreateAccount() {
             <input type="password" name="password" placeholder="Create password" value={formData.password} onChange={handleChange} required />
             <input type="password" name="confirmPassword" placeholder="Confirm password" value={formData.confirmPassword} onChange={handleChange} required />
 
-            <button type="submit" className="submit" disabled={loading}>
+            <button type="submit" className="subbbmit" disabled={loading}>
               {loading ? 'Creating account...' : 'Create account'}
             </button>
           </form>

@@ -186,9 +186,9 @@
   gap: 1rem;
 }
 
-.view-all-invitations {
+.view-all-invitati {
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 2rem;
   color: #2563eb;
   background: none;
   border: none;
@@ -200,8 +200,8 @@
   transition: color 0.2s ease;
 }
 
-.view-all-invitations:hover {
-  color: #ffffff;
+.view-all-invitati:hover {
+  color: darkblue;
 }
 
 /* Responsive adjustments */

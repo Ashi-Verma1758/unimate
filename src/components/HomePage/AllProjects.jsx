@@ -36,18 +36,18 @@ const AllProjectsPage = ({
     };
 
     return (
-        <div className="all-projects-page">
+        <div className="all-projectsss-page">
             <Navbar />
 
-            <div className="all-projects-container">
-                <div className="all-projects-header">
+            <div className="all-projectsss-container">
+                <div className="all-projectss-header">
                     <div onClick={() => navigate(-1)} className="back-button ppp">
                       <span> &larr; Back to Home</span> 
                     </div>
-                    <h1 className="page-title">All Project Posts</h1>
+                    <h1 className="pageee-title">All Project Posts</h1>
                 </div>
 
-                <div className="project-list">
+                <div className="projectss-list">
                     {loadingProjects ? (
                         <p>Loading all project posts...</p>
                     ) : projectsError ? (
