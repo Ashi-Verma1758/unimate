@@ -5,52 +5,110 @@ import Navbar from "./components/HomePage/Navbar";
 
 const FindTeammates = () => {
   const [teammates, setTeammates] = useState([]);
-    const [loading, setLoading] = useState(true);
+     const [myProjects, setMyProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const backendUrl = "http://localhost:8000";
 
     useEffect(() => {
-        const fetchTeammates = async () => {
+    //     const fetchTeammates = async () => {
+    //         try {
+    //             const token = localStorage.getItem("accessToken");
+    //             if (!token) {
+    //                 setError("You must be logged in to view teammates.");
+    //                 setLoading(false);
+    //                 return;
+    //             }
+    //             // Fetch users from the new backend endpoint
+    //             const res = await axios.get(`${backendUrl}/api/users/all`, {
+    //                 headers: { Authorization: `Bearer ${token}` }
+    //             });
+    //             setTeammates(res.data);
+    //         } catch (err) {
+    //             setError("Failed to fetch teammates.");
+    //             console.error("Error fetching teammates:", err);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchTeammates();
+    // }, []); // Empty dependency array ensures this runs only once
+
+    // if (loading) {
+    //     return (
+    //         <>
+    //             <Navbar />
+    //             <section className="teammates"><h2>Loading Teammates...</h2></section>
+    //         </>
+    //     );
+    // }
+
+    // if (error) {
+    //     return (
+    //         <>
+    //             <Navbar />
+    //             <section className="teammates"><h2>Error</h2><p>{error}</p></section>
+    //         </>
+    //     );
+    // }
+const fetchData = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
                 if (!token) {
-                    setError("You must be logged in to view teammates.");
+                    setError("You must be logged in.");
                     setLoading(false);
                     return;
                 }
-                // Fetch users from the new backend endpoint
-                const res = await axios.get(`${backendUrl}/api/users/all`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setTeammates(res.data);
+                // Fetch both teammates and the logged-in user's projects
+                const [teammatesRes, myProjectsRes] = await Promise.all([
+                    axios.get(`${backendUrl}/api/users/all`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${backendUrl}/api/projects/me/created`, { headers: { Authorization: `Bearer ${token}` } })
+                ]);
+                
+                setTeammates(teammatesRes.data.data || teammatesRes.data);
+                setMyProjects(myProjectsRes.data.data || myProjectsRes.data);
+
             } catch (err) {
-                setError("Failed to fetch teammates.");
-                console.error("Error fetching teammates:", err);
+                setError("Failed to fetch data.");
+                console.error("Error fetching data:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchTeammates();
-    }, []); // Empty dependency array ensures this runs only once
+        fetchData();
+    }, []);
 
-    if (loading) {
-        return (
-            <>
-                <Navbar />
-                <section className="teammates"><h2>Loading Teammates...</h2></section>
-            </>
-        );
-    }
+    // This function now handles the entire "Connect" logic
+    const handleConnectClick = async (userToInvite) => {
+        // First, check if the logged-in user has any projects
+        if (myProjects.length === 0) {
+            alert("You must create a project before you can invite teammates.");
+            return;
+        }
 
-    if (error) {
-        return (
-            <>
-                <Navbar />
-                <section className="teammates"><h2>Error</h2><p>{error}</p></section>
-            </>
-        );
-    }
+        // The projects are already sorted by date, so the first one is the most recent
+        const mostRecentProject = myProjects[0];
+
+        try {
+            const token = localStorage.getItem("accessToken");
+            // Call your existing 'sendProjectInvitation' endpoint
+            // Assumes your route is POST /api/invitations/send/:projectId/:userId
+            await axios.post(
+                `${backendUrl}/api/invites/send/${mostRecentProject._id}/${userToInvite._id}`,
+                {}, // Empty body
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert(`Invitation for project '${mostRecentProject.title}' sent to ${userToInvite.name}!`);
+        } catch (err) {
+            console.error("Failed to send invitation:", err);
+            alert(`Error: ${err.response?.data?.message || 'Could not send invitation.'}`);
+        }
+    };
+
+    if (loading) return <> <Navbar /> <section className="teammates"><h2>Loading...</h2></section> </>;
+    if (error) return <> <Navbar /> <section className="teammates"><h2>Error</h2><p>{error}</p></section> </>
 
   return (
    <>
@@ -67,10 +125,7 @@ const FindTeammates = () => {
          {teammates.map(user => (
                         <div className="carduu" key={user._id}>
                             <div className="card-header">
-                              {/* <img
-                    src={user.avatarUrl || `https://via.placeholder.com/60?text=${user.name?.charAt(0)}`}
-                    alt="Profile"
-                /> */}
+                            
                 <div className="author-avatar">
         {user.avatarUrl ? (
             // If an avatar image exists, display it
@@ -118,8 +173,8 @@ const FindTeammates = () => {
               • {user.projectCount} projects 
               <div className="actions">
                 <button>Chat</button>
-                <button className="primary">Connect</button>
-              </div>
+                <button className="primary" onClick={() => handleConnectClick(user)}>Connect</button>
+                                </div>
             </div>
           </div>
          ))}
