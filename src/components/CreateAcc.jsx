@@ -103,8 +103,18 @@ function CreateAccount() {
 
             <select name="university" value={formData.university} onChange={handleChange} required>
               <option value="">Select your university</option>
-              <option value="University A">University A</option>
-              <option value="University B">University B</option>
+              <option value="DITU">DITU</option>
+              <option value="Graphic Era">Graphic Era</option>
+              <option value="UPES">UPES</option>
+              <option value="Thapar">Thapar</option>
+              <option value="Uttaranchal">Uttaranchal Uni</option>
+              <option value="Bennett">Bennett Uni</option>
+              <option value="JSS Noida">JSS Noida</option>
+
+
+
+
+
               {/* Add more university options as needed */}
             </select>
 
