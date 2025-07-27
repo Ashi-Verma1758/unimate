@@ -1,79 +1,110 @@
-import React,{useEffect,useState} from "react";
+import React,{useEffect,useState,useCallBack} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from 'axios';
 import "./TeamInvite.css";
 import Navbar from "../HomePage/Navbar";
 
 export default function TeamInvitations() {
-    const [invitations, setInvitations] = useState([]);
+     const [receivedInvites, setReceivedInvites] = useState([]);
+    const [sentRequests, setSentRequests] = useState([]);
+
+    // State for UI control
+    const [activeTab, setActiveTab] = useState('received');
+  const [invitations, setInvitations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [teamInvitations, setTeamInvitations] = useState([]);
     const navigate = useNavigate();
     const backendUrl = "http://localhost:8000";
 
-    useEffect(() => {
-        const fetchInvitations = async () => {
+ 
+ useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            const token = localStorage.getItem("accessToken");
+            if (!token) {
+                setError("You must be logged in to view invitations.");
+                setLoading(false);
+                return;
+            }
+
             try {
-                const token = localStorage.getItem("accessToken");
-                if (!token) {
-                    setError("You must be logged in to view invitations.");
-                    setLoading(false);
-                    return;
-                }
-                const res = await axios.get(`${backendUrl}/api/invites/received`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                if (res.data && Array.isArray(res.data.data)) {
-                    setInvitations(res.data.data);
-                } else {
-                    setInvitations([]); // Ensure it's always an array
-                }
+                // Fetch both sets of data in parallel for efficiency
+                const [receivedRes, sentRes] = await Promise.all([
+                    axios.get(`${backendUrl}/api/invites/received`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${backendUrl}/api/invites/sent`, { headers: { Authorization: `Bearer ${token}` } })
+                ]);
+
+                setReceivedInvites(receivedRes.data?.data && Array.isArray(receivedRes.data.data) ? receivedRes.data.data : []);
+                setSentRequests(sentRes.data?.data && Array.isArray(sentRes.data.data) ? sentRes.data.data : []);
+
             } catch (err) {
-                setError("Failed to fetch invitations.");
-                console.error("Error fetching invitations:", err);
+                setError("Failed to fetch team invitations and requests.");
+                console.error("Error fetching data:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchInvitations();
-    }, []);
+        fetchData();
+    }, [backendUrl]); // Dependency array ensures this runs only once
 
-   const handleRespondToInvitation = async (projectId, fromUserId, status) => {
+    // Handler for accepting or declining an invitation
+    const handleRespondToInvitation = async (projectId, fromUserId, status) => {
         const token = localStorage.getItem('accessToken');
-        if (!token) { alert('Authentication required to respond to invitation.'); return; }
+        if (!token) {
+            alert('Authentication required to respond.');
+            return;
+        }
         try {
-            const res = await axios.put(`${backendUrl}/api/invites/respond/${projectId}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
-           navigate('/success', {
-  state: { message: res.data.message || 'Join request sent successfully!' }
-});
-;
-          setTeamInvitations(prevInvitations => prevInvitations.filter(invite => invite.projectId !== projectId));
-            if (status === 'accepted') {
-                const conversationRes = await axios.get(`${backendUrl}/api/chats/get-or-create-conversation?otherUserId=${fromUserId}&projectId=${projectId}`, { headers: { Authorization: `Bearer ${token}` } });
-                const conversation = conversationRes.data;
-                if (conversation && conversation._id) {
-                    setSelectedConversationId(conversation._id);
-                    navigate('/chat');
-                } else {
-                    console.error("Failed to get or create conversation: No conversation ID returned.");
-                    alert("Invitation accepted, but could not open chat. Please navigate to chat manually.");
-                }
-            }
-        } catch (err) {
-            console.error(`Error ${status} invitation:`, err);
-            navigate('/error', {
-  state: { message: err.response?.data?.message || `Failed to ${status} invitation.` }
-});
+            const res = await axios.put(`${backendUrl}/api/invites/respond/${projectId}/${fromUserId}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
+            
+            // Remove the processed invitation from the list
+            setReceivedInvites(prev => prev.filter(invite => invite.projectId !== projectId));
 
+            alert(res.data.message || `Invitation ${status}!`);
+
+            // // If accepted, try to navigate to the chat
+            // if (status === 'accepted') {
+            //     const conversationRes = await axios.get(`${backendUrl}/api/chats/get-or-create-conversation?otherUserId=${fromUserId}&projectId=${projectId}`, { headers: { Authorization: `Bearer ${token}` } });
+            //     const conversation = conversationRes.data;
+            //     if (conversation?._id) {
+            //         navigate('/chat'); // Assuming your chat page can handle the context
+            //     } else {
+            //          console.error("Failed to get or create conversation.");
+            //     }
+            // }
+        } catch (err) {
+            console.error(`Error responding to invitation:`, err);
+           
+         alert(err.response?.data?.message || `Failed to ${status} invitation.`);
+       return;
         }
     };
 
-    // const handleViewProject = (projectId) => {
-    //     // You need to implement the navigation logic to your project details page
-    //     navigate(`/ProjectInfo/${projectId}`);
-    // };
+    // Placeholder for canceling a sent request
+    const handleCancelRequest = async (projectId) => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('Authentication required to cancel a request.');
+            return;
+        }
+        try {
+            // Note: You need to implement this endpoint on your backend
+            // It would typically be a DELETE or PUT/PATCH request
+            await axios.delete(`${backendUrl}/api/invites/cancel/${projectId}`, { headers: { Authorization: `Bearer ${token}` } });
+            
+            // Remove the canceled request from the list
+            setSentRequests(prev => prev.filter(req => req.projectId !== projectId));
+            alert("Request cancelled successfully.");
+
+        } catch (err) {
+            console.error(`Error canceling request:`, err);
+            alert(err.response?.data?.message || `Failed to cancel request.`);
+        }
+    };
+
+   
 
     if (loading) return <> <Navbar /> <div className="team-container"><h2>Loading...</h2></div> </>;
     if (error) return <> <Navbar /> <div className="team-container"><h2>Error</h2><p>{error}</p></div> </>;
@@ -86,15 +117,30 @@ export default function TeamInvitations() {
       <p>Manage your team invitations and collaboration requests</p>
 
       <div className="tabs">
-        <button className="tabu active">👥 Received </button>
-        <button className="tabu">💬 Sent Requests</button>
+        
+       <button 
+                        className={`tabu ${activeTab === 'received' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('received')}
+                    >
+                        👥 Received
+                    </button>
+                    <button 
+                        className={`tabu ${activeTab === 'sent' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('sent')}
+                    >
+                        💬 Sent Requests
+                    </button>
       </div>
+      {activeTab === 'received' ? (
+                    <>
 
       <h2>Pending Invitations({invitations.length})</h2>
 <div className="carddd">
-  {invitations.length>0?(
-      invitations.map((invite) => (
-        <div className="cardss" key={invite.invitationid}>
+  {/* {invitations.length>0?(
+      invitations.map((invite) => ( */}
+      {receivedInvites.length > 0 ? (
+                                receivedInvites.map((invite) => (
+        <div className="cardss" key={invite.invitationid || invite._id}>
           <div className="card-header">
             <div className="user">
               <img src={invite.fromAvatar || `https://via.plalder.com/60?text=${invite.fromName?.charAt(0)}`} alt={invite.fromName} className="avatar" />
@@ -103,52 +149,55 @@ export default function TeamInvitations() {
                 <span className="university">{invite.fromUniversity}</span>
               </div>
             </div>
-            <div className="badge-area">
-              <span className="badge">{invite.team}</span>
-              <span className="time">{invite.timeAgo}</span>
+ <span className="time">{invite.timeAgo}</span>
+                                        </div>
+                                        <h4>{invite.projectName}</h4>
+                                        <div className="actions">
+                                            <button className="accept" onClick={() => handleRespondToInvitation(invite.projectId, invite.fromUserId, 'accepted')}>✔ Accept</button>
+                                            <button className="decline" onClick={() => handleRespondToInvitation(invite.projectId, invite.fromUserId, 'declined')}>✖ Decline</button>
+                                            <button className="view" onClick={() => navigate(`/ProjectInfo/${invite.projectId}`)}>View Project</button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>You have no pending invitations.</p>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <h2>Sent Requests ({sentRequests.length})</h2>
+                        <div className="carddd">
+                            {sentRequests.length > 0 ? (
+                                sentRequests.map((request) => (
+                                    // NOTE: Adapt this card to your 'sent request' data structure
+                                    <div className="cardss" key={request.invitationId || request._id}>
+                                        <div className="card-header">
+                                            <div className="user">
+                                                 {/* Assuming 'toAvatar' and 'toName' exist on your sent request object */}
+                                                <img src={request.toAvatar || `https://via.placeholder.com/60?text=${request.toName?.charAt(0)}`} alt={request.toName} className="avatar" />
+                                                <div>
+                                                    <h3>{request.toName}</h3>
+                                                    <span className="university">{request.toUniversity}</span>
+                                                </div>
+                                            </div>
+                                            <span className="time">{request.timeAgo}</span>
+                                        </div>
+                                        <h4>{request.projectName}</h4>
+                                        <div className="actions">
+                                          
+                                            <button className="view" onClick={() => navigate(`/ProjectInfo/${invite.projectId}`)}>View Project</button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>You have not sent any team requests.</p>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
-          </div>
-
-          <h4>{invite.projectName}</h4>
-          <p className="message">{invite.message}</p>
-
-          <div className="meta">
-            <span>🕒 {invite.hours}</span>
-            <span>📅 {invite.duration}</span>
-          </div>
-
-          <div className="skills">
-             {Array.isArray(invite.skills) && invite.skills.map((skill, index) => (
-        // By combining the skill name and its index, the key is always unique
-        <span key={`${skill}-${index}`} className="skill">
-            {skill}
-        </span>
-            ))}
-          </div>
-
-          <div className="actions">
-            {/* <button className="accept">✔ Accept</button>
-            <button className="decline">✖ Decline</button>
-            <button className="view">View Project</button> */}
-          <button className="accept" onClick={() => handleResponse(invite.projectId, 'accepted')}>✔ Accept</button>
-                                    <button className="decline" onClick={() => handleRespondToInvitation(invite.projectId, 'declined')}>✖ Decline</button>
-                                    <button className="view" onClick={() =>  {
-            // This now correctly uses the 'project' for this specific card
-            navigate(`/ProjectInfo/`, { state: { project: project } });
-                                    }}
-            
-            >View Project</button>
-                                </div>
-        
-        </div>
-      ))
-    )  : (
-                        <p>You have no pending invitations.</p>
-     
-      )}
-    </div>
-    </div>
-    </>
-  );
-  
-}
+        </>
+    );
+  }
+          
