@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './profile.css';
 
 const StudentProfile = () => {
   const [profile, setProfile] = useState({
+  
     name: '',
     major: '',
-    year: '',
+    academicYear: '',
+    bio:' ',
     university: '',
     joinedDate: '',
     totalProjects: 0,
@@ -24,7 +26,13 @@ const StudentProfile = () => {
 
   const [loading, setLoading] = useState(true);
   const backendUrl = "http://localhost:8000"; // Change this if needed
-
+ const navigate = useNavigate(); 
+  // const handleViewClick = () => {
+  //       // Navigate to the ProjectInfo page, passing the entire projectData object
+  //       // in the 'state' property of the navigation.
+  //       navigate('/ProjectInfo', { state: { project: projectData } });
+        
+  //   };
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -46,7 +54,9 @@ const StudentProfile = () => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-
+const totalProjects = profile.projects?.length || 0;
+  const completedProjects = profile.projects?.filter(p => p.status === 'Completed').length || 0;
+  const inProgressProjects = totalProjects - completedProjects;
   return (
     <div className="container">
 
@@ -61,10 +71,11 @@ const StudentProfile = () => {
         )}
         <div className="info">
           <h2>{profile.name}</h2>
-          <p>{profile.major} • {profile.year}</p>
+          <p>{profile.major} • {profile.academicYear}</p>
           <p>🎓 {profile.university} • 📍 {profile.joinedDate}</p>
+           {profile.bio && <p className="bio">{profile.bio}</p>}
           <div className="meta">
-            <span>({profile.totalProjects} projects)</span> •
+            <span>({totalProjects}  projects)</span> •
             <span>👥 {profile.connections} connections</span>
           </div>
         </div>
@@ -73,16 +84,16 @@ const StudentProfile = () => {
 
       {/* Stats */}
       <div className="stats">
-        <div className="stat"><strong>{profile.totalProjects}</strong><p>Total Projects</p></div>
-        <div className="stat"><strong className="green">{profile.completedProjects}</strong><p>Completed</p></div>
-        <div className="stat"><strong className="orange">{profile.inProgressProjects}</strong><p>In Progress</p></div>
+        <div className="stat"><strong>{totalProjects}</strong><p>Total Projects</p></div>
+        <div className="stat"><strong className="green">{completedProjects}</strong><p>Completed</p></div>
+        <div className="stat"><strong className="orange">{inProgressProjects}</strong><p>In Progress</p></div>
       </div>
 
       {/* Content */}
       <div className="content">
 
         {/* Projects */}
-        <div className="projects">
+        {/* <div className="projects">
           {Array.isArray(profile.projects) && profile.projects.map((project, idx) => (
             <div className="project-card" key={idx}>
               <img src={project.image || "https://via.placeholder.com/300x150"} alt="project" />
@@ -91,7 +102,32 @@ const StudentProfile = () => {
               <p>{project.role}</p>
             </div>
           ))}
-        </div>
+        </div> */}
+        <div className="projects">
+  {Array.isArray(profile.projects) && profile.projects.map((project) => (
+    <div className="project-card" key={project._id}>
+   
+      <div className="card-content">
+        <div className={`badge ${project.status === "Completed" ? 'green' : project.status === 'In Progress' 
+      ? 'yellow' 
+      : 'blue'
+  }`}
+>{project.status || 'Active'}</div>
+        <p className="ptitle"><strong>{project.title}</strong></p>
+        <button className="view-btn"
+        onClick={() => {
+            // This now correctly uses the 'project' for this specific card
+            navigate(`/ProjectInfo/`, { state: { project: project } });
+          }}
+        >
+          View
+        </button>
+                  
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {/* Skills & Interests */}
         <div className="skills-interests">

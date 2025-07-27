@@ -64,35 +64,31 @@ const handleViewAllProjects = () => {
         if (message === null) { return; }
         try {
             const res = await axios.post(`${backendUrl}/api/projects/${projectId}/join`, { message }, { headers: { Authorization: `Bearer ${token}` } });
-            navigate('/success', {
-  state: { message: res.data.message || 'Join request sent successfully!' }
-});
+//             navigate('/success', {
+//   state: { message: res.data.message || 'Join request sent successfully!' }
+// }
+ navigate('/success', {
+            state: { message: res.data.message || 'Join request sent successfully!' }
+        });
 
-            // You might want to refresh joinRequests or project info here if the status changes immediately
-         setProjectPosts(prevPosts =>
+    }
+    catch (err) {
+
+      console.error('Error sending join request:', err);
+
+        if (err.response?.status === 400 && err.response?.data?.message === 'You have already requested to join this project') {
+            setProjectPosts(prevPosts =>
         prevPosts.map(post =>
           post.id === projectId
             ? { ...post, hasUserSentRequest: true, responseCount: post.responseCount + 1 } // Add flag, increment count
             : post
         )
       );
-        } catch (err) {
-
-      console.error('Error sending join request:', err);
-      // If the error is 'You have already requested to join this project', update UI too
-      if (err.response?.status === 400 && err.response?.data?.message === 'You have already requested to join this project') {
-
-
+alert('You have already sent a request to join this project.');
         
-        // Even if backend caught it, update frontend flag to disable button
-        setProjectPosts(prevPosts =>
-          prevPosts.map(post =>
-            post.id === projectId
-              ? { ...post, hasUserSentRequest: true } // Set flag to disable the button
-              : post
-          )
-        );
+   
       } else {
+        
 navigate('/error', {
   state: { message: err.response?.data?.message || `Failed to ${status} invitation.` }
 });

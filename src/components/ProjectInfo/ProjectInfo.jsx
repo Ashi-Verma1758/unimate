@@ -246,7 +246,7 @@ const project = currentProject; // Use currentProject for rendering
                         <div className="project-header-card">
                             <div className="project-header">
                                 <div className="author-info">
-                                    <div className="avatar">{project.author?.name?.charAt(0).toUpperCase || '?'}</div>
+                                    <div className="avatar">{project.author?.name?.charAt(0).toUpperCase() || '?'}</div>
                                     <div className="author-details">
                                         <h3>{project.author?.name}</h3>
                                         <p>{project.author?.university} • {project.author?.year}</p>
@@ -271,11 +271,11 @@ const project = currentProject; // Use currentProject for rendering
 
                             <h1 className="project-title">{project.title}</h1>
 
-                            <div className="badges">
+                            {/* <div className="badges">
                                 {project.status && <span className="badge recruiting">{project.status}</span>}
                                 {project.domain && <span className="badge domain">{project.domain}</span>}
                                 {project.postedDate && <span className="badge posted">Posted {project.postedDate}</span>}
-                            </div>
+                            </div> */}
 
                             <div className="project-description">
                                 {(project.description || '').split('\n\n').map((paragraph, index) => (

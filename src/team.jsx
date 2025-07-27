@@ -1,8 +1,57 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
+import axios from 'axios';
 import "./team.css";
 import Navbar from "./components/HomePage/Navbar";
 
 const FindTeammates = () => {
+  const [teammates, setTeammates] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const backendUrl = "http://localhost:8000";
+
+    useEffect(() => {
+        const fetchTeammates = async () => {
+            try {
+                const token = localStorage.getItem("accessToken");
+                if (!token) {
+                    setError("You must be logged in to view teammates.");
+                    setLoading(false);
+                    return;
+                }
+                // Fetch users from the new backend endpoint
+                const res = await axios.get(`${backendUrl}/api/users/all`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setTeammates(res.data);
+            } catch (err) {
+                setError("Failed to fetch teammates.");
+                console.error("Error fetching teammates:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTeammates();
+    }, []); // Empty dependency array ensures this runs only once
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <section className="teammates"><h2>Loading Teammates...</h2></section>
+            </>
+        );
+    }
+
+    if (error) {
+        return (
+            <>
+                <Navbar />
+                <section className="teammates"><h2>Error</h2><p>{error}</p></section>
+            </>
+        );
+    }
+
   return (
    <>
    <Navbar/>
@@ -15,35 +64,47 @@ const FindTeammates = () => {
        
 
         <div className="cardsrr">
-          <div className="carduu">
-            <div className="card-header">
-              <img
-                src="https://via.placeholder.com/60"
-                alt="Profile"
-              />
-              <div>
+         {teammates.map(user => (
+                        <div className="carduu" key={user._id}>
+                            <div className="card-header">
+                              {/* <img
+                    src={user.avatarUrl || `https://via.placeholder.com/60?text=${user.name?.charAt(0)}`}
+                    alt="Profile"
+                /> */}
+                <div className="author-avatar">
+        {user.avatarUrl ? (
+            // If an avatar image exists, display it
+            <img src={user.avatarUrl} alt={`${user.name}'s avatar`} className="avatar-img" />
+        ) : (
+            // Otherwise, display the styled div with the first initial
+            <div className="avatar-placeholder">
+                {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+            </div>
+        )}
+    </div>
+                               
+                                <div>
                 <h3>
-                  Alex Chen <span className="verified">✔</span>
+                  {user.name} <span className="verified">✔</span>
                 </h3>
-                <p>Junior • Computer Science • Stanford University</p>
-                <p>Palo Alto, CA • Active 2 hours ago</p>
+                <p>{user.academicYear} • {user.major} • {user.university}</p>
+                <p>Location N/A • Active recently</p>
               </div>
             </div>
 
             <p className="desc">
-              Passionate full-stack developer with experience in React, Node.js,
-              and machine learning. Looking to collaborate on innovative
-              projects that make a positive impact on student life and
-              education.
+              {user.bio || "This user hasn't added a bio yet."}
             </p>
 
             <div className="tags">
               <strong>Skills:</strong>
-              <span>React</span>
-              <span>Node.js</span>
-              <span>Python</span>
-              <span>Machine Learning</span>
-              <span>MongoDB</span>
+              {user.skills && user.skills.length > 0 ? (
+                                    user.skills.map((skill, index) => (
+                                        <span key={index}>{skill}</span>
+                                    ))
+                                ) : (
+                                    <span>No skills listed.</span>
+                                )}
             </div>
 
             <div className="tags">
@@ -54,13 +115,14 @@ const FindTeammates = () => {
             </div>
 
             <div className="footer">
-              ⭐ 4.8 • 12 projects • 95% response rate
+              • {user.projectCount} projects 
               <div className="actions">
-                <button>Message</button>
+                <button>Chat</button>
                 <button className="primary">Connect</button>
               </div>
             </div>
           </div>
+         ))}
         </div>
       </section>
     </>
