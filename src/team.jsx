@@ -133,14 +133,14 @@ const fetchData = async () => {
         ) : (
             // Otherwise, display the styled div with the first initial
             <div className="avatar-placeholder">
-                {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                {user.name ? user.name.charAt(0).toUpperCase() : 'A'}
             </div>
         )}
     </div>
                                
                                 <div>
                 <h3>
-                  {user.name} <span className="verified">✔</span>
+                  {user.name ? user.name : 'Ashi'} <span className="verified">✔</span>
                 </h3>
                 <p>{user.academicYear} • {user.major} • {user.university}</p>
                 <p>Location N/A • Active recently</p>
