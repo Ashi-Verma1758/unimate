@@ -106,6 +106,9 @@ img{
 .btnsd{
   width: 14vw;
 }
+.btnsd:hover{
+  background-color: blue;
+}
 
 
 
