@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from 'axios'; // Import axios
 import { useNavigate, Link } from "react-router-dom"; // Import Link for navigation
 import "./Log-In.css";
+import {FaEnvelope,FaLock,FaEye,FaEyeSlash,} from "react-icons/fa";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,10 +11,11 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
-  });
+  }); 
 
   const [message, setMessage] = useState({ type: '', text: '' }); // State for messages
   const [loading, setLoading] = useState(false); // State for loading indicator
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -58,67 +61,130 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+  window.location.href =
+    "http://localhost:8000/api/auth/google";
+};
+
   return (
-    <div className="container">
-      {/* "Unimate" logo linking to homepage */}
-      <Link to="/" className="logo-link">
-        <h1 className="logo">Unimate</h1>
-      </Link>
-      <p className="subtitle">Welcome back to your collaboration hub</p>
+  <div className="login-page">
+    <div className="logo-circle">U</div>
 
-      <div className="form-box">
-        <h2>Sign in</h2>
-        <p className="description">
-          Enter your email and password to access your account
-        </p>
+    <h3 className="welcome">Welcome back</h3>
+    <p className="subtitle">
+      Sign in to your Unimate account
+    </p>
 
-        <form onSubmit={handleSubmit}> {/* Attach the handleSubmit to the form */}
-          {/* Display messages */}
-          {message.text && (
-            <p className={`form-message ${message.type}`}>
-              {message.text}
-            </p>
-          )}
+    <div className="login-card">
+      <h2>Sign In</h2>
 
-          <label htmlFor="email">Email</label>
+      <p className="card-subtitle">
+        Enter your credentials to access your account
+      </p>
+
+      <form onSubmit={handleSubmit}>
+        {message.text && (
+          <p className={`form-message ${message.type}`}>
+            {message.text}
+          </p>
+        )}
+
+        <label htmlFor="email">
+          <FaEnvelope className="label-icon" />
+          Email
+        </label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+
+        <label htmlFor="password">
+          <FaLock className="label-icon" />
+          Password
+        </label>
+
+        <div className="password-wrapper">
           <input
-            type="email"
-            id="email"
-            name="email" // Added name attribute
-            placeholder="Enter your university email"
-            value={formData.email} // Controlled component
-            onChange={handleChange} // Handle input changes
+            type={showPassword ? "text" : "password"}
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
             required
           />
 
-          <label htmlFor="password">Password</label>
-          <div className="password-field">
-            <input
-              type="password"
-              id="password"
-              name="password" // Added name attribute
-              placeholder="Enter your password"
-              value={formData.password} // Controlled component
-              onChange={handleChange} // Handle input changes
-              required
-            />
-          </div>
+          <span
+            className="eye-icon"
+            onClick={() =>
+              setShowPassword(!showPassword)
+            }
+          >
+            {showPassword ? (
+              <FaEyeSlash />
+            ) : (
+              <FaEye />
+            )}
+          </span>
+        </div>
 
-          <div className="forgot">
-            <a href="#">Forgot password?</a> {/* Consider a <Link to="/forgot-password"> */}
-          </div>
+        <div className="options">
+          <label className="remember">
+            <input type="checkbox" />
+            Remember me
+          </label>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign in'}
-          </button>
-        </form>
+          <a href="/">Forgot password?</a>
+        </div>
 
-        <p className="switch">
-          Don't have an account? <Link to="/signup">Sign up</Link> {/* Use Link to your signup page */}
+        <button
+          type="submit"
+          className="signin-btn"
+          disabled={loading}
+        >
+          {loading ? "Signing in..." : "Sign In"}
+        </button>
+
+        <div className="divider">
+          <span>OR</span>
+        </div>
+
+        <button
+          type="button"
+          className="google-btn"
+          onClick={handleGoogleLogin}
+        >
+        <img
+          src="https://developers.google.com/identity/images/g-logo.png"
+          alt="Google Logo"
+          />
+        <span>Sign in with Google</span>
+        </button>
+
+        <p className="signup-text">
+          Don't have an account?
+          <Link to="/signup">
+            {" "}
+            Sign up here
+          </Link>
         </p>
-      </div>
+      </form>
     </div>
-  );
+
+    <p className="footer">
+      By signing in, you agree to our
+      <a href="/"> Terms of Service </a>
+      and
+      <a href="/"> Privacy Policy</a>
+    </p>
+  </div>
+);
 };
 
 export default Login;
