@@ -135,7 +135,7 @@ function CreateAccount() {
 
           <div style={{ textAlign: 'center', margin: '20px 0' }}>or</div>
 
-          <button 
+          {/* <button 
             onClick={handleGoogleSignup} 
             className="google-btn"
           >
@@ -145,7 +145,7 @@ function CreateAccount() {
               style={{ width: '20px', marginRight: '10px' }}
             />
             Sign up with Google
-          </button>
+          </button> */}
 
           <p className="signin-text">
             Already have an account? <a href="/login">Sign In</a>
