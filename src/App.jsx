@@ -21,6 +21,7 @@ import SuccessPage from './dialogboxes/SuccessPage.jsx';
 import ErrorPage from './dialogboxes/ErrorPage.jsx';
 import StudentProfile from './Profile/profile.jsx';
 import EditProfile from './Profile/editProfile.jsx';
+import SearchPage from "./components/HomePage/SearchPage.jsx";
 
 function App() {
 
@@ -172,8 +173,7 @@ let currentUserId = null;
 
                     <Route path="/all-invitations" element={<TeamInvitations />} />
                     <Route path="/Find-Teammates" element={<FindTeammates />} />
-
-
+                    <Route path="/search" element={<SearchPage />} />
 
 
                     <Route

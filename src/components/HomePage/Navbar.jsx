@@ -6,6 +6,7 @@ import './Navbar.css';
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
    const [isLoggedIn, setIsLoggedIn] = useState(false);
+   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -55,10 +56,20 @@ const Navbar = () => {
                 {/* <a href="/HomePage"><Home size={20} /> <span>Home</span></a> */}
                 <a href="/Find-Teammates"><UserSearch size={20} /> <span>Find Teammates</span></a>
                 <a href="/chat"><MessageCircle size={20} /> <span>Chat</span></a>
-
+                 
                 <a href="/Team"><Users size={20} /> <span>Teams</span></a>
-                {/* <a href="#"><Info size={20} /> <span> Walkthrough</span></a> */}
-                {/* <a href="#"><HelpCircle size={20} /> <span>Help</span></a> */}
+                  <input
+                  type="text"
+                  placeholder="Search students, skills, projects, hackathons..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      navigate(`/search?q=${search}`);
+                    }
+                  }}
+                />
+                                    
               </div>
             )}
           </div>
