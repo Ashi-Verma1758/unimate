@@ -374,6 +374,7 @@ const project = currentProject; // Use currentProject for rendering
                                 <div className="deadline">Apply by {project.deadline}</div>
                                 <div className="start-date">Starting {project.startDate}</div>
                             </div>
+                            <div className="action-buttons">
                             <button
                                 className="joinnn-btn"
                                 // onClick={() => setShowJoinDialog(true)}
@@ -387,6 +388,7 @@ const project = currentProject; // Use currentProject for rendering
                                 <MessageCircle size={20} />
                                 Chat with Team
                             </button>
+                            </div>
                         </div>
 
                         <div className="stats-card">
