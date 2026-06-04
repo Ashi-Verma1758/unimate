@@ -314,7 +314,7 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
                             <button
                                 type="button"
                                 onClick={handleAddRequiredSkill}
-                                className="plus-btn"
+                                className="skill-plus-btn"
                             >
                                 +
                             </button>
@@ -342,7 +342,7 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
                             <button
                                 type="button"
                                 onClick={handleAddNiceToHaveSkill}
-                                className="plus-btn"
+                                className="skill-plus-btn"
                             >
                                 +
                             </button>
