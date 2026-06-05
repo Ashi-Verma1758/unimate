@@ -344,7 +344,7 @@ useEffect(() => {
                     <Link to="/CreatePost">
                         <button className="create-project-button">
                             <Plus size={20} />
-                            <span>Create Project</span>
+                            <span className='hellow'>Create Project</span>
                         </button>
                     </Link>
                 </div>
@@ -364,10 +364,10 @@ useEffect(() => {
                 <div className="homepage-grid">
                     <div className="mains-content">
                         <div className="section-header tabs-container">
-                            <button className={`tab-button ${selectedMainTab === 'recentPosts' ? 'active' : ''}`} onClick={() => setSelectedMainTab('recentPosts')}>Recent Posts</button>
-                            <button className={`tab-button ${selectedMainTab === 'joinRequests' ? 'active' : ''}`} onClick={() => setSelectedMainTab('joinRequests')}>
+                            <div className={`tab-button ${selectedMainTab === 'recentPosts' ? 'active' : ''}`} onClick={() => setSelectedMainTab('recentPosts')}>Recent Posts</div>
+                            <div className={`tab-button ${selectedMainTab === 'joinRequests' ? 'active' : ''}`} onClick={() => setSelectedMainTab('joinRequests')}>
                                 Join Requests {joinRequests.length > 0 && <span className="tab-badge">{joinRequests.length}</span>}
-                            </button>
+                            </div>
                         </div>
                         {selectedMainTab === 'recentPosts' && (
                             <div className="view-all-button-container">
