@@ -138,8 +138,8 @@ const fetchData = async () => {
         )}
     </div>
                                
-                                <div>
-                <h3>
+              <div classname="user-info">
+                <h3 classname="user-name">
                   {user.name ? user.name : 'Ashi'} <span className="verified">✔</span>
                 </h3>
                 <p>{user.academicYear} • {user.major} • {user.university}</p>

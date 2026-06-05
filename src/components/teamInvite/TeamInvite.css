@@ -84,10 +84,11 @@ h3 {
   transform: translateY(-2px);
 
 }
-.actions{
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .card-header {
