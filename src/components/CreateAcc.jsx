@@ -7,13 +7,12 @@ import { Link } from "react-router-dom";
 function CreateAccount() {
   const navigate = useNavigate();
 
-  // formData state matches input names
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    universityEmail: '', // Input name is 'universityEmail'
+    universityEmail: '',
     university: '',
-    year: '',            // Input name is 'year'
+    year: '',
     major: '',
     password: '',
     confirmPassword: '',
@@ -41,28 +40,27 @@ function CreateAccount() {
     }
 
     try {
-      const backendUrl = 'http://localhost:8000'; // Ensure this matches your backend port
+      const backendUrl = 'http://localhost:8000';
 
       const res = await axios.post(`${backendUrl}/api/auth/register`, {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        email: formData.universityEmail, // Map frontend 'universityEmail' to backend 'email'
+        email: formData.universityEmail,
         university: formData.university,
-        academicYear: formData.year,     // Map frontend 'year' to backend 'academicYear'
+        academicYear: formData.year,
         major: formData.major,
         password: formData.password,
       });
 
-      // ✅ Store the tokens and user info from the successful registration response
       const { accessToken, refreshToken, user, message: successMessage } = res.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user)); // Store user data
+      localStorage.setItem('user', JSON.stringify(user));
 
       setMessage({ type: 'success', text: successMessage || 'Account created successfully!' });
 
       setTimeout(() => {
-        navigate('/Homepage'); // Redirect to your Homepage after registration
+        navigate('/Homepage');
       }, 2000);
 
     } catch (err) {
@@ -74,6 +72,10 @@ function CreateAccount() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSignup = () => {
+    window.location.href = "http://localhost:8000/api/auth/google";
   };
 
   return (
@@ -98,7 +100,6 @@ function CreateAccount() {
               <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
             </div>
 
-            {/* Input name is 'universityEmail' */}
             <input type="email" name="universityEmail" placeholder="University Email" value={formData.universityEmail} onChange={handleChange} required />
 
             <select name="university" value={formData.university} onChange={handleChange} required>
@@ -110,16 +111,9 @@ function CreateAccount() {
               <option value="Uttaranchal">Uttaranchal Uni</option>
               <option value="Bennett">Bennett Uni</option>
               <option value="JSS Noida">JSS Noida</option>
-
-
-
-
-
-              {/* Add more university options as needed */}
             </select>
 
             <div className="input-row">
-              {/* Input name is 'year' */}
               <select name="year" value={formData.year} onChange={handleChange} required>
                 <option value="">Year</option>
                 <option value="1st">1st</option>
@@ -139,9 +133,22 @@ function CreateAccount() {
             </button>
           </form>
 
+          <div style={{ textAlign: 'center', margin: '20px 0' }}>or</div>
+
+          {/* <button 
+            onClick={handleGoogleSignup} 
+            className="google-btn"
+          >
+            <img 
+              src="https://developers.google.com/identity/images/g-logo.png" 
+              alt="Google logo"
+              style={{ width: '20px', marginRight: '10px' }}
+            />
+            Sign up with Google
+          </button> */}
+
           <p className="signin-text">
             Already have an account? <a href="/login">Sign In</a>
-            {/* Consider using <Link to="/login">Sign In</Link> if /login is a React Router route */}
           </p>
         </div>
       </div>
