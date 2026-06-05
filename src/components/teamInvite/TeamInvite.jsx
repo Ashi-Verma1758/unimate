@@ -118,18 +118,18 @@ export default function TeamInvitations() {
 
       <div className="tabs">
         
-       <button 
+       <div 
                         className={`tabu ${activeTab === 'received' ? 'active' : ''}`} 
                         onClick={() => setActiveTab('received')}
                     >
                         👥 Received
-                    </button>
-                    <button 
+                    </div>
+                    <div 
                         className={`tabu ${activeTab === 'sent' ? 'active' : ''}`} 
                         onClick={() => setActiveTab('sent')}
                     >
                         💬 Sent Requests
-                    </button>
+                    </div>
       </div>
       {activeTab === 'received' ? (
                     <>
