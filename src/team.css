@@ -3,12 +3,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 4rem;
+  width: 100%;
+  padding: 0 5rem;
 }
 
 .teammates h2 {
-  margin-bottom: 1rem;
+  color: #000;
+  margin-bottom: 0.5rem;
 }
 
 .teammates input[type="text"] {
@@ -27,23 +30,34 @@
 
 .carduu {
   background: white;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
-  width: 60vw;
-  margin-bottom: 2rem;
+
+  width: 80vw;
+  max-width:1300px;
   padding: 2rem;
+
+  border-radius: 20px;
+
+  border: 1px solid #ececec;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  margin-bottom: 2rem;
 }
-.carduu:hover{
-box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
-  transform: translateY(-2px);
+.carduu:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 8px 24px rgba(255, 78, 205, 0.15),
+    0 8px 24px rgba(143, 76, 248, 0.15),
+    0 8px 24px rgba(79, 108, 247, 0.15);
 }
 
-.card-headerrr {
+.card-header {
   display: flex;
-      justify-content: flex-start;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 20px;
+  width: 100%;
 }
 
 .card-header img {
@@ -89,16 +103,60 @@ box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
 }
 
 .footer button.primary {
-  background: #0056ff;
+  background: linear-gradient(
+    135deg,
+    #ff4ecd,
+    #8f4cf8,
+    #4f6cf7
+  );
+
   color: white;
 }
-
-.author-avatar{
- padding:1.5rem;
- 
+.footer button:not(.primary):hover {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+.author-avatar {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
+  flex-shrink: 0;
 }
 
-.avatar-placeholder{
-  padding:1.5rem;
+.avatar-placeholder {
+  width: 72px;
+  height: 72px;
 
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    135deg,
+    #ff4ecd,
+    #8f4cf8,
+    #4f6cf7
+  );
+
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+}
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.carduu * {
+  text-align: left !important;
 }
