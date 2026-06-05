@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from 'axios';
-import { useNavigate, Link } from "react-router-dom";
+import axios from 'axios'; // Import axios
+import { useNavigate, Link } from "react-router-dom"; // Import Link for navigation
 import "./Log-In.css";
 import {FaEnvelope,FaLock,FaEye,FaEyeSlash,} from "react-icons/fa";
 
@@ -8,10 +8,14 @@ import {FaEnvelope,FaLock,FaEye,FaEyeSlash,} from "react-icons/fa";
 const Login = () => {
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  }); 
 
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' }); // State for messages
+  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -21,26 +25,29 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage({ type: '', text: '' });
-    setLoading(true);
+    e.preventDefault(); // Prevent default form submission
+    setMessage({ type: '', text: '' }); // Clear previous messages
+    setLoading(true); // Start loading
 
     try {
-      const backendUrl = 'http://localhost:8000';
-      const res = await axios.post(`${backendUrl}/api/auth/login`, {
-        email: formData.email,
-        password: formData.password,
-      });
+     const backendUrl = 'http://localhost:8000';
+    const res = await axios.post(`${backendUrl}/api/auth/login`, {
+      email: formData.email,
+      password: formData.password,
+    });
 
-      const { accessToken, refreshToken, user, message: successMessage } = res.data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
+    const { accessToken, refreshToken, user, message: successMessage } = res.data;
+
+    // ✅ Change 'token' to 'accessToken' here
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken); // Ensure refreshToken is also stored
+    localStorage.setItem('user', JSON.stringify(user));
 
       setMessage({ type: 'success', text: successMessage || 'Login successful! Redirecting...' });
 
+      // Redirect to the homepage or dashboard after a short delay
       setTimeout(() => {
-        navigate('/Homepage');
+        navigate('/Homepage'); // Redirect to your Homepage
       }, 1500);
 
     } catch (err) {
@@ -50,33 +57,14 @@ const Login = () => {
         text: err.response?.data?.message || 'Login failed. Please check your credentials.'
       });
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading regardless of success or failure
     }
   };
 
   const handleGoogleLogin = () => {
-
-    window.location.href = "http://localhost:8000/api/auth/google";
-  };
-
-  return (
-    <div className="container">
-      <Link to="/" className="logo-link">
-        <h1 className="logo">Unimate</h1>
-      </Link>
-      <p className="subtitle">Welcome back to your collaboration hub</p>
-
-      <div className="form-box">
-        <h2>Sign in</h2>
-        <p className="description">Enter your email and password to access your account</p>
-
-        <form onSubmit={handleSubmit}>
-          {message.text && (
-            <p className={`form-message ${message.type}`}>
-              {message.text}
-            </p>
-          )}
-
+  window.location.href =
+    "http://localhost:8000/api/auth/google";
+};
 
   return (
   <div className="login-page">
