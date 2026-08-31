@@ -1,444 +1,459 @@
-import React, { useState,useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import axios from 'axios';
 import {
     ArrowLeft,
     Bookmark,
-    Share2,
-    Clock,
     Calendar,
-    Users,
-    MapPin,
-    Star,
-    Send,
-    MessageCircle,
+    Clock,
     Github,
-    Globe
+    Globe,
+    MapPin,
+    MessageCircle,
+    Send,
+    Share2,
+    Star,
+    Users,
 } from 'lucide-react';
-import './ProjectInfo.css';
-import Navbar from '../HomePage/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-const backendUrl = 'http://localhost:8000';
+import Navbar from '../HomePage/Navbar';
+import './ProjectInfo.css';
 
-export default function ProjectInfo() {
+const fallbackProject = {
+    id: null,
+    title: 'No Project Selected',
+    description: 'No description available. Please navigate from a project card or create a new project.',
+    domain: 'General',
+    projectType: 'project',
+    status: 'Recruiting',
+    postedDate: 'N/A',
+    timeCommitment: 'N/A',
+    duration: 'N/A',
+    teamSize: { current: 0, target: 0 },
+    location: 'N/A',
+    startDate: 'N/A',
+    deadline: 'N/A',
+    responses: 0,
+    views: 0,
+    requiredSkills: [],
+    currentTeam: [],
+    githubRepo: '',
+    figmaLink: '',
+    demoLink: '',
+    hasUserSentRequest: false,
+    author: {
+        id: null,
+        name: 'N/A',
+        university: 'N/A',
+        year: 'N/A',
+        rating: 0,
+        projectsCompleted: 0,
+        avatar: null,
+        skills: [],
+    },
+};
+
+const buildProject = (projectData) => {
+    if (!projectData) return fallbackProject;
+
+    const creator = projectData.createdBy || {};
+    const creatorName = `${creator.firstName || ''} ${creator.lastName || ''}`.trim() || projectData.author || 'Unknown';
+    const requiredSkills = (projectData.requiredSkills || []).map((skill) => ({
+        skill,
+        level: 'Intermediate',
+        required: true,
+    }));
+    const niceToHaveSkills = (projectData.niceToHaveSkills || []).map((skill) => ({
+        skill,
+        level: 'Any',
+        required: false,
+    }));
+    const currentTeam = projectData.currentTeam?.length
+        ? projectData.currentTeam.map((member) => ({
+            id: member._id || member.id,
+            name: member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim() || 'Team Member',
+            role: member.role || 'Member',
+            skills: member.skills || [],
+            avatar: member.avatar || null,
+        }))
+        : [{
+            id: creator._id || creator.id,
+            name: creatorName,
+            role: 'Project Lead',
+            skills: creator.skills || projectData.requiredSkills?.slice(0, 3) || [],
+            avatar: creator.avatar || projectData.avatar || null,
+        }];
+
+    return {
+        id: projectData._id || projectData.id,
+        title: projectData.title || fallbackProject.title,
+        description: projectData.description || fallbackProject.description,
+        domain: projectData.domain || fallbackProject.domain,
+        projectType: projectData.projectType || 'project',
+        status: projectData.status || 'Recruiting',
+        postedDate: projectData.createdAt ? moment(projectData.createdAt).fromNow() : 'Just now',
+        timeCommitment: projectData.timeCommitment || 'Flexible',
+        duration: projectData.projectDuration || projectData.duration || 'Open ended',
+        teamSize: {
+            current: projectData.currentTeamCount || currentTeam.length || 1,
+            target: parseInt(projectData.teamSize, 10) || 1,
+        },
+        location: projectData.remote
+            ? `${projectData.location || 'Remote'} + Remote friendly`
+            : projectData.location || 'Remote',
+        startDate: projectData.startDate ? moment(projectData.startDate).format('MMMM D, YYYY') : 'To be decided',
+        deadline: projectData.applicationDeadline ? moment(projectData.applicationDeadline).format('MMMM D, YYYY') : 'Rolling',
+        responses: projectData.joinRequests?.length || projectData.responseCount || 0,
+        views: projectData.views || 0,
+        requiredSkills: [...requiredSkills, ...niceToHaveSkills],
+        currentTeam,
+        githubRepo: projectData.githubRepo || '',
+        figmaLink: projectData.figmaLink || '',
+        demoLink: projectData.demoLink || '',
+        hasUserSentRequest: Boolean(projectData.hasUserSentRequest),
+        author: {
+            id: creator._id || creator.id,
+            name: creatorName,
+            university: creator.university || projectData.university || 'N/A',
+            year: creator.academicYear || 'Student',
+            rating: creator.rating || 4.8,
+            projectsCompleted: creator.projectsCompleted || 0,
+            avatar: creator.avatar || projectData.avatar || null,
+            skills: creator.skills || [],
+        },
+    };
+};
+
+export default function ProjectInfo({ backendUrl = 'http://localhost:8000' }) {
     const location = useLocation();
     const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
-    // const [showJoinDialog, setShowJoinDialog] = useState(false);
-    // const [joinMessage, setJoinMessage] = useState('');
-        // const [joinRequests, setJoinRequests] = useState([]);
-        // const [joinRequestsLoading, setJoinRequestsLoading] = useState(true);
-        // const [joinRequestsError, setJoinRequestsError] = useState(null);
+    const [currentProject, setCurrentProject] = useState(() => buildProject(location.state?.project));
+    const [openingChat, setOpeningChat] = useState(false);
 
-    // FIX: Correctly retrieve the passed data using the 'project' key
-    const passedProjectData = location.state?.project; // Changed from 'fullProjectData' to 'project'
+    const project = currentProject;
+    const skillTags = useMemo(
+        () => project.requiredSkills.map((item) => item.skill).filter(Boolean).slice(0, 8),
+        [project.requiredSkills],
+    );
 
-    // Define a default project structure for when no data is passed
-    const defaultProject = {
-        title: 'No Project Selected',
-        description: 'No description available. Please navigate from a project card or create a new project.',
-        author: {
-            name: 'N/A',
-            university: 'N/A',
-            year: 'N/A',
-            rating: 0,
-            projectsCompleted: 0,
-            avatar: null
-        },
-        domain: 'General',
-        status: 'N/A',
-        postedDate: 'N/A',
-        timeCommitment: 'N/A',
-        duration: 'N/A',
-        teamSize: { current: 0, target: 0 },
-        location: 'N/A',
-        startDate: 'N/A',
-        deadline: 'N/A',
-        responses: 0,
-        views: 0,
-        requiredSkills: [],
-        niceToHaveSkills: [],
-        currentTeam: [],
-        githubRepo: '',
-        figmaLink: '',
-        demoLink: '',
-        hasUserSentRequest:false
-    };
-
-    // Determine which project data to use: passed data or default
-    // const project = passedProjectData ? {
-    const [currentProject, setCurrentProject] = useState(() => {
-        if (passedProjectData) {
-            return {
-         id: passedProjectData._id || passedProjectData.id, 
-                title: passedProjectData.title,
-        description: passedProjectData.description,
-        domain: passedProjectData.domain,
-        projectType: passedProjectData.projectType,
-        status: 'Recruiting',
-        postedDate: passedProjectData.createdAt ? moment(passedProjectData.createdAt).fromNow() : 'Just now',
-        timeCommitment: passedProjectData.timeCommitment,
-        duration: passedProjectData.projectDuration,
-        teamSize: {
-            current: passedProjectData.currentTeamCount || (passedProjectData.createdBy ? 1 : 0),
-            target: parseInt(passedProjectData.teamSize) || 1
-        },
-        location: passedProjectData.remote ? `${passedProjectData.location} (Remote Friendly)` : passedProjectData.location,
-        startDate: passedProjectData.startDate ? moment(passedProjectData.startDate).format('YYYY-MM-DD') : 'N/A',
-        deadline: passedProjectData.applicationDeadline ? moment(passedProjectData.applicationDeadline).format('YYYY-MM-DD') : 'N/A',
-        responses: passedProjectData.joinRequests?.length || 0,
-        views: passedProjectData.views || 0,
-
-        // FIX FOR AUTHOR DETAILS: Reconstruct from 'createdBy' (populated user object)
-        author: {
-            name: passedProjectData.createdBy ? `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim() : 'Unknown',
-            university: passedProjectData.createdBy?.university || 'N/A',
-            year: passedProjectData.createdBy?.academicYear || 'N/A',
-            rating: passedProjectData.createdBy?.rating || 0,
-            projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
-            avatar: passedProjectData.createdBy?.avatar || null
-        },
-
-        // Correctly map skills. Backend sends string arrays
-        requiredSkills: (passedProjectData.requiredSkills || []).map(skill => ({ skill, level: 'Any', required: true }))
-            .concat((passedProjectData.niceToHaveSkills || []).map(skill => ({ skill, level: 'Any', required: false }))),
-
-        // FIX FOR CURRENT TEAM: Ensure creator is listed and other accepted members if populated
-        currentTeam: passedProjectData.currentTeam ? passedProjectData.currentTeam.map(member => ({
-            name: member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim(),
-            role: 'Member', // Or actual role if available
-            skills: member.skills || [],
-            avatar: member.avatar || null
-        })) : (passedProjectData.createdBy ? [{ // Add project creator as first member if no specific team array
-            name: `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim(),
-            role: 'Project Lead',
-            skills: passedProjectData.createdBy.skills || [],
-            avatar: passedProjectData.createdBy.avatar || null
-        }] : []),
-
-        githubRepo: passedProjectData.githubRepo,
-        figmaLink: passedProjectData.figmaLink,
-        demoLink: passedProjectData.demoLink,
-          hasUserSentRequest: passedProjectData.hasUserSentRequest
-    } ;
- }
- return defaultProject;
-});
- useEffect(() => {
-        if (passedProjectData) {
-            setCurrentProject({
-               id: passedProjectData._id || passedProjectData.id,
-                title: passedProjectData.title,
-                description: passedProjectData.description,
-                domain: passedProjectData.domain,
-                projectType: passedProjectData.projectType,
-                status: 'Recruiting',
-                postedDate: passedProjectData.createdAt ? moment(passedProjectData.createdAt).fromNow() : 'Just now',
-                timeCommitment: passedProjectData.timeCommitment,
-                duration: passedProjectData.projectDuration,
-                teamSize: {
-                    current: passedProjectData.currentTeamCount || (passedProjectData.createdBy ? 1 : 0),
-                    target: parseInt(passedProjectData.teamSize) || 1
-                },
-                location: passedProjectData.remote ? `${passedProjectData.location} (Remote Friendly)` : passedProjectData.location,
-                startDate: passedProjectData.startDate ? moment(passedProjectData.startDate).format('YYYY-MM-DD') : 'N/A',
-                deadline: passedProjectData.applicationDeadline ? moment(passedProjectData.applicationDeadline).format('YYYY-MM-DD') : 'N/A',
-                responses: passedProjectData.responseCount || 0,
-                views: passedProjectData.views || 0,
-                author: {
-                    // name: passedProjectData.author,
-                    // university: passedProjectData.university,
-                    // year: passedProjectData.createdBy?.academicYear || 'N/A',
-                    // rating: passedProjectData.createdBy?.rating || 0,
-                    // projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
-                    // avatar: passedProjectData.avatar
-                    name: passedProjectData.createdBy ? `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim() : 'Unknown',
-    university: passedProjectData.createdBy?.university || 'N/A',
-    year: passedProjectData.createdBy?.academicYear || 'N/A',
-    rating: passedProjectData.createdBy?.rating || 0,
-    projectsCompleted: passedProjectData.createdBy?.projectsCompleted || 0,
-    avatar: passedProjectData.createdBy?.avatar || null
-                },
-                requiredSkills: (passedProjectData.requiredSkills || []).map(skill => ({ skill, level: 'Any', required: true }))
-                    .concat((passedProjectData.niceToHaveSkills || []).map(skill => ({ skill, level: 'Any', required: false }))),
-                currentTeam: passedProjectData.currentTeam ? passedProjectData.currentTeam.map(member => ({
-                    name: member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim(),
-                    role: 'Member',
-                    skills: member.skills || [],
-                    avatar: member.avatar || null
-                })) : (passedProjectData.createdBy ? [{
-                    name: `${passedProjectData.createdBy.firstName || ''} ${passedProjectData.createdBy.lastName || ''}`.trim(),
-                    role: 'Project Lead',
-                    skills: passedProjectData.createdBy.skills || [],
-                    avatar: passedProjectData.createdBy.avatar || null
-                }] : []),
-                githubRepo: passedProjectData.githubRepo,
-                figmaLink: passedProjectData.figmaLink,
-                demoLink: passedProjectData.demoLink,
-                hasUserSentRequest: passedProjectData.hasUserSentRequest
-            });
+    const handleJoinRequest = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('You must be logged in to send a join request.');
+            return;
         }
-    }, [passedProjectData]);
 
-const project = currentProject; // Use currentProject for rendering
-
-    useEffect(() => {
-        console.log('ProjectInfo: Final project object used for rendering:', project);
-    }, [project]);
-
-
-    const handleJoinRequest =async () => {
-        // alert('Join request sent!'); // This needs actual API call logic
-        // setShowJoinDialog(false);
-        // setJoinMessage('');
-    // };
-    const token = localStorage.getItem('accessToken');
-        if (!token) { alert('You must be logged in to send a join request.'); return; }
         const message = prompt('Optional: Add a message with your join request:');
-        if (message === null) { return; }
+        if (message === null) return;
+
         try {
-           const res = await axios.post(`${backendUrl}/api/projects/${project.id}/join`, { message }, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post(
+                `${backendUrl}/api/projects/${project.id}/join`,
+                { message },
+                { headers: { Authorization: `Bearer ${token}` } },
+            );
             alert(res.data.message || 'Join request sent successfully!');
-
-            // Update the local `currentProject` state to reflect the sent request
-            setCurrentProject(prevProject => ({
-                ...prevProject,
+            setCurrentProject((previousProject) => ({
+                ...previousProject,
                 hasUserSentRequest: true,
-                responses: prevProject.responses + 1 // Increment response count locally
+                responses: previousProject.responses + 1,
             }));
-
-        }catch (err) {
+        } catch (err) {
             console.error('Error sending join request:', err);
-            if (err.response?.status === 400 && err.response?.data?.message === 'You have already requested to join this project') {
-                alert(err.response.data.message);
-                // Even if backend caught it, update frontend flag to disable button
-                setCurrentProject(prevProject => ({
-                    ...prevProject,
-                    hasUserSentRequest: true // Set flag to disable the button
+            if (err.response?.status === 400) {
+                setCurrentProject((previousProject) => ({
+                    ...previousProject,
+                    hasUserSentRequest: true,
                 }));
-            } else {
-                alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
-      }
-    }
-  };
-
-    const handleBookmark = () => {
-        setIsBookmarked(!isBookmarked);
+            }
+            alert(err.response?.data?.message || 'Failed to send join request. Please try again.');
+        }
     };
 
-    const handleBack = () => {
-        navigate('/homepage');
-    }
+    const getCurrentUserId = () => {
+        const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+        const token = localStorage.getItem('accessToken');
+        let userId = storedUser?._id || storedUser?.id || null;
+
+        if (!userId && token) {
+            try {
+                userId = JSON.parse(atob(token.split('.')[1]))?.id || null;
+            } catch (error) {
+                console.error('Failed to decode user token:', error);
+            }
+        }
+
+        return userId;
+    };
+
+    const handleChatWithTeam = async (preferredMemberId) => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('You must be logged in to chat with the team.');
+            return;
+        }
+
+        const currentUserId = getCurrentUserId();
+        const teamMemberIds = project.currentTeam
+            .map((member) => member.id)
+            .filter(Boolean);
+        const safePreferredMemberId = preferredMemberId && preferredMemberId !== currentUserId
+            ? preferredMemberId
+            : null;
+        const otherUserId = safePreferredMemberId
+            || [project.author.id, ...teamMemberIds].find((memberId) => memberId && memberId !== currentUserId);
+
+        if (!project.id) {
+            alert('Project details are missing. Please open the project again.');
+            return;
+        }
+
+        if (!otherUserId) {
+            navigate('/chat');
+            return;
+        }
+
+        try {
+            setOpeningChat(true);
+            const response = await axios.get(`${backendUrl}/api/chats/get-or-create`, {
+                params: {
+                    otherUserId,
+                    projectId: project.id,
+                },
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const conversation = response.data?.data || response.data;
+            if (conversation?._id) {
+                localStorage.setItem('pendingChatConversationId', conversation._id);
+            }
+            navigate('/chat');
+        } catch (err) {
+            console.error('Error opening team chat:', err.response?.data || err.message);
+            alert(err.response?.data?.message || 'Failed to open chat. Please try again.');
+        } finally {
+            setOpeningChat(false);
+        }
+    };
 
     return (
-        <div className="project-info">
+        <div className="project-info-page">
             <Navbar />
-            <div className="project-details">
+            <div className="pi-shell">
+                <button type="button" className="pi-back-button" onClick={() => navigate(-1)}>
+                    <ArrowLeft size={16} />
+                    Back to search
+                </button>
 
-                <div className="back-button" onClick={handleBack}>
-                    <ArrowLeft size={20} />
-                    <span>Back to search</span>
-                </div>
-
-                <div className="main-content">
-                    <div className="left-section">
-                        {/* Project Header Card */}
-                        <div className="project-header-card">
-                            <div className="project-header">
-                                <div className="author-info">
-                                    <div className="avatar">{project.author?.name?.charAt(0).toUpperCase() || '?'}</div>
-                                    <div className="author-details">
-                                        <h3>{project.author?.name}</h3>
-                                        <p>{project.author?.university} • {project.author?.year}</p>
-                                        <div className="rating">
-                                            <Star size={20} className="star-icon" />
-                                            {project.author?.rating} ({project.author?.projectsCompleted} projects)
-                                        </div>
+                <div className="pi-layout">
+                    <main className="pi-main">
+                        <section className="pi-card pi-hero-card">
+                            <div className="pi-hero-top">
+                                <div className="pi-author">
+                                    <div className="pi-avatar">
+                                        {project.author.avatar ? (
+                                            <img src={project.author.avatar} alt={`${project.author.name}'s avatar`} />
+                                        ) : (
+                                            project.author.name.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h2>{project.author.name}</h2>
+                                        <p>{project.author.university} &bull; {project.author.year}</p>
+                                        <span className="pi-rating">
+                                            <Star size={14} />
+                                            {project.author.rating} ({project.author.projectsCompleted} projects)
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="header-actions">
+                                <div className="pi-icon-actions">
                                     <button
-                                        className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`}
-                                        onClick={handleBookmark}
+                                        type="button"
+                                        className={isBookmarked ? 'active' : ''}
+                                        onClick={() => setIsBookmarked((bookmarked) => !bookmarked)}
+                                        aria-label="Save project"
                                     >
-                                        <Bookmark size={22} className={isBookmarked ? 'filled' : ''} />
+                                        <Bookmark size={17} />
                                     </button>
-                                    <button className="share-btn">
-                                        <Share2 size={22} />
+                                    <button type="button" aria-label="Share project">
+                                        <Share2 size={17} />
                                     </button>
                                 </div>
                             </div>
 
-                            <h1 className="project-title">{project.title}</h1>
-
-                            {/* <div className="badges">
-                                {project.status && <span className="badge recruiting">{project.status}</span>}
-                                {project.domain && <span className="badge domain">{project.domain}</span>}
-                                {project.postedDate && <span className="badge posted">Posted {project.postedDate}</span>}
-                            </div> */}
-
-                            <div className="project-description">
-                                {(project.description || '').split('\n\n').map((paragraph, index) => (
+                            <h1>{project.title}</h1>
+                            <div className="pi-badges">
+                                <span className="pi-badge pi-badge-blue">{project.status}</span>
+                                <span className="pi-badge">{project.domain}</span>
+                                <span className="pi-badge">Posted {project.postedDate}</span>
+                            </div>
+                            <div className="pi-description">
+                                {project.description.split('\n').filter(Boolean).map((paragraph, index) => (
                                     <p key={index}>{paragraph}</p>
                                 ))}
                             </div>
-                        </div>
+                        </section>
 
-                        {/* Project Details */}
-                        <div className="project-details-card">
-                            <h3>Project Details</h3>
-                            <div className="details-grid">
-                                <div className="detail-item">
-                                    <Clock size={20} className="detail-icon" />
+                        <section className="pi-card pi-details-card">
+                            <h2>Project Details</h2>
+                            <div className="pi-details-grid">
+                                <div className="pi-detail-item">
+                                    <Clock size={18} />
                                     <div>
                                         <strong>Time Commitment</strong>
-                                        <p>{project.timeCommitment}</p>
+                                        <span>{project.timeCommitment}</span>
                                     </div>
                                 </div>
-                                <div className="detail-item">
-                                    <Calendar size={20} className="detail-icon" />
+                                <div className="pi-detail-item">
+                                    <Calendar size={18} />
                                     <div>
                                         <strong>Duration</strong>
-                                        <p>{project.duration}</p>
+                                        <span>{project.duration}</span>
                                     </div>
                                 </div>
-                                <div className="detail-item">
-                                    <Users size={20} className="detail-icon" />
+                                <div className="pi-detail-item">
+                                    <Users size={18} />
                                     <div>
                                         <strong>Team Size</strong>
-                                        <p>{project.teamSize.current}/{project.teamSize.target} members</p>
+                                        <span>{project.teamSize.current}/{project.teamSize.target} members</span>
                                     </div>
                                 </div>
-                                <div className="detail-item">
-                                    <MapPin size={20} className="detail-icon" />
+                                <div className="pi-detail-item">
+                                    <MapPin size={18} />
                                     <div>
                                         <strong>Location</strong>
-                                        <p>{project.location || 'N/A'}</p>
+                                        <span>{project.location}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="required-skills">
-                                <h4>Required Skills</h4>
-                                {(project.requiredSkills && project.requiredSkills.length > 0) ? (
-                                    project.requiredSkills.map((item, index) => (
-                                        <div key={index} className="skill-item">
-                                            <div className="skill-info">
-                                                <span className="skill-name">{item.skill}</span>
-                                                <span className={`skill-badge ${item.required ? 'required' : 'optional'}`}>
+                            <div className="pi-section-block">
+                                <h3>Required Skills</h3>
+                                <div className="pi-skill-list">
+                                    {project.requiredSkills.length > 0 ? project.requiredSkills.map((item, index) => (
+                                        <div className="pi-skill-row" key={`${item.skill}-${index}`}>
+                                            <div>
+                                                <strong>{item.skill}</strong>
+                                                <span className={item.required ? 'pi-skill-required' : 'pi-skill-optional'}>
                                                     {item.required ? 'Required' : 'Nice to have'}
                                                 </span>
                                             </div>
-                                            <span className="skill-level">{item.level}</span>
+                                            <span>{item.level}</span>
                                         </div>
-                                    ))
-                                ) : (
-                                    <p>No specific skills listed.</p>
-                                )}
+                                    )) : (
+                                        <p className="pi-muted">No specific skills listed.</p>
+                                    )}
+                                </div>
                             </div>
 
-                            <div className="project-links">
-                                <h4>Project Links</h4>
-                                {project.githubRepo && (
-                                    <a href={project.githubRepo} target="_blank" rel="noopener noreferrer" className="link-btn">
-                                        <Github size={20} />
-                                        GitHub
-                                    </a>
-                                )}
-                                {project.figmaLink && (
-                                    <a href={project.figmaLink} target="_blank" rel="noopener noreferrer" className="link-btn">
-                                        <Globe size={20} />
-                                        Figma
-                                    </a>
-                                )}
-                                {project.demoLink && (
-                                    <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="link-btn">
-                                        <Globe size={20} />
-                                        Demo
-                                    </a>
-                                )}
-                                {!project.githubRepo && !project.figmaLink && !project.demoLink && <p>No project links provided.</p>}
+                            <div className="pi-section-block">
+                                <h3>Project Links</h3>
+                                <div className="pi-links">
+                                    {project.githubRepo && (
+                                        <a href={project.githubRepo} target="_blank" rel="noopener noreferrer">
+                                            <Github size={15} />
+                                            GitHub
+                                        </a>
+                                    )}
+                                    {project.demoLink && (
+                                        <a href={project.demoLink} target="_blank" rel="noopener noreferrer">
+                                            <Globe size={15} />
+                                            Demo
+                                        </a>
+                                    )}
+                                    {project.figmaLink && (
+                                        <a href={project.figmaLink} target="_blank" rel="noopener noreferrer">
+                                            <Globe size={15} />
+                                            Figma
+                                        </a>
+                                    )}
+                                    {!project.githubRepo && !project.demoLink && !project.figmaLink && (
+                                        <span className="pi-muted">No project links provided.</span>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        </section>
 
-                    </div>
-
-                    {/* Right Sidebar */}
-                    <div className="right-sidebar">
-                        <div className="action-card">
-                            <div className="interest-count">
-                                <div className="count">{project.responses}</div>
-                                <div className="count-label">people interested</div>
-                            </div>
-                            <div className="deadline-info">
-                                <div className="deadline">Apply by {project.deadline}</div>
-                                <div className="start-date">Starting {project.startDate}</div>
-                            </div>
-                            <div className="action-buttons">
-                            <button
-                                className="joinnn-btn"
-                                // onClick={() => setShowJoinDialog(true)}
-                                onClick={handleJoinRequest} // Directly call the handler now
-                                disabled={project.hasUserSentRequest}
-                            >
-                                <Send size={20} />
-                                {project.hasUserSentRequest ? 'Request Sent' : 'Send Join Request'}
-                            </button>
-                            <button className="chattt-btn">
-                                <MessageCircle size={20} />
-                                Chat with Team
-                            </button>
-                            </div>
-                        </div>
-
-                        <div className="stats-card">
-                            <h3>Project Stats</h3>
-                            <div className="stat-row">
-                                <span>Views</span>
-                                <span>{project.views}</span>
-                            </div>
-                            <div className="stat-row">
-                                <span>Applications</span>
-                                <span>{project.responses}</span>
-                            </div>
-                            <div className="stat-row">
-                                <span>Team Members</span>
-                                <span>{project.teamSize.current}/{project.teamSize.target}</span>
-                            </div>
-                            <div className="stat-row">
-                                <span>Posted</span>
-                                <span>{project.postedDate}</span>
-                            </div>
-                        </div>
-                        <div className="current-team">
-                            <h3>Current Team</h3>
-                            <p className="team-subtitle">Meet the team members already working on this project</p>
-                            {(project.currentTeam && project.currentTeam.length > 0) ? (
-                                project.currentTeam.map((member, index) => (
-                                    <div key={index} className="team-member">
-                                        <div className="member-avatar">{member.name?.charAt(0) || '?'}</div>
-                                        <div className="member-info">
-                                            <h4>{member.name}</h4>
+                        <section className="pi-card pi-team-card">
+                            <h2>Current Team</h2>
+                            <p>Meet the team members already working on this project</p>
+                            <div className="pi-team-list">
+                                {project.currentTeam.map((member, index) => (
+                                    <div className="pi-team-member" key={`${member.name}-${index}`}>
+                                        <div className="pi-member-avatar">
+                                            {member.avatar ? <img src={member.avatar} alt="" /> : member.name.charAt(0)}
+                                        </div>
+                                        <div className="pi-member-info">
+                                            <h3>{member.name}</h3>
                                             <p>{member.role}</p>
+                                            <div>
+                                                {member.skills.slice(0, 3).map((skill) => (
+                                                    <span key={skill}>{skill}</span>
+                                                ))}
+                                            </div>
                                         </div>
-                                        <button className="message-btn">
-                                            <MessageCircle size={20} />
-                                            Message
+                                        <button
+                                            type="button"
+                                            aria-label={`Message ${member.name}`}
+                                            onClick={() => handleChatWithTeam(member.id)}
+                                            disabled={openingChat}
+                                        >
+                                            <MessageCircle size={16} />
                                         </button>
                                     </div>
-                                ))
-                            ) : (
-                                <p>No team members listed yet.</p>
-                            )}
-                        </div>
+                                ))}
+                            </div>
+                        </section>
+                    </main>
 
-                    </div>
+                    <aside className="pi-sidebar">
+                        <section className="pi-card pi-action-card">
+                            <strong>{project.responses}</strong>
+                            <span>people interested</span>
+                            <h2>Apply by {project.deadline}</h2>
+                            <p>Starting {project.startDate}</p>
+                            <button
+                                type="button"
+                                className="pi-join-button"
+                                onClick={handleJoinRequest}
+                                disabled={project.hasUserSentRequest}
+                            >
+                                <Send size={16} />
+                                {project.hasUserSentRequest ? 'Request Sent' : 'Send Join Request'}
+                            </button>
+                            <button
+                                type="button"
+                                className="pi-chat-button"
+                                onClick={() => handleChatWithTeam()}
+                                disabled={openingChat}
+                            >
+                                <MessageCircle size={16} />
+                                {openingChat ? 'Opening Chat...' : 'Chat with Team'}
+                            </button>
+                        </section>
+
+                        <section className="pi-card pi-stats-card">
+                            <h2>Project Stats</h2>
+                            <div><span>Views</span><strong>{project.views}</strong></div>
+                            <div><span>Applications</span><strong>{project.responses}</strong></div>
+                            <div><span>Team Members</span><strong>{project.teamSize.current}/{project.teamSize.target}</strong></div>
+                            <div><span>Posted</span><strong>{project.postedDate}</strong></div>
+                        </section>
+
+                        <section className="pi-card pi-tags-card">
+                            <h2>Skills Tags</h2>
+                            <div>
+                                {skillTags.length > 0 ? skillTags.map((skill) => (
+                                    <span key={skill}>{skill}</span>
+                                )) : (
+                                    <span>No skills listed</span>
+                                )}
+                            </div>
+                        </section>
+                    </aside>
                 </div>
-
-               
-               
             </div>
         </div>
     );
-
 }

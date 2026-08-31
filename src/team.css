@@ -112,6 +112,29 @@
 
   color: white;
 }
+
+.footer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.self-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #2563eb;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.empty-teammates {
+  margin: 0;
+  color: #64748b;
+}
 .footer button:not(.primary):hover {
   background: #ede9fe;
   color: #7c3aed;

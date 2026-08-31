@@ -1,93 +1,76 @@
-/* TeamInvitationCard.css */
 .inviuutation-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  padding: 3rem;
-  transition: box-shadow 0.2s ease;
-  width: 30vw;
-  margin-bottom: 2rem;
-
+  width: 100%;
+  border: 1px solid #d9dce3;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 18px;
 }
 
-.inviuutation-card:hover {
-  box-shadow: 0 0 15px 4px rgba(147, 191, 236, 0.7);
-  transform: translateY(-2px);
+.invitation-header {
+  margin-bottom: 14px;
 }
 
-.invitation-content {
-  margin-bottom: 0.75rem;
+.from-details {
+  min-width: 0;
 }
 
 .invitation-titleee {
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 0.25rem;
-  font-size: 2rem;
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
+  margin: 0 0 6px;
+  overflow: hidden;
+  color: #020617;
+  font-size: 15px;
+  line-height: 1.3;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-
 .invitation-details {
-  font-size: 1rem;
-  color: #4b5563;
-  /* margin: 0; */
-  margin-bottom: 2rem;
+  margin: 0;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .invitation-actions {
-  display: flex;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
-.accept-button, .decline-button {
-  flex: 1;
-  padding: 0.5rem 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  border: none;
+.accept-button,
+.decline-button {
+  width: 100%;
+  height: 31px;
+  border-radius: 7px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 750;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 
 .accept-button {
-  background-color: #2563eb;
-  color: white;
-  width: 50vw;
-
+  border: 0;
+  background: #2563eb;
+  color: #ffffff;
 }
 
 .accept-button:hover {
-  background-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
 }
 
 .decline-button {
-  background-color: #f3f4f6;
-  color: #374151;
-  width: 50vw;
-
+  border: 1px solid #d9dce3;
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .decline-button:hover {
-  background-color: #e5e7eb;
-}
-
-/* Focus states for accessibility */
-.accept-button:focus, .decline-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-}
-
-/* Active states */
-.accept-button:active {
-  background-color: #1e40af;
-  transform: translateY(1px);
-}
-
-.decline-button:active {
-  background-color: #d1d5db;
-  transform: translateY(1px);
+  background: #f8fafc;
+  color: #dc2626;
 }
