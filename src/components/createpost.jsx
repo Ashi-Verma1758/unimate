@@ -17,7 +17,9 @@ function CreatePost() {
         requiredSkills: [],
         niceToHaveSkills: [],
         timeCommitment: '',
+        timeCommitmentUnit: 'hours/week',
         projectDuration: '',
+        projectDurationUnit: 'months',
         teamSize: '',
         location: '',
         startDate: '',
@@ -123,7 +125,7 @@ function CreatePost() {
 //         navigate('/ProjectInfo', { state: { project: projectToPass } });
 //     };
 
-const handleSubmit = async (e) => { // <--- ADD async HERE
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!userProfile) {
@@ -131,28 +133,33 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
         return;
     }
 
-    // --- PRE-SUBMISSION DATA TRANSFORMATION ---
-    // Ensure all data types match your backend Project schema (project.model.js)
+    const normalizedTimeCommitment = projectData.timeCommitment && projectData.timeCommitmentUnit
+        ? `${projectData.timeCommitment} ${projectData.timeCommitmentUnit}`
+        : '';
+
+    const normalizedProjectDuration = projectData.projectDuration && projectData.projectDurationUnit
+        ? `${projectData.projectDuration} ${projectData.projectDurationUnit}`
+        : '';
+
     const dataToSend = {
         title: projectData.projectTitle,
         description: projectData.projectDescription,
         domain: projectData.domain,
         projectType: projectData.projectType,
-        requiredSkills: projectData.requiredSkills, // Already array of strings
-        niceToHaveSkills: projectData.niceToHaveSkills, // Already array of strings
-        timeCommitment: projectData.timeCommitment,
-        projectDuration: projectData.projectDuration,
-        teamSize: parseInt(projectData.teamSize, 10), // Convert to Number
+        requiredSkills: projectData.requiredSkills,
+        niceToHaveSkills: projectData.niceToHaveSkills,
+        timeCommitment: normalizedTimeCommitment,
+        projectDuration: normalizedProjectDuration,
+        teamSize: parseInt(projectData.teamSize, 10),
         location: projectData.location,
-        startDate: projectData.startDate, // YYYY-MM-DD from date input, Mongoose parses fine
-        applicationDeadline: projectData.applicationDeadline, // YYYY-MM-DD from date input
-        remote: projectData.remoteWorkOkay, // Match 'remote' field in backend
+        startDate: projectData.startDate,
+        applicationDeadline: projectData.applicationDeadline,
+        remote: projectData.remoteWorkOkay,
         githubRepo: projectData.githubRepo,
         figmaLink: projectData.figmaLink,
         demoLink: projectData.demoLink,
     };
 
-    // Basic client-side validation check for required fields
     if (!dataToSend.title || !dataToSend.description || !dataToSend.domain ||
         !dataToSend.timeCommitment || !dataToSend.projectDuration || isNaN(dataToSend.teamSize) ||
         !dataToSend.startDate || !dataToSend.applicationDeadline) {
@@ -192,7 +199,9 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
             requiredSkills: [],
             niceToHaveSkills: [],
             timeCommitment: '',
+            timeCommitmentUnit: 'hours/week',
             projectDuration: '',
+            projectDurationUnit: 'months',
             teamSize: '',
             location: '',
             startDate: '',
@@ -367,27 +376,52 @@ const handleSubmit = async (e) => { // <--- ADD async HERE
                         <div className="two-col">
                             <div>
                                 <label htmlFor="timeCommitment">Time Commitment <span className="text-red-500">*</span></label>
-                                <input
-                                    type="text"
-                                    id="timeCommitment"
-                                    name="timeCommitment"
-                                    placeholder="Expected time commitment"
-                                    value={projectData.timeCommitment}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <div className="unit-input-row">
+                                    <input
+                                        type="number"
+                                        id="timeCommitment"
+                                        name="timeCommitment"
+                                        min="1"
+                                        placeholder="e.g. 4"
+                                        value={projectData.timeCommitment}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    <select
+                                        id="timeCommitmentUnit"
+                                        name="timeCommitmentUnit"
+                                        value={projectData.timeCommitmentUnit}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="hours/day">hours/day</option>
+                                        <option value="days/week">days/week</option>
+                                        <option value="hours/week">hours/week</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="projectDuration">Project Duration <span className="text-red-500">*</span></label>
-                                <input
-                                    type="text"
-                                    id="projectDuration"
-                                    name="projectDuration"
-                                    placeholder="How long is the project?"
-                                    value={projectData.projectDuration}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <div className="unit-input-row">
+                                    <input
+                                        type="number"
+                                        id="projectDuration"
+                                        name="projectDuration"
+                                        min="1"
+                                        placeholder="e.g. 3"
+                                        value={projectData.projectDuration}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    <select
+                                        id="projectDurationUnit"
+                                        name="projectDurationUnit"
+                                        value={projectData.projectDurationUnit}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="weeks">weeks</option>
+                                        <option value="months">months</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 

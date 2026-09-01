@@ -1,86 +1,103 @@
-// src/components/JoinRequestCard.jsx
 import React from 'react';
-import { Mail, Star, Users } from 'lucide-react'; // Assuming you have lucide-react installed
-import './JoinRequestCard.css'; // Make sure to create this CSS file
+import { Check, Mail, Star, Users, X } from 'lucide-react';
+import './JoinRequestCard.css';
 
 const JoinRequestCard = ({
-  requestId,       // ID of the specific join request (for backend actions)
-  projectId,       // ID of the project the request is for
-  requesterAvatar, // Avatar URL of the user who sent the request
+  requestId,
+  projectId,
+  requesterAvatar,
   requesterName,
   requesterMajor,
   requesterAcademicYear,
   requesterUniversity,
-//   requesterRating, // e.g., 4.8
-  requesterProjectsCount, // e.g., 12 projects
-  timeAgo,         // e.g., "2 hours ago"
+  requesterProjectsCount,
+  timeAgo,
   projectTitle,
   requestMessage,
-  skills = [],     // Array of skills (e.g., ['React', 'Python'])
-  onAccept,        // Function to call on Accept button click
-  onDecline        // Function to call on Decline button click
+  skills = [],
+  onAccept,
+  onDecline,
 }) => {
+  const safeName = requesterName || 'Unknown';
+  const safeMajor = requesterMajor || 'Computer Science';
+  const safeUniversity = requesterUniversity || 'University';
+  const safeYear = requesterAcademicYear || 'Junior';
+  const safeProjectsCount = requesterProjectsCount || 0;
+  const safeRequestMessage = requestMessage || 'I would love to contribute to this project.';
+
   return (
     <div className="join-request-card">
-      <div className="card-header">
+      <div className="join-request-header">
         <div className="requester-info">
           <div className="requester-avatar">
             {requesterAvatar ? (
-              <img src={requesterAvatar} alt={`${requesterName}'s avatar`} className="avatar-img" />
+              <img src={requesterAvatar} alt={`${safeName}'s avatar`} className="avatar-img" />
             ) : (
-              requesterName ? requesterName.charAt(0).toUpperCase() : '?'
+              safeName.charAt(0).toUpperCase()
             )}
           </div>
+
           <div className="requester-details">
-            <h4 className="requester-name">{requesterName}</h4>
-            <span className="requester-major">{requesterMajor}</span>
-            <span className="requester-academic-year">{requesterAcademicYear}</span>
-            <span className="requester-university">{requesterUniversity}</span>
-            <div className="requester-meta">
-              {/* <span className="requester-rating">
-                <Star size={14} fill="currentColor" strokeWidth={0} /> {requesterRating}
-              </span> */}
+            <div className="requester-name-line">
+              <h4 className="requester-name">{safeName}</h4>
+              <span className="requester-year">{safeYear}</span>
+            </div>
+
+            <div className="requester-meta-row">
+              <span className="requester-major">{safeMajor}</span>
+              <span className="meta-dot">•</span>
+              <span className="requester-university">{safeUniversity}</span>
+              <span className="meta-dot">•</span>
+              <span className="requester-time">{timeAgo}</span>
+            </div>
+
+            <div className="requester-stats-row">
+              <span className="requester-rating">
+                <Star size={14} fill="currentColor" strokeWidth={0} />
+                <span>4.8</span>
+              </span>
+              <span className="meta-dot">•</span>
               <span className="requester-projects-count">
-                <Users size={14} /> {requesterProjectsCount} projects
+                <Users size={14} /> {safeProjectsCount} projects
               </span>
             </div>
           </div>
         </div>
+
         <div className="request-actions">
-          <button className="acceppt-button" onClick={() => onAccept(projectId, requestId)}>
-            Accept
+          <button className="accept-button" type="button" onClick={() => onAccept(projectId, requestId)}>
+            <Check size={15} />
+            <span>Accept</span>
           </button>
-          <button className="decliine-button" onClick={() => onDecline(projectId, requestId)}>
-            Decline
+          <button className="decline-button" type="button" onClick={() => onDecline(projectId, requestId)}>
+            <X size={15} />
+            <span>Decline</span>
           </button>
         </div>
       </div>
 
-      <div className="project-detailsss">
-        <h4 className="project-title-request">Requesting to join: {projectTitle}</h4>
+      <div className="project-detail-row">
+        <span className="project-detail-label">Requesting to join:</span>
+        <span className="project-detail-title">{projectTitle}</span>
       </div>
 
       <div className="request-message-section">
-        <Mail size={16} />
-        <p className="request-message">"{requestMessage}"</p>
+        <span className="quote-mark">“</span>
+        <p className="request-message">{safeRequestMessage}</p>
       </div>
 
       {skills.length > 0 && (
         <div className="skills-section">
-          <span className="skills-label">Skills:</span>
+          <span className="skills-label">Skills</span>
           <div className="skills-list">
             {skills.map((skill, index) => (
-              <span key={index} className="skill-tag">
+              <span key={`${skill}-${index}`} className="skill-tag">
                 {skill}
               </span>
             ))}
           </div>
         </div>
       )}
-
-      <div className="request-time">
-        <span className="time-ago">{timeAgo}</span>
-      </div>
     </div>
   );
 };

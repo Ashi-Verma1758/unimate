@@ -125,6 +125,7 @@ let currentUserId = null;
                     <Route path="/signup" element={<CreateAccount />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<StudentProfile />} />
+                    <Route path="/profile/:userId" element={<StudentProfile />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
 
                     <Route

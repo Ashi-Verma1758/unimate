@@ -1,15 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import './ChatWindow.css';
 import Navbar from "../HomePage/Navbar.jsx";
 import TeamMembers from './TeamMembers.jsx';
 import {
   Image,
+  Download,
+  FileText,
   MoreVertical,
   Paperclip,
   Phone,
   Send,
   Smile,
   Video,
+  X,
 } from 'lucide-react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -26,8 +29,74 @@ const ChatWindow = () => {
   const [messagesError, setMessagesError] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [selectedAttachments, setSelectedAttachments] = useState([]);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
+
+  const fetchConversations = useCallback(async ({ shouldSelectDefault = false } = {}) => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      setMessagesError('Please log in to access chat.');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${backendUrl}/api/chats/my`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const convos = response.data || [];
+      setConversations(convos);
+
+      if (!shouldSelectDefault) return;
+
+      const pendingConversationId = localStorage.getItem('pendingChatConversationId');
+      const pendingConversationExists = convos.some((conversation) => conversation._id === pendingConversationId);
+      const targetConversationId = pendingConversationExists ? pendingConversationId : convos[0]?._id;
+
+      if (pendingConversationId && !pendingConversationExists) {
+        localStorage.removeItem('pendingChatConversationId');
+      }
+
+      if (targetConversationId) {
+        setSelectedConversationId(targetConversationId);
+        localStorage.removeItem('pendingChatConversationId');
+      }
+    } catch (err) {
+      console.error('Error fetching conversations:', err.response?.data || err.message);
+      setMessagesError(err.response?.data?.message || 'Failed to load conversations.');
+    }
+  }, []);
+
+  const fetchMessages = useCallback(async (conversationId, { showLoading = false } = {}) => {
+    const token = localStorage.getItem('accessToken');
+    if (!token || !conversationId) return;
+
+    try {
+      if (showLoading) {
+        setLoadingMessages(true);
+      }
+      setMessagesError(null);
+
+      const response = await axios.get(`${backendUrl}/api/chats/${conversationId}/messages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const chatMessages = response.data?.messages || response.data || [];
+      setMessages(chatMessages);
+
+      socketRef.current?.emit('joinRoom', { conversationId });
+    } catch (err) {
+      console.error('Error fetching messages:', err.response?.data || err.message);
+      setMessagesError(err.response?.data?.message || 'Failed to load messages.');
+    } finally {
+      if (showLoading) {
+        setLoadingMessages(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
@@ -49,35 +118,8 @@ const ChatWindow = () => {
       return;
     }
 
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get(`${backendUrl}/api/chats/my`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const convos = response.data || [];
-        setConversations(convos);
-
-        const pendingConversationId = localStorage.getItem('pendingChatConversationId');
-        const pendingConversationExists = convos.some((conversation) => conversation._id === pendingConversationId);
-        const targetConversationId = pendingConversationExists ? pendingConversationId : convos[0]?._id;
-
-        if (pendingConversationId && !pendingConversationExists) {
-          localStorage.removeItem('pendingChatConversationId');
-        }
-
-        if (targetConversationId) {
-          setSelectedConversationId(targetConversationId);
-          localStorage.removeItem('pendingChatConversationId');
-        }
-      } catch (err) {
-        console.error('Error fetching conversations:', err.response?.data || err.message);
-        setMessagesError(err.response?.data?.message || 'Failed to load conversations.');
-      }
-    };
-
-    fetchConversations();
-  }, []);
+    fetchConversations({ shouldSelectDefault: true });
+  }, [fetchConversations]);
 
   useEffect(() => {
     if (!selectedConversationId) {
@@ -86,32 +128,45 @@ const ChatWindow = () => {
       return;
     }
 
+    fetchMessages(selectedConversationId, { showLoading: true });
+  }, [fetchMessages, selectedConversationId]);
+
+  useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    if (!token) return;
+    if (!token) return undefined;
 
-    const fetchMessages = async () => {
-      try {
-        setLoadingMessages(true);
-        setMessagesError(null);
-
-        const response = await axios.get(`${backendUrl}/api/chats/${selectedConversationId}/messages`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const chatMessages = response.data?.messages || response.data || [];
-        setMessages(chatMessages);
-
-        socketRef.current?.emit('joinRoom', { conversationId: selectedConversationId });
-      } catch (err) {
-        console.error('Error fetching messages:', err.response?.data || err.message);
-        setMessagesError(err.response?.data?.message || 'Failed to load messages.');
-      } finally {
-        setLoadingMessages(false);
+    const refreshConversations = () => {
+      if (document.visibilityState === 'visible') {
+        fetchConversations();
       }
     };
 
-    fetchMessages();
-  }, [selectedConversationId]);
+    const intervalId = window.setInterval(refreshConversations, 10000);
+    window.addEventListener('focus', refreshConversations);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', refreshConversations);
+    };
+  }, [fetchConversations]);
+
+  useEffect(() => {
+    if (!selectedConversationId) return undefined;
+
+    const refreshMessages = () => {
+      if (document.visibilityState === 'visible') {
+        fetchMessages(selectedConversationId);
+      }
+    };
+
+    const intervalId = window.setInterval(refreshMessages, 5000);
+    window.addEventListener('focus', refreshMessages);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', refreshMessages);
+    };
+  }, [fetchMessages, selectedConversationId]);
 
   useEffect(() => {
     const selectedConversation = conversations.find((conversation) => conversation._id === selectedConversationId);
@@ -166,6 +221,7 @@ const ChatWindow = () => {
 
     socket.on('receiveMessage', (newMessage) => {
       const conversationId = newMessage.conversationId || newMessage.conversation;
+      const lastMessage = newMessage.text || (newMessage.attachments?.length === 1 ? 'Sent an attachment' : `Sent ${newMessage.attachments?.length || 0} attachments`);
 
       if (conversationId === selectedConversationId) {
         setMessages((prevMessages) => {
@@ -178,7 +234,7 @@ const ChatWindow = () => {
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation._id === conversationId
-            ? { ...conversation, lastMessage: newMessage.text, updatedAt: newMessage.sentAt || new Date().toISOString() }
+            ? { ...conversation, lastMessage, updatedAt: newMessage.sentAt || new Date().toISOString() }
             : conversation
         )
       );
@@ -198,19 +254,25 @@ const ChatWindow = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!newMessageText.trim() || !selectedConversationId || !currentUserId) return;
+    if ((!newMessageText.trim() && selectedAttachments.length === 0) || !selectedConversationId || !currentUserId) return;
 
     const trimmedText = newMessageText.trim();
     const token = localStorage.getItem('accessToken');
+    const formData = new FormData();
+    formData.append('text', trimmedText);
+    selectedAttachments.forEach((file) => {
+      formData.append('attachments', file);
+    });
 
     try {
       const response = await axios.post(
         `${backendUrl}/api/chats/${selectedConversationId}/messages`,
-        { text: trimmedText },
+        formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const savedMessage = response.data;
+      const lastMessage = savedMessage.text || (savedMessage.attachments?.length === 1 ? 'Sent an attachment' : `Sent ${savedMessage.attachments?.length || 0} attachments`);
       setMessages((prevMessages) => {
         const exists = prevMessages.some((msg) => msg._id === savedMessage._id);
         if (exists) return prevMessages;
@@ -220,17 +282,43 @@ const ChatWindow = () => {
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation._id === selectedConversationId
-            ? { ...conversation, lastMessage: trimmedText, updatedAt: savedMessage.sentAt || new Date().toISOString() }
+            ? { ...conversation, lastMessage, updatedAt: savedMessage.sentAt || new Date().toISOString() }
             : conversation
         )
       );
 
       setNewMessageText('');
+      setSelectedAttachments([]);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (imageInputRef.current) imageInputRef.current.value = '';
       setMessagesError(null);
     } catch (err) {
       console.error('Error sending message:', err.response?.data || err.message);
       setMessagesError(err.response?.data?.message || 'Failed to send message.');
     }
+  };
+
+  const handleAttachmentSelect = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setSelectedAttachments((currentFiles) => [...currentFiles, ...files].slice(0, 5));
+    event.target.value = '';
+  };
+
+  const removeSelectedAttachment = (indexToRemove) => {
+    setSelectedAttachments((currentFiles) =>
+      currentFiles.filter((file, index) => index !== indexToRemove)
+    );
+  };
+
+  const getAttachmentUrl = (attachment) =>
+    attachment.url?.startsWith('http') ? attachment.url : `${backendUrl}${attachment.url}`;
+
+  const formatFileSize = (size = 0) => {
+    if (size < 1024) return `${size} B`;
+    if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const formatMessageTime = (isoString) => {
@@ -276,6 +364,49 @@ const ChatWindow = () => {
     otherMembers.map(getMemberName).join(', ') ||
     'Select a conversation';
 
+  const teamConversations = conversations.filter((convo) => convo.project && convo.project._id);
+  const directConversations = conversations.filter((convo) => !convo.project || !convo.project._id);
+
+  const renderConversationList = (items) =>
+    items.map((convo) => {
+      const title =
+        convo.project?.title ||
+        convo.members
+          ?.filter((member) => member._id !== currentUserId)
+          .map(getMemberName)
+          .join(', ') ||
+        'Unnamed Chat';
+
+      return (
+        <button
+          type="button"
+          key={convo._id}
+          className={`conversation-item ${selectedConversationId === convo._id ? 'active' : ''}`}
+          onClick={() => setSelectedConversationId(convo._id)}
+        >
+          <div className="conversation-info">
+            <div className="conversation-text">
+              <div className="conversation-topline">
+                <h4 className="conversation-name">{title}</h4>
+                {convo.unreadCount > 0 && <span className="conversation-badge">{convo.unreadCount}</span>}
+              </div>
+              <p className="last-message">{convo.lastMessage || 'No messages yet.'}</p>
+              <div className="conversation-meta-row">
+                <span>{getRelativeTime(convo.updatedAt)}</span>
+                <div className="conversation-mini-avatars" aria-hidden="true">
+                  {(convo.members || []).slice(0, 3).map((member) => (
+                    <span key={member._id} className="mini-avatar">
+                      {getInitials(getMemberName(member))}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </button>
+      );
+    });
+
   return (
     <>
       <Navbar />
@@ -287,44 +418,17 @@ const ChatWindow = () => {
             {conversations.length === 0 ? (
               <p className="empty-state">No conversations found.</p>
             ) : (
-              conversations.map((convo) => {
-                const title =
-                  convo.project?.title ||
-                  convo.members
-                    ?.filter((member) => member._id !== currentUserId)
-                    .map(getMemberName)
-                    .join(', ') ||
-                  'Unnamed Chat';
+              <>
+                <div className="conversation-section">
+                  <h3 className="conversation-section-header">Teams</h3>
+                  {teamConversations.length > 0 ? renderConversationList(teamConversations) : <p className="empty-substate">No team chats yet.</p>}
+                </div>
 
-                return (
-                  <button
-                    type="button"
-                    key={convo._id}
-                    className={`conversation-item ${selectedConversationId === convo._id ? 'active' : ''}`}
-                    onClick={() => setSelectedConversationId(convo._id)}
-                  >
-                    <div className="conversation-info">
-                      <div className="conversation-text">
-                        <div className="conversation-topline">
-                          <h4 className="conversation-name">{title}</h4>
-                          {convo.unreadCount > 0 && <span className="conversation-badge">{convo.unreadCount}</span>}
-                        </div>
-                        <p className="last-message">{convo.lastMessage || 'No messages yet.'}</p>
-                        <div className="conversation-meta-row">
-                          <span>{getRelativeTime(convo.updatedAt)}</span>
-                          <div className="conversation-mini-avatars" aria-hidden="true">
-                            {(convo.members || []).slice(0, 3).map((member) => (
-                              <span key={member._id} className="mini-avatar">
-                                {getInitials(getMemberName(member))}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })
+                <div className="conversation-section">
+                  <h3 className="conversation-section-header">Users</h3>
+                  {directConversations.length > 0 ? renderConversationList(directConversations) : <p className="empty-substate">No direct chats yet.</p>}
+                </div>
+              </>
             )}
           </div>
         </aside>
@@ -377,6 +481,7 @@ const ChatWindow = () => {
                 message.sender?.firstName || message.sender?.lastName
                   ? `${message.sender?.firstName || ''} ${message.sender?.lastName || ''}`.trim()
                   : memberNameById[senderId] || 'Unknown';
+              const attachments = message.attachments || [];
 
               return (
                 <div key={message._id || message.tempId} className={`chat-message ${isSent ? 'sent' : 'received'}`}>
@@ -392,7 +497,39 @@ const ChatWindow = () => {
                     </div>
                     <div className="chat-bubble-wrap">
                       <div className="chat-bubble">
-                        <p>{message.text}</p>
+                        {message.text && <p>{message.text}</p>}
+                        {attachments.length > 0 && (
+                          <div className="message-attachments">
+                            {attachments.map((attachment) => {
+                              const attachmentUrl = getAttachmentUrl(attachment);
+                              const isImage = attachment.mimeType?.startsWith('image/');
+
+                              return (
+                                <a
+                                  className={`message-attachment ${isImage ? 'image-attachment' : 'file-attachment'}`}
+                                  href={attachmentUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  download={attachment.originalName}
+                                  key={attachment.fileName || attachment.url}
+                                >
+                                  {isImage ? (
+                                    <img src={attachmentUrl} alt={attachment.originalName} />
+                                  ) : (
+                                    <>
+                                      <FileText size={17} />
+                                      <span>
+                                        <strong>{attachment.originalName}</strong>
+                                        <small>{formatFileSize(attachment.size)}</small>
+                                      </span>
+                                      <Download size={16} />
+                                    </>
+                                  )}
+                                </a>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -403,11 +540,59 @@ const ChatWindow = () => {
             <div ref={messagesEndRef} />
           </div>
 
+          {selectedAttachments.length > 0 && (
+            <div className="selected-attachments">
+              {selectedAttachments.map((file, index) => (
+                <div className="selected-attachment" key={`${file.name}-${file.lastModified}`}>
+                  {file.type.startsWith('image/') ? <Image size={15} /> : <FileText size={15} />}
+                  <span>{file.name}</span>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${file.name}`}
+                    title="Remove attachment"
+                    onClick={() => removeSelectedAttachment(index)}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="chat-input-area">
-            <button className="chat-utility-button" type="button" aria-label="Attach file" title="Attach file">
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="chat-file-input"
+              multiple
+              onChange={handleAttachmentSelect}
+            />
+            <input
+              ref={imageInputRef}
+              type="file"
+              className="chat-file-input"
+              accept="image/*"
+              multiple
+              onChange={handleAttachmentSelect}
+            />
+            <button
+              className="chat-utility-button"
+              type="button"
+              aria-label="Attach file"
+              title="Attach file"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={!selectedConversationId || loadingMessages}
+            >
               <Paperclip size={16} />
             </button>
-            <button className="chat-utility-button" type="button" aria-label="Add image" title="Add image">
+            <button
+              className="chat-utility-button"
+              type="button"
+              aria-label="Add image"
+              title="Add image"
+              onClick={() => imageInputRef.current?.click()}
+              disabled={!selectedConversationId || loadingMessages}
+            >
               <Image size={16} />
             </button>
             <input
@@ -431,7 +616,7 @@ const ChatWindow = () => {
               type="button"
               aria-label="Send message"
               onClick={handleSendMessage}
-              disabled={!selectedConversationId || loadingMessages || !newMessageText.trim()}
+              disabled={!selectedConversationId || loadingMessages || (!newMessageText.trim() && selectedAttachments.length === 0)}
             >
               <Send className="send" />
             </button>

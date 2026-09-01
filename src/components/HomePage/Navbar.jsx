@@ -54,14 +54,6 @@ const Navbar = () => {
           <div className="navbar-left">
             <div className="navbar-brand-wrap">
               <Link to={isLoggedIn ? '/homepage' : '/'} className="navbar-logo">Unimate</Link>
-              {isLoggedIn && (
-                <Link
-                  to="/homepage"
-                  className={`navbar-home-link ${isHomeActive ? 'active' : ''}`}
-                >
-                  <Home size={16} /> <span>Home</span>
-                </Link>
-              )}
             </div>
 
             {isLoggedIn && (
