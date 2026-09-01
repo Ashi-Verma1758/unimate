@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './profile.css';
@@ -27,6 +27,7 @@ const StudentProfile = () => {
   const [loading, setLoading] = useState(true);
   const backendUrl = "http://localhost:8000"; // Change this if needed
  const navigate = useNavigate(); 
+ const { userId } = useParams();
   // const handleViewClick = () => {
   //       // Navigate to the ProjectInfo page, passing the entire projectData object
   //       // in the 'state' property of the navigation.
@@ -37,7 +38,10 @@ const StudentProfile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        const res = await axios.get(`${backendUrl}/api/users/me`, {
+        const profileUrl = userId
+          ? `${backendUrl}/api/users/${userId}`
+          : `${backendUrl}/api/users/me`;
+        const res = await axios.get(profileUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -51,7 +55,7 @@ const StudentProfile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [userId]);
 
   if (loading) return <div>Loading...</div>;
 const totalProjects = profile.projects?.length || 0;
@@ -80,7 +84,7 @@ const totalProjects = profile.projects?.length || 0;
             <span>👥 {profile.connections} connections</span>
           </div>
         </div>
-        <Link to="/edit-profile" className="edit-btn">✏ Edit Profile</Link>
+        {!userId && <Link to="/edit-profile" className="edit-btn">✏ Edit Profile</Link>}
       </div>
 
       {/* Stats */}

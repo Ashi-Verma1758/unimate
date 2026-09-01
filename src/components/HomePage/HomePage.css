@@ -1,345 +1,316 @@
-/* HomePage.css */
 .homepage {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background: #f6f7f9;
+  color: #0f172a;
 }
 
 .homepage-container {
-  max-width: 80rem;
-  margin: 0 4rem;
-  padding: 2rem 1rem;
+  width: min(100% - 40px, 1180px);
+  margin: 0 auto;
+  padding: 22px 0 38px;
 }
 
-/* Welcome Section */
 .welcome-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
-}
-
-.welcome-content h1 {
-  margin: 0;
+  gap: 18px;
+  margin-bottom: 18px;
 }
 
 .welcome-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  color: #0f172a;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 750;
   text-align: left;
 }
 
 .welcome-subtitle {
-  color: #4b5563;
-  margin: 0;
+  margin: 8px 0 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.45;
   text-align: left;
-  margin: 10px 0px;
 }
 
 .create-project-button {
-  background-color: #2563eb;
-  /* width:10vw; */
-  color: white;
-  /* padding: 0.75rem 1.5rem; */
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  display: flex;
+  height: 38px;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s ease;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease;
 }
 
 .create-project-button:hover {
-  background-color: #1d4ed8;
-}
-
-.hellow{
-margin: 1vw;}
-/* Homepage Grid */
-.homepage-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-.view-all-buttonlala {
-  color: #2563eb;
-  background: none;
-  border: none;
-  font-weight: 500;
-  /* font-size: 1.5rem; */
-  cursor: pointer;
-  transition: color 0.2s ease;
-  font-size: 1rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  margin-right: 2.5rem;
-}
-.view-all-buttonlala:hover{
-  color: blue;
-}
-
-@media (min-width: 1024px) {
-  .homepage-grid {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-/* Main Content */
-.mains-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  margin-bottom: 4rem;
-  margin-top: 2rem;
-}
-
-@media (min-width: 640px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .stats-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Recent Projects Section */
-.recent-projects {
-  margin-bottom: 2rem;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  width:50vw;
-}
-
-.section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
-}
-
-
-.view-all-button:hover {
+  background: #1d4ed8;
   color: #ffffff;
 }
 
-.projects-list {
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin: 16px 0 24px;
+}
+
+.homepage-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 354px;
+  gap: 30px;
+  align-items: start;
+}
+
+.mains-content,
+.activity-sidebar {
+  min-width: 0;
+}
+
+.mains-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 14px;
 }
 
-/* Sidebar */
-.sidebar {
+.project-activity-header {
   display: flex;
-  flex-direction: column; 
-   /* flex: 1; /* For flex-based layouts */
-  /* min-width: 300px;
-  max-width: 400px;  */
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 32px;
 }
 
-.sidebar-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  padding: 1.5rem;
+.project-activity-title {
+  margin: 0;
+  color: #020617;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 750;
+}
+
+.view-all-projects-button {
+  width: auto;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #2563eb;
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-all-projects-button:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.tabs-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  height: 32px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #e9ebef;
+}
+
+.tab-button {
+  width: 100%;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #0f172a;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab-button:hover {
+  background: rgba(255, 255, 255, 0.65);
+  color: #0f172a;
+}
+
+.tab-button.active {
+  background: #ffffff;
+  color: #020617;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.tab-badge {
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #3b73e6;
+  color: #ffffff;
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.projects-list,
+.join-requests-list,
+.invitations-list,
+.quick-actions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-list,
+.join-requests-list {
+  gap: 16px;
+}
+
+.activity-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.side-bar-card {
+  width: 100%;
+  border: 1px solid #d9dce3;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 22px;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 9px;
+  margin-bottom: 20px;
 }
 
 .sidebar-header svg {
-  color: #4b5563;
+  color: #0f172a;
 }
 
 .sidebar-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
   margin: 0;
+  color: #020617;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .invitations-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width:20vw;
+  gap: 14px;
 }
 
 .view-all-invitati {
   width: 100%;
-  margin-top: 2rem;
-  color: #2563eb;
-  background: none;
-  border: none;
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-align: center;
-  padding: 0.5rem;
+  height: 30px;
+  margin-top: 14px;
+  border: 1px solid #d9dce3;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
-  transition: color 0.2s ease;
 }
 
 .view-all-invitati:hover {
-  color: darkblue;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .homepage-container {
-    padding: 1rem;
-  }
-  
-  .welcome-section {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  
-  .create-project-button {
-    justify-content: center;
-  }
-  
-  .welcome-title {
-    font-size: 1.5rem;
-  }
-}
-/* src/HomePage.css (add these styles) */
-.tabs-container {
-  display: flex; /* Makes the buttons sit side-by-side */
-  background-color: #e0e0e0; /* Light grey background for the entire segmented control */
-  border-radius: 9999px; /* Pill-shaped container */
-  padding: 4px; /* Small padding inside the container */
-  margin-bottom: 5px; /* Space below the tabs */
-  /* Remove border-bottom and padding-bottom from here that were for the old underline style */
-  border-bottom: none; /* Ensure no residual border */
-  padding-bottom: unset; /* Remove previous padding for border-bottom */
-}
-
-/* Revised Tab Button Styles */
-.tab-button {
-  flex: 1; /* Makes each button take equal available width */
-  padding: 10px 20px; /* Adjust padding as needed */
-  border: none; /* Remove any default button borders */
-  outline:none;
-  background-color: transparent; /* Default transparent background */
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  color: #666; /* Default text color for inactive tab */
-  border-radius: 9999px; /* Make individual buttons pill-shaped inside container */
-  transition: background-color 0.3s ease, color 0.3s ease, font-weight 0.3s ease;
-  display: flex; /* For badge alignment */
-  align-items: center;
-  justify-content: center; /* Center content horizontally */
-  gap: 8px; /* Space between text and badge */
-  white-space: nowrap; /* Prevent text from wrapping */
-  width: 20vw;
-}
-
-.tab-button:hover:not(.active) { /* Hover effect for inactive tabs */
-  background-color: #d0d0d0; /* Slightly darker grey on hover */
-  color: #444; /* Darker text on hover */
-}
-
-.tab-button.active {
-  background-color: #ffffff; /* Solid white background for active tab */
-  color: #000000; /* Black text color for active tab (adjust if your design is different) */
-  font-weight: 600; /* Bolder text for active tab */
-  border:none;
-  outline:none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* Subtle shadow for active tab */
-  /* Remove ::after pseudo-element styling here */
-  width: 100%;
-}
-
-/* Tab Badge Styles (already good, just ensure they are here) */
-.tab-badge {
-  background-color: #2563eb; /* Blue for the badge */
-  color: #fff;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 3px 8px;
-  border-radius: 12px;
-  min-width: 24px;
-  text-align: center;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  /* Add margin to space it from the text if needed */
-  margin-left: 4px; /* Adjust spacing between text and badge */
-}
-
-/* Ensure the .ml-auto for View All button still works if desired */
-.ml-auto {
-  margin-left: auto;
- 
-}
-
-/* In src/HomePage.css, add these new styles */
-
-.view-all-button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -3rem;
-  margin-bottom: -4rem;
-  padding-right: 20px;
-
-}
-
-
-/* Ensure your .view-all-button styles are still present (they should be) */
-.view-all-button {
+  background: #f8fafc;
   color: #2563eb;
-  background: none;
-  border: none;
-  font-weight: 500;
-  font-size: 0.875rem;
+}
+
+.quick-actions-card {
+  padding-top: 20px;
+}
+
+.quick-actions-list {
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.quick-action-button {
+  width: 100%;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  border: 1px solid #d9dce3;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
-  transition: color 0.2s ease;
-border-radius: 30px;
 }
 
-.view-all-button:hover {
-  color: #ffffff;
-  
-}
-.join-requests-list {
-  /* Inherits styling similar to projects-list from HomePage.css, or add specific styles if needed */
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Space between request cards */
+.quick-action-button:hover {
+  background: #f8fafc;
+  color: #2563eb;
 }
 
-.no-requests-message {
-    text-align: center;
-    color: #777;
-    padding: 30px;
-    background-color: #f8f8f8;
-    border-radius: 8px;
-    margin-top: 20px;
+.activity-state,
+.error-message {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.activity-state.compact {
+  padding: 8px 0;
+}
+
+.error-message {
+  color: #dc2626;
+}
+
+@media (max-width: 980px) {
+  .homepage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-sidebar {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .homepage-container {
+    width: min(100% - 24px, 1180px);
+    padding-top: 14px;
+  }
+
+  .welcome-section,
+  .project-activity-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .create-project-button {
+    width: 100%;
+  }
+
+  .project-activity-title {
+    font-size: 20px;
+  }
 }

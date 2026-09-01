@@ -1,61 +1,62 @@
-import React, { useState, useEffect, useContext } from 'react';
-import api from '../../api'; // Import your configured Axios instance
-import { AuthContext } from '../../context/AuthContext'; // Import AuthContext
+import React from 'react';
+import { Settings, UserPlus, Users } from 'lucide-react';
 
-const TeamMembers = () => {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { currentUserId } = useContext(AuthContext); // Get current user ID from context
+const TeamMembers = ({ members = [], currentUserId, loading = false }) => {
+  const getMemberName = (member) =>
+    member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim() || member.email || 'Member';
 
-  // IMPORTANT: Replace with a valid projectId from your database
-  // In a real app, this would be dynamic (e.g., from URL params, or selected project)
-  const MOCK_PROJECT_ID = '60d0fe4f5311236168a109cb'; // Replace with an actual project ID from your DB
-
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      if (!currentUserId || !MOCK_PROJECT_ID) {
-        setLoading(false);
-        // Optionally, handle case where user/project ID is not available
-        return;
-      }
-      try {
-        setLoading(true);
-        setError(null);
-        // Endpoint: GET /api/projects/:projectId/members (assuming this exists)
-        // If not, you might need to create such an endpoint on your backend
-        const response = await api.get(`/projects/${MOCK_PROJECT_ID}/members`);
-        setMembers(response.data.members || []); // Assuming response.data has a 'members' array
-      } catch (err) {
-        console.error('Error fetching team members:', err.response?.data || err.message);
-        setError(err.response?.data?.message || 'Failed to load team members.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTeamMembers();
-  }, [currentUserId, MOCK_PROJECT_ID]); // Re-fetch when dependencies change
-
-  if (loading) return <div className="team-members-container">Loading team members...</div>;
-  if (error) return <div className="team-members-container text-red-500">{error}</div>;
+  const getInitials = (name = '') =>
+    name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0).toUpperCase())
+      .join('') || 'U';
 
   return (
-    <div className="team-members-container">
-      <h2 className="team-members-title">Team Members</h2>
+    <aside className="team-members-container">
+      <h2 className="team-members-title">
+        <Users size={17} />
+        <span>Team Members</span>
+      </h2>
+
       <div className="member-list custom-scrollbar">
-        {members.length === 0 ? (
-          <p className="text-gray-500 text-sm p-4">No team members found for this project.</p>
+        {loading ? (
+          <p className="empty-state">Loading team members...</p>
+        ) : members.length === 0 ? (
+          <p className="empty-state">Select a team to view members.</p>
         ) : (
-          members.map((member) => (
-            <div key={member._id} className="member-item">
-              <span className="member-name">{member.firstName} {member.lastName}</span>
-              <span className="member-email">{member.email}</span>
-            </div>
-          ))
+          members.map((member) => {
+            const memberName = getMemberName(member);
+            const isCurrentUser = member._id === currentUserId;
+
+            return (
+              <div key={member._id} className="member-item">
+                <div className="member-avatar-wrap">
+                  <span className="member-avatar">{getInitials(memberName)}</span>
+                  <span className={`member-status-dot ${isCurrentUser ? 'online' : ''}`}></span>
+                </div>
+                <div className="member-copy">
+                  <span className="member-name">{memberName}</span>
+                  <span className="member-status">{isCurrentUser ? 'Online' : 'Offline'}</span>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
-    </div>
+
+      <div className="member-actions">
+        <button type="button" className="member-action-button">
+          <Settings size={14} />
+          <span>Team Settings</span>
+        </button>
+        <button type="button" className="member-action-button">
+          <UserPlus size={14} />
+          <span>Invite Members</span>
+        </button>
+      </div>
+    </aside>
   );
 };
 
