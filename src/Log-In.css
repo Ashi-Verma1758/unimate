@@ -4,6 +4,8 @@
 }
 
 .login-page {
+  --auth-blue: #2563eb;
+  --auth-blue-dark: #1d4ed8;
   min-height: 100vh;
 
   padding: 2rem 1rem;
@@ -12,7 +14,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #eef3ff;
+  background: #eff6ff;
   /* background: linear-gradient(
     135deg,
     #eef2ff,
@@ -36,18 +38,13 @@
 
   margin-bottom: 1rem;
 
-  background: linear-gradient(
-    135deg,
-    #ff4ecd,
-    #8f4cf8,
-    #4f6cf7
-  );
+  background: var(--auth-blue);
 
   color: white;
 }
 
 .welcome {
-  color: #2f64f9;
+  color: var(--auth-blue-dark);
   font-weight: 600;
 }
 
@@ -106,6 +103,15 @@ input[type="text"] {
   transition: all 0.3s ease;
 }
 
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--auth-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
 .password-wrapper {
   position: relative;
 }
@@ -146,7 +152,7 @@ input[type="text"] {
 }
 
 .options a {
-  color: #2f64f9;
+  color: var(--auth-blue-dark);
   text-decoration: none;
   font-size: 14px;
 }
@@ -167,20 +173,13 @@ input[type="text"] {
 
   cursor: pointer;
 
-  background: linear-gradient(
-    135deg,
-    #ff4ecd,
-    #8f4cf8,
-    #4f6cf7
-  );
-
-  background-size: 200% auto;
+  background: var(--auth-blue);
 
   transition: all 0.4s ease;
 }
 
 .signin-btn:hover {
-  background-position: right center;
+  background: var(--auth-blue-dark);
   transform: translateY(-0.125rem);
 }
 
@@ -249,7 +248,7 @@ input[type="text"] {
 
 .signup-text a {
   text-decoration: none;
-  color: #2f64f9;
+  color: var(--auth-blue-dark);
   font-weight: 600;
 }
 
@@ -264,7 +263,7 @@ input[type="text"] {
 }
 
 .footer a {
-  color: #2f64f9;
+  color: var(--auth-blue-dark);
   text-decoration: none;
 }
 
@@ -283,4 +282,59 @@ input[type="text"] {
 .form-message.error {
   background: #fdeaea;
   color: #dc3545;
+}
+
+@media (max-width: 600px) {
+  .login-page {
+    justify-content: flex-start;
+    padding: 1.5rem 0.75rem;
+  }
+
+  .logo-circle {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .welcome {
+    margin: 0;
+    font-size: 1.35rem;
+  }
+
+  .subtitle {
+    margin-bottom: 1.25rem;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .login-card {
+    width: 100%;
+    padding: 1.5rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .login-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .card-subtitle {
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .options {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+
+  .signin-btn,
+  .google-btn {
+    min-height: 46px;
+  }
+
+  .footer {
+    max-width: 22rem;
+    line-height: 1.5;
+  }
 }

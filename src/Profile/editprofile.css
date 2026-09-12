@@ -74,6 +74,7 @@ label {
 }
 
 input[type="text"],
+input[type="url"],
 textarea,
 select {
   width: 100%;
@@ -182,5 +183,59 @@ textarea {
   color: white;
 }
 .skills-list{
-  gap:1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .container {
+    width: min(100% - 20px, 900px);
+    margin: 20px auto;
+    padding: 0;
+  }
+
+  .container > h2 {
+    font-size: 1.5rem;
+  }
+
+  .section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+  }
+
+  .section p {
+    font-size: 1rem;
+  }
+
+  .two-col {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-with-button {
+    align-items: stretch;
+  }
+
+  .plus-btn {
+    min-width: 42px;
+    height: 42px;
+  }
+
+  .skill-tag {
+    width: auto;
+    max-width: 100%;
+  }
+
+  .footer-buttons {
+    justify-content: stretch;
+  }
+
+  .footer-buttons button {
+    width: 100%;
+  }
 }

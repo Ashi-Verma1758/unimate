@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from 'axios'; // Import axios
 import { useNavigate, Link } from "react-router-dom"; // Import Link for navigation
 import "./Log-In.css";
 import {FaEnvelope,FaLock,FaEye,FaEyeSlash,} from "react-icons/fa";
+import { AuthContext } from './context/AuthContext.jsx';
 
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -39,9 +41,9 @@ const Login = () => {
     const { accessToken, refreshToken, user, message: successMessage } = res.data;
 
     // ✅ Change 'token' to 'accessToken' here
-    localStorage.setItem('accessToken', accessToken);
+    login(user, accessToken);
     localStorage.setItem('refreshToken', refreshToken); // Ensure refreshToken is also stored
-    localStorage.setItem('user', JSON.stringify(user));
+    window.dispatchEvent(new Event('unimate-auth-changed'));
 
       setMessage({ type: 'success', text: successMessage || 'Login successful! Redirecting...' });
 

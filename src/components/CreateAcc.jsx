@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "./CreateAcc.css";
+import { AuthContext } from '../context/AuthContext.jsx';
 import {
   FaEnvelope,
   FaLock,
@@ -15,6 +16,7 @@ import {
 
 function CreateAccount() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -64,9 +66,9 @@ function CreateAccount() {
       });
 
       const { accessToken, refreshToken, user, message: successMessage } = res.data;
-      localStorage.setItem("accessToken", accessToken);
+      login(user, accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("user", JSON.stringify(user));
+      window.dispatchEvent(new Event("unimate-auth-changed"));
 
       setMessage({
         type: "success",

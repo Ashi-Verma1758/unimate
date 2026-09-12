@@ -210,7 +210,9 @@ const ChatWindow = () => {
   }, [conversations, selectedConversationId]);
 
   useEffect(() => {
-    const socket = io(`${backendUrl}`);
+    const socket = io(`${backendUrl}`, {
+      auth: { token: localStorage.getItem('accessToken') },
+    });
     socketRef.current = socket;
 
     socket.on('connect', () => {

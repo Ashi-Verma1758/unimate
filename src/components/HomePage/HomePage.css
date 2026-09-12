@@ -300,6 +300,11 @@
     padding-top: 14px;
   }
 
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
   .welcome-section,
   .project-activity-header {
     align-items: flex-start;
