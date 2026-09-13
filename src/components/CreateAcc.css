@@ -45,8 +45,9 @@
 .signup-form input:focus,
 .signup-form select:focus {
   outline: none;
-  border-color: #8f4cf8;
-  box-shadow: 0 0 0 3px rgba(143, 76, 248, 0.12);
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .signup-form select {
@@ -93,12 +94,25 @@
 }
 
 @media (max-width: 600px) {
+  .signup-page {
+    padding-top: 1rem;
+  }
+
   .input-row {
     grid-template-columns: 1fr;
   }
 
   .login-card {
-    padding: 1.75rem 1.25rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .signup-card {
+    width: 100%;
+  }
+
+  .signup-form input,
+  .signup-form select {
+    min-height: 44px;
   }
 }
 

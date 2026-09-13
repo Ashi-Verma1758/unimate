@@ -1,7 +1,7 @@
 import "./HeroSection.css";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import photo from '../../assets/photo.jpg';
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../HomePage/Navbar.jsx"
 import {
   Users ,  
@@ -12,12 +12,29 @@ import {
   Zap } from 'lucide-react';
 
 const HeroSection = () =>{
+  const navigate = useNavigate();
   const cardsRef = useRef(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    if (localStorage.getItem('accessToken')) {
+      navigate('/homepage', { replace: true });
+      return;
+    }
+
+    setCheckingSession(false);
+  }, [navigate]);
+
   const scrollToCards = ()=>{
     cardsRef.current.scrollIntoView({behavior: 'smooth'});
   }
+
+  if (checkingSession) {
+    return null;
+  }
+
     return(
-    <> 
+    <div className="hero-page">
     <Navbar/>
     <div className="full">
       <div className="box1">
@@ -83,7 +100,7 @@ const HeroSection = () =>{
 
       </div>
     </div>
-    </>
+    </div>
     );
 };
 export default HeroSection;

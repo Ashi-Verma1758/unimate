@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Home, UserSearch, Users, Info, HelpCircle, User, LogOut, Menu, MessageCircle, Search } from 'lucide-react';
+import React, { useContext, useState } from 'react';
+import { Home, UserSearch, Users, HelpCircle, User, LogOut, Menu, MessageCircle, Search } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    setIsLoggedIn(Boolean(token));
-  }, []);
+  const { token, logout } = useContext(AuthContext);
+  const isLoggedIn = Boolean(token);
 
   const handleLogin = () => {
     navigate('/login');
@@ -24,9 +21,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    setIsLoggedIn(false);
+    logout();
     navigate('/', { state: { loggedOut: true } });
   };
 
@@ -120,7 +115,6 @@ const Navbar = () => {
             </>
           )}
 
-          <Link to="/about" onClick={() => setIsSidebarOpen(false)}><Info size={20} /> <span>About Us</span></Link>
           <Link to="/help" onClick={() => setIsSidebarOpen(false)}><HelpCircle size={20} /> <span>Help</span></Link>
         </div>
 

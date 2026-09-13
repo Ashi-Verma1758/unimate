@@ -1,4 +1,5 @@
 .stats-card {
+  box-sizing: border-box;
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
@@ -6,8 +7,8 @@
   padding: 1.5rem;
   text-align: center;
   transition: box-shadow 0.2s ease;
-  width: 20vw;
-    height: 15vh;
+  width: 100%;
+  min-height: 120px;
 }
 
 .stats-card:hover {

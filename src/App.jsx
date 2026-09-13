@@ -94,6 +94,13 @@ let currentUserId = null;
     // Fetch all projects initially when the App component mounts
     useEffect(() => {
         fetchAllProjectsData();
+
+        const handleAuthChanged = () => {
+            fetchAllProjectsData();
+        };
+
+        window.addEventListener('unimate-auth-changed', handleAuthChanged);
+        return () => window.removeEventListener('unimate-auth-changed', handleAuthChanged);
     }, [backendUrl]); // Depend on backendUrl if it can change
 
     // Callback function passed to CreatePost to update global state immediately
